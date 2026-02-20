@@ -9,12 +9,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTPAuthenticationError
 from sqlalchemy import func
+import os
 
 # =========================
 # APP SETUP
 # =========================
 app = Flask(__name__)
-app.secret_key = os.environ.get['FLASK_SECRET_KEY']
+app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///football_prophesy.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
