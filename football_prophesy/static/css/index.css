@@ -35,7 +35,7 @@
 /* ================================================== */
 #login {
     display: block;               /* block makes margin auto work reliably */
-    width: fit-content;           /* shrink to fit content width */
+    width: 80%;           /* shrink to fit content width */
     text-align: center;
     padding: 1rem 1rem;           /* same vertical padding as hero */
     background-color: var(--color-secondary);
@@ -149,7 +149,7 @@
 
 .full-scoreboard-btn {
     position: absolute;
-    bottom: 600px;
+    bottom: 100px;
     right: 8px;
     font-size: 0.6rem;              /* small button */
     padding: 4px 8px;               /* compact */
@@ -241,6 +241,10 @@
 /*               RESPONSIVE ADJUSTMENTS              */
 /* ================================================== */
 @media (max-width: 768px) {
+    #hero {
+        width: 80%;
+    }
+
     #main-navigation ul {
         grid-template-columns: repeat(3, 1fr);  /* force 3 columns */
         grid-template-rows: repeat(3, 1fr);     /* force 3 rows */
