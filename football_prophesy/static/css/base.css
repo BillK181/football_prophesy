@@ -235,7 +235,5 @@ section {
 /* ================================================== */
 
 @media (max-width: 768px) {
-    section {
-        padding-block: var(--spacing-lg);
-    }
+
 }

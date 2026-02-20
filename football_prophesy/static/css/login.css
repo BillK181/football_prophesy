@@ -107,7 +107,7 @@ p a:hover {
 /* Responsive for small screens */
 @media (max-width: 480px) {
     #login-section {
-        padding: 30px 20px;
+        width: 75%;
     }
 
     button[type="submit"] {

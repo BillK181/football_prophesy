@@ -380,4 +380,8 @@ h3 {
     .submit-section {
         bottom: 15px;
     }
+
+    #comments .no-comments {
+        font-size: .9rem;
+    }
 }

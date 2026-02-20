@@ -65,8 +65,9 @@ class User(db.Model):
     # Ranking
     # -----------------
     def rank(self, year=2026):
-        return next((i+1 for i, u in enumerate(self.leaderboard(year)) if u["user"].id == self.id), "-")
-
+        my_points = self.total_points(year)
+        better_users = [u for u in User.query.all() if u.total_points(year) > my_points]
+        return len(better_users) + 1
     # -----------------
     # Leaderboards
     # -----------------
@@ -87,7 +88,7 @@ class User(db.Model):
 
 class Prediction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
     year = db.Column(db.Integer, default=2026)
     section = db.Column(db.String(50), default="scouting_combine")
     position_group = db.Column(db.String(50), nullable=False)
@@ -112,6 +113,47 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
     is_admin = db.Column(db.Boolean, default=False)
+
+class RouteUsage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    route_name = db.Column(db.String(100), nullable=False)
+    count = db.Column(db.Integer, default=0)
+    last_visited = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref="route_usage")
+
+# =========================
+# ROUTE TRACKING HELPER
+# =========================
+from flask import g
+
+def track_route_usage(route_name):
+    user_id = session.get("user_id")
+    if not user_id:
+        return
+
+    usage = RouteUsage.query.filter_by(user_id=user_id, route_name=route_name).first()
+
+    now = datetime.utcnow()
+    if usage:
+        usage.count += 1
+        usage.last_visited = now
+    else:
+        usage = RouteUsage(user_id=user_id, route_name=route_name, count=1, last_visited=now)
+        db.session.add(usage)
+
+    # Store for batching commit at teardown
+    if not hasattr(g, "route_usage_to_commit"):
+        g.route_usage_to_commit = []
+    g.route_usage_to_commit.append(usage)
+
+@app.teardown_request
+def commit_route_usage(exception=None):
+    if hasattr(g, "route_usage_to_commit"):
+        for usage in g.route_usage_to_commit:
+            db.session.merge(usage)
+        db.session.commit()
 
 
 # =========================
@@ -166,17 +208,22 @@ def send_welcome_email(user):
 @app.before_request
 def load_user_info():
     user_id = session.get("user_id")
+
+    # Auto track route usage
+    if user_id and request.endpoint:
+        track_route_usage(request.endpoint)
+
     if user_id:
         user = User.query.get(user_id)
         if user:
-            session["username"] = user.username
-            leaderboard = sorted(
-                [(u.id, u.total_points()) for u in User.query.all()],
-                key=lambda x: x[1],
-                reverse=True
-            )
-            session["rank"] = next((i+1 for i, (uid, _) in enumerate(leaderboard) if uid == user_id), "-")
             session["total_points"] = user.total_points()
+
+            better_users = [
+                u for u in User.query.all()
+                if u.total_points() > session["total_points"]
+            ]
+
+            session["rank"] = len(better_users) + 1
 
 # =========================
 # INDEX / HOME
@@ -210,13 +257,22 @@ def register():
 
         new_user = User(username=username, name=name, email=email, favorite_team=favorite_team)
         new_user.set_password(password)
+
+        # Make ThrillBill an admin automatically
+        if username == "ThrillBill":
+            new_user.is_admin = True
+
         db.session.add(new_user)
         db.session.commit()
 
-        try:
-            send_welcome_email(new_user)
-        except SMTPAuthenticationError:
-            pass
+
+# =========================
+# FUTURE EMAIL IMPLENTATION
+# =========================
+        #try:
+            #send_welcome_email(new_user)
+        #except SMTPAuthenticationError:
+            #pass
 
         flash("Account created! You can now log in.", "success")
         return redirect(url_for("login"))
@@ -226,10 +282,13 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter(
+            func.lower(User.username) == username.lower()
+        ).first()
         if user and user.check_password(password):
             session["user_id"] = user.id
             session["is_admin"] = user.is_admin
@@ -251,6 +310,7 @@ def logout():
 # SCOUTING COMBINE
 # =========================
 @app.route("/scouting-combine")
+@login_required
 def scouting_combine():
     user_id = session.get("user_id")
     previous_preds = Prediction.query.filter_by(user_id=user_id, year=2026, section="scouting_combine").all()
@@ -267,15 +327,13 @@ def scouting_combine():
         previous_predictions=previous_predictions,
         comments=comments
     )
-from collections import defaultdict
-from flask import flash, redirect, session, url_for
-from datetime import datetime
 
 @app.route("/submit-combine", methods=["POST"])
 @login_required
 def submit_combine():
+    
     user_id = session.get("user_id")
-    combine_deadline = datetime(2026, 2, 26, 14, 0)
+    combine_deadline = datetime(2026, 2, 26, 12, 0)
 
     # Deadline check
     if datetime.utcnow() > combine_deadline:
@@ -322,6 +380,7 @@ def submit_combine():
             # Save or update
             if prediction_key in existing_dict:
                 existing_dict[prediction_key].player_name = player_name
+                db.session.add(existing_dict[prediction_key])
             else:
                 db.session.add(
                     Prediction(
@@ -354,10 +413,11 @@ def submit_combine():
 @app.route("/submit-comment", methods=["POST"])
 @login_required
 def submit_comment():
+    
     page = request.form.get("page").lstrip('/')
     content = request.form.get("content")
     user_id = session.get("user_id")
-    if not content.strip():
+    if not content or not content.strip():
         flash("Comment cannot be empty.", "warning")
         return redirect(request.referrer)
     db.session.add(Comment(user_id=user_id, page=page, content=content))
@@ -368,6 +428,7 @@ def submit_comment():
 @app.route("/delete-comment/<int:comment_id>", methods=["POST"])
 @login_required
 def delete_comment(comment_id):
+    
     comment = Comment.query.get_or_404(comment_id)
     user_id = session.get("user_id")
     user = User.query.get(user_id)
@@ -385,6 +446,7 @@ def delete_comment(comment_id):
 @app.route("/account/<int:user_id>")
 @login_required
 def account(user_id):
+    
     profile_user = User.query.get_or_404(user_id)
     total_points = profile_user.total_points()
     rank = profile_user.rank()
@@ -403,6 +465,7 @@ def account(user_id):
 @app.route("/account/<int:user_id>/scouting_combine")
 @login_required
 def user_combine_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     unlock_datetime = datetime(2026, 3, 3, 18, 0)
     if datetime.utcnow() < unlock_datetime:
@@ -424,6 +487,7 @@ def user_combine_results(user_id):
 @app.route("/account/<int:user_id>/free_agency")
 @login_required
 def user_free_agency_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Free Agency results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -431,6 +495,7 @@ def user_free_agency_results(user_id):
 @app.route("/account/<int:user_id>/draft")
 @login_required
 def user_draft_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Draft results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -438,6 +503,7 @@ def user_draft_results(user_id):
 @app.route("/account/<int:user_id>/schedule_release")
 @login_required
 def user_schedule_release_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Schedule Release results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -445,6 +511,7 @@ def user_schedule_release_results(user_id):
 @app.route("/account/<int:user_id>/preseason")
 @login_required
 def user_preseason_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Preseason results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -452,6 +519,7 @@ def user_preseason_results(user_id):
 @app.route("/account/<int:user_id>/season_predictions")
 @login_required
 def user_season_predictions_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Season Predictions results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -459,6 +527,7 @@ def user_season_predictions_results(user_id):
 @app.route("/account/<int:user_id>/season_picks")
 @login_required
 def user_season_picks_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Season Picks results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -466,6 +535,7 @@ def user_season_picks_results(user_id):
 @app.route("/account/<int:user_id>/postseason_predictions")
 @login_required
 def user_postseason_predictions_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Postseason Predictions results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -473,6 +543,7 @@ def user_postseason_predictions_results(user_id):
 @app.route("/account/<int:user_id>/postseason_picks")
 @login_required
 def user_postseason_picks_results(user_id):
+    
     user = User.query.get_or_404(user_id)
     flash("Postseason Picks results are not implemented yet.", "info")
     return redirect(url_for("account", user_id=user.id))
@@ -482,39 +553,48 @@ def user_postseason_picks_results(user_id):
 # =========================
 @app.route("/free_agency")
 def free_agency():
+    
     return render_template("free_agency.html", players=players)
 
 @app.route("/draft")
 def draft():
+    
     return render_template("draft.html", players=players)
 
 @app.route("/schedule_release")
 def schedule_release():
+    
     return render_template("schedule_release.html", players=players)
 
 @app.route("/preseason")
 def preseason():
+    
     return render_template("preseason.html", players=players)
 
 @app.route("/season_predictions")
 def season_predictions():
+    
     return render_template("season_predictions.html", players=players)
 
 @app.route("/season_picks")
 def season_picks():
+    
     return render_template("season_picks.html", players=players)
 
 @app.route("/postseason_predictions")
 def postseason_predictions():
+    
     return render_template("postseason_predictions.html", players=players)
 
 @app.route("/postseason_picks")
 def postseason_picks():
+    
     return render_template("postseason.html", players=players)
 
 @app.route("/all_accounts")
 @login_required
 def all_accounts():
+    
     users = User.query.all()
     users_with_points = [(user, user.total_points()) for user in users]
     users_sorted = sorted(users_with_points, key=lambda x: x[1], reverse=True)
