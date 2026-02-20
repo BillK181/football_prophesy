@@ -3,7 +3,7 @@
 /* ================================================== */
 #hero {
     text-align: center;
-    width: 80%;
+    width: fit-content;
     margin: 1rem auto;          /* <-- centers the section horizontally */
     margin-top: .1rem;
     padding: 0;
@@ -87,7 +87,7 @@
     justify-content: flex-start;
     padding: 1rem 0;
     margin: 0.5rem auto;      /* center container */
-    width: 100%;              /* take full width of parent */
+    width: 75%;              /* take full width of parent */
     max-width: 800px;         /* optional: limit max width */
 }
 
@@ -249,7 +249,7 @@
     }
 
     .hero-box h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
 
     #main-navigation ul {
@@ -263,7 +263,7 @@
     }
 
     #main-navigation a {
-        font-size: .6rem;  /* slightly smaller for fit */
+        font-size: .4rem;  /* slightly smaller for fit */
         line-height: 80px; /* match li height for vertical centering */
     }
 }
@@ -274,7 +274,7 @@
     }
 
     #main-navigation a {
-        font-size: 0.9rem;
+        font-size: 0.4rem;
         line-height: 60px;
     }
 }

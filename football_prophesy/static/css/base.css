@@ -237,7 +237,7 @@ section {
 @media (max-width: 768px) {
     #site-header {
         min-height: auto;         /* let padding & logo define height */
-        padding-bottom: 5px;
+        padding-bottom: 15px;
     }
 
     #site-header .site-logo {
