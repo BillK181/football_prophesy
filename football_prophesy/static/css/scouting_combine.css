@@ -3,14 +3,17 @@
 /* ================================================== */
 #scouting_combine_scoreboard {
     display: flex;
-    justify-content: center;   /* horizontal centering */
+    justify-content: center;   /* center table horizontally */
     align-items: flex-start;   /* push table to top */
     padding: 20px 0;
-    margin: 0 auto;            /* centers the container itself */
-    width: 60%;                /* keeps it at 60% width */
+    margin: 0 auto;            /* center container itself */
+    width: 100%;               /* take full width for responsive centering */
 }
 
 #scoreboard {
+    width: 100%;               /* table fills parent */
+    max-width: 350px;          /* optional: cap table width */
+    max-height: 200px;         
     border-collapse: collapse;
     font-family: var(--font-base, Arial);
     background-color: #000;    
@@ -18,9 +21,6 @@
     text-align: center;
     overflow-y: auto;
     box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-    width: 100%;               
-    max-width: 350px;          
-    max-height: 200px;         
 }
 
 #scoreboard th,
