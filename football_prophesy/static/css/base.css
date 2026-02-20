@@ -235,5 +235,12 @@ section {
 /* ================================================== */
 
 @media (max-width: 768px) {
+    #site-header {
+        min-height: auto;         /* let padding & logo define height */
+        padding-bottom: 5px;
+    }
 
+    #site-header .site-logo {
+        max-height: 80px;         /* shrink logo on small screens */
+    }
 }

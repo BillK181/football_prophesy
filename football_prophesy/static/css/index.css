@@ -149,7 +149,7 @@
 
 .full-scoreboard-btn {
     position: absolute;
-    bottom: 60px;
+    bottom: 500px;
     right: 8px;
     font-size: 0.6rem;              /* small button */
     padding: 4px 8px;               /* compact */
@@ -247,9 +247,6 @@
 }
 
 @media (max-width: 480px) {
-    #main-navigation ul {
-        grid-template-columns: 1fr;
-    }
 
     #hero h1 {
         font-size: 2rem;
@@ -257,5 +254,9 @@
 
     #login h3 {
         font-size: 1.25rem;
+    }
+
+    #login {
+        width: 80%;
     }
 }
