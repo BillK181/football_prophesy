@@ -14,7 +14,7 @@ from sqlalchemy import func
 # APP SETUP
 # =========================
 app = Flask(__name__)
-app.secret_key = "!12Tb@80Tb#54Tb"
+app.secret_key = os.environ.get['FLASK_SECRET_KEY']
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///football_prophesy.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -135,7 +135,7 @@ with app.app_context():
 # EMAIL FUNCTION
 # =========================
 def send_welcome_email(user):
-    sender = "thrillbill@footballprophesy.com"
+    sender = "ThrillBill@footballprophesy.com"  # Mailgun domain email
     receiver = user.email
 
     msg = MIMEMultipart("alternative")
@@ -149,9 +149,14 @@ def send_welcome_email(user):
     msg.attach(MIMEText(text, "plain"))
     msg.attach(MIMEText(html, "html"))
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    SMTP_SERVER = "smtp.mailgun.org"
+    SMTP_PORT = 587
+    SMTP_USERNAME = os.environ.get("MAILGUN_SMTP_USER")
+    SMTP_PASSWORD = os.environ.get("MAILGUN_SMTP_PASS")
+
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls()
-        server.login("thrillbill@footballprophesy.com", "your_password")
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
         server.sendmail(sender, receiver, msg.as_string())
 
 # =========================
