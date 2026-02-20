@@ -15,7 +15,7 @@
 .hero-box {
     display: inline-block; /* makes the box shrink to fit content */
     background-color: var(--color-secondary); /* box background */
-    padding: 1rem 1.5rem;    /* space inside the box */
+    padding: .5rem .75rem;    /* space inside the box */
     box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* subtle depth */
 }
 
@@ -38,7 +38,7 @@
     display: block;               /* block makes margin auto work reliably */
     width: fit-content;           /* shrink to fit content width */
     text-align: center;
-    padding: 1rem 1rem;           /* same vertical padding as hero */
+    padding: .25rem .25rem;           /* same vertical padding as hero */
     background-color: var(--color-secondary);
     color: var(--color-primary);
     margin: 0.5rem auto;            /* centers horizontally */
@@ -87,7 +87,7 @@
     justify-content: flex-start;
     padding: 1rem 0;
     margin: 0.5rem auto;      /* center container */
-    width: 75%;              /* take full width of parent */
+    width: 90%;              /* take full width of parent */
     max-width: 800px;         /* optional: limit max width */
 }
 
@@ -263,7 +263,7 @@
     }
 
     #main-navigation a {
-        font-size: .4rem;  /* slightly smaller for fit */
+        font-size: .6rem;  /* slightly smaller for fit */
         line-height: 80px; /* match li height for vertical centering */
     }
 }
@@ -274,7 +274,7 @@
     }
 
     #main-navigation a {
-        font-size: 0.4rem;
+        font-size: 0.6rem;
         line-height: 60px;
     }
 }
