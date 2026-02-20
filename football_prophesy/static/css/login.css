@@ -1,0 +1,116 @@
+/* ================================================== */
+/*                  LOGIN PAGE CSS                   */
+/* ================================================== */
+
+/* The main container sits inside your base.html <main> */
+#login-section {
+    background-color: var(--color-secondary, #000);  /* login box background */
+    color: var(--color-primary, #fff);          /* text color */
+    padding: 40px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    max-width: 400px;
+    margin: 40px auto;      /* centers horizontally within main content */
+    text-align: center;
+}
+
+/* Heading */
+#login-section h2 {
+    font-family: var(--font-primary, Arial, sans-serif);
+    margin-bottom: 25px;
+    color: var(--color-primary, #f0f);
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: var(--color-primary, #fff);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-primary, #000);
+    font-size: 16px;
+    font-family: var(--font-primary, Arial, sans-serif);
+    background-color: var(--color-primary, #111);
+    color: var(--color-secondary, #fff);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-accent, #f0f);
+    box-shadow: 0 0 5px var(--color-accent, #f0f);
+}
+
+/* Submit button */
+button[type="submit"] {
+    width: 50%;
+    padding: 12px 0;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--color-accent, #f0f);
+    color: var(--color-secondary, #111);
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--color-primary, #000);
+    color: var(--color-accent, #f0f);
+    transform: translateY(-2px);
+}
+
+/* Paragraphs & links */
+p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--color-primary, #fff);
+}
+
+p a {
+    color: var(--color-accent, #f0f);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Flash messages */
+.flash {
+    margin-bottom: 15px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.flash.success {
+    background-color: rgba(0,255,0,0.2);
+    color: var(--color-primary);
+}
+
+.flash.danger {
+    background-color: rgba(255,0,0,0.2);
+    color: var(--color-primary);
+}
+
+/* Responsive for small screens */
+@media (max-width: 480px) {
+    #login-section {
+        padding: 30px 20px;
+    }
+
+    button[type="submit"] {
+        font-size: 16px;
+    }
+}

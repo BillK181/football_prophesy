@@ -1,0 +1,78 @@
+
+
+
+
+.account-instruction {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+    -webkit-text-stroke: .6px var(--color-accent, #fff);
+    margin-top: 1rem;
+}
+
+/* ================================================== */
+/*               ALL ACCOUNTS SCOREBOARD             */
+/* ================================================== */
+#home_scoreboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem 0;
+    margin: 0.5 5rem;
+}
+
+/* No button container needed on this page */
+
+/* Main scoreboard table */
+#scoreboard {
+    width: 60%;                       /* same width as homepage scoreboard */
+    border-collapse: collapse;
+    font-family: var(--font-base);
+    background-color: #000;           /* black box background */
+    color: var(--color-primary);
+    text-align: center;
+    overflow-y: visible;              /* allow table to grow with content */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+#scoreboard th,
+#scoreboard td {
+    border: 1px solid #000;           /* hide grid lines */
+    padding: 0.35rem 1rem;
+    text-shadow: 
+        0 0 5px var(--color-accent),
+        0 0 10px var(--color-primary),
+        0 0 15px var(--color-accent);
+}
+
+#scoreboard th {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 8px var(--color-accent),
+        0 0 16px var(--color-primary);
+}
+
+#scoreboard tr:nth-child(1) td,
+#scoreboard tr:nth-child(2) td,
+#scoreboard tr:nth-child(3) td {
+    color: var(--color-accent);       /* top 3 glow */
+}
+
+#scoreboard tr {
+    background-color: transparent;    /* no row distinction */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+#scoreboard a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#scoreboard a:hover {
+    color: var(--color-accent);
+}

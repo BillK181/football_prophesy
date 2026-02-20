@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+Coming Soon | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="coming-soon-container">
+    <h1>Coming Soon!</h1>
+    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+
+    <div class="tentative-scoring">
+        <h2>Tentative Scoring</h2>
+        <ul>
+            <li>Predict How Many of Each Position Get Drafted in Each Round
+                <ul>
+                    <li>Closest Prediction for Each Position receives 3 Points</li>
+                </ul>
+            </li>
+            <li>Predict What Pick and for What Team for a Handful of Prospects
+                <ul>
+                    <li>20 Points for correctly guessing what team</li>
+                    <li>5 Points for guessing closest to the correct pick</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}

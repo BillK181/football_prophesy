@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+Account | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="account-page-wrapper">
+    <section class="account-profile">
+        <h1>Account Overview</h1>
+        <p><strong>Username:</strong> {{ profile_user.username }}</p>
+        <p><strong>Name:</strong> {{ profile_user.name }}</p>
+        <p><strong>Favorite Team:</strong> {{ profile_user.favorite_team or "N/A" }}</p>
+        <p><strong>Rank:</strong> {{ rank }}</p>
+        <p><strong>Total Points:</strong> {{ total_points }}</p>
+    </section>
+
+    <section class="account-events">
+        <h2>Event Results</h2>
+        <ul>
+            <li><a href="{{ url_for('user_combine_results', user_id=profile_user.id) }}">Scouting Combine</a></li>
+            <li><a href="{{ url_for('user_free_agency_results', user_id=profile_user.id) }}">Free Agency</a></li>
+            <li><a href="{{ url_for('user_draft_results', user_id=profile_user.id) }}">Draft</a></li>
+            <li><a href="{{ url_for('user_schedule_release_results', user_id=profile_user.id) }}">Schedule Release</a></li>
+            <li><a href="{{ url_for('user_preseason_results', user_id=profile_user.id) }}">Preseason</a></li>
+            <li><a href="{{ url_for('user_season_predictions_results', user_id=profile_user.id) }}">Season Predictions</a></li>
+            <li><a href="{{ url_for('user_season_picks_results', user_id=profile_user.id) }}">Season Picks</a></li>
+            <li><a href="{{ url_for('user_postseason_predictions_results', user_id=profile_user.id) }}">Postseason Predictions</a></li>
+            <li><a href="{{ url_for('user_postseason_picks_results', user_id=profile_user.id) }}">Postseason Picks</a></li>
+        </ul>
+    </section>
+
+    <section class="account-comments">
+        <h2>{{ profile_user.username }}'s Comments</h2>
+        {% if comments %}
+        <ul>
+            {% for comment in comments %}
+            <li>
+                <strong>{{ comment.page.lstrip('/').replace('-', ' ').title() }}</strong>
+                ({{ comment.timestamp.strftime('%m-%d-%Y') }}):<br>
+                <p>{{ comment.content }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No comments yet.</p>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}

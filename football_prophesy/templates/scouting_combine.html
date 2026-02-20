@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+Scouting Combine | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/scouting_combine.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<section id="scouting_combine_scoreboard">
+    <table id="scoreboard">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player Name</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in combine_top_players %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ player.user.username }}</td>
+                <td>{{ player.score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="combine-container">
+    <h1>2026 Scouting Combine Predictions</h1>
+    <h5>Submissions Lock 2/26 at 2pm</h5>
+    <h5>Prophesy the Top 3 performers for each drill for each position.</h5>
+    <p> 
+        Be sure to scroll down to see full list of drills to prophesy<br>
+        You may not put the same player twice for the same drill<br>
+        You may submit unfinished results and return to them<br>
+        Feel free to leave a comment at the bottom
+    </p>
+
+    <form method="POST" action="{{ url_for('submit_combine') }}">
+        {% set drills = ["40_yard", "bench_press", "three_cone"] %}
+
+        {% for position, position_players in players.items() %}
+        <div class="position-group">
+            <h2>{{ position }}</h2>
+
+            {% for drill in drills %}
+            <div class="drill-section">
+                <h3>{{ drill.replace("_", " ").title() }}</h3>
+
+                {% for place in [1,2,3] %}
+                <div class="prediction-row">
+                    <label>Place {{ place }}</label>
+                    <select name="{{ position|lower|replace(' ', '_') }}_{{ drill }}_{{ place }}">
+                        <option value="">Select Player</option>
+                        {% for name, school in position_players.items() %}
+                        <option value="{{ name }}"
+                            {% if previous_predictions.get(position|lower|replace(' ', '_') ~ '_' ~ drill ~ '_' ~ place) == name %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ name }} - {{ school }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endfor %}
+
+            </div>
+            {% endfor %}
+        </div>
+        <hr>
+        {% endfor %}
+
+        <div class="submit-section">
+            <button type="submit">Submit Predictions</button>
+        </div>
+    </form>
+</section>
+
+<h3>Comments</h3>
+
+<div id="comments">
+    {% if session.get('user_id') %}
+    <form action="{{ url_for('submit_comment') }}" method="POST" class="comment-form">
+        <input type="hidden" name="page" value="scouting_combine">
+        <textarea name="content" placeholder="Write a comment..." required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    {% else %}
+    <p class="comment_login_text">
+    <a href="{{ url_for('login') }}">Log in</a> to post a comment.
+    </p>
+    {% endif %}
+
+
+    {% for comment in comments %}
+    <div class="comment">
+        <strong>{{ comment.user.username }}</strong>
+        <em>{{ comment.timestamp.strftime('%m-%d-%Y') }}</em>
+        <p>{{ comment.content }}</p>
+
+        {% if session.get('user_id') == comment.user_id or session.get('is_admin') %}
+        <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST" class="delete-form">
+            <button type="submit" class="delete-btn">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <p class="no-comments">No comments yet. Be the first!</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

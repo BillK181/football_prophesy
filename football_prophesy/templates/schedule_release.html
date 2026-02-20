@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}
+Coming Soon | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="coming-soon-container">
+    <h1>Coming Soon!</h1>
+    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+
+    <div class="tentative-scoring">
+        <h2>Tentative Scoring</h2>
+        <ul>
+            <li>Predict Which Teams Will Have 7+, 6, 5, 4, 3, 2, 1, and 0 Primetime Games
+                <ul>
+                    <li>2 pts per team correctly guessed</li>
+                </ul>
+            </li>
+            <li>Predict Thanksgiving Day Matchups
+                <ul>
+                    <li>5 pts per team correctly guessed (Lions and Cowboys do not count)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+All Accounts | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/all_accounts.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h3 class="account-instruction">
+    Click on a Username to see their Account Page
+</h3>
+
+<section id="home_scoreboard">
+    <table id="scoreboard">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Total Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user, points in users_sorted %}
+            <tr class="{% if loop.index <= 3 %}top-player{% endif %}">
+                <td>{{ loop.index }}</td>
+                <td><a href="{{ url_for('account', user_id=user.id) }}">{{ user.username }}</a></td>
+                <td>{{ points }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% endblock %}

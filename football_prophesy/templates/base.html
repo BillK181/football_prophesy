@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!--        META           -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!--        TITLE          -->
+
+    <title>{% block title %}{% endblock %}</title>
+
+
+    <!--        STYLES         -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+    {% block extra_css %}
+    <!-- Page-specific CSS -->
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <!--        HEADER         -->
+
+    <header id="site-header">
+        <a href="/" aria-label="Home">
+            <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" alt="Football Prophesy" class="site-logo">
+        </a>
+    </header>
+
+    <!--    NAME/RANK/SCORE    -->
+    {% if session.get('user_id') %}
+    <div id="user-info">
+        <a href="{{ url_for('account', user_id=session.get('user_id')) }}" class="account-button">
+            <strong>{{ session.get('username') }}</strong>
+        <p>Rank: <span>{{ session.get('rank') }}</span></p>
+        <p>Points: <span>{{ session.get('total_points') }}</span></p>
+        </a>
+    </div>
+    {% endif %}
+
+
+    <!--        MAIN           -->
+
+    <main id="site-content">
+
+        {% block content %}
+        <!-- Page content goes here -->
+        {% endblock %}
+
+    </main>
+
+    <!--        FOOTER         -->
+
+    <footer id="site-footer">
+        <a href="/" aria-label="Home">
+            <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" alt="Football Prophesy" class="footer-logo">
+        </a>
+    </footer>
+
+
+    <!--        SCRIPTS        -->
+
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+
+    {% block extra_js %}
+    <!-- Page-specific JS -->
+    {% endblock %}
+
+</body>
+</html>

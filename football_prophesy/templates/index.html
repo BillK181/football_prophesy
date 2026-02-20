@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<!-- Page-specific CSS for index page -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- ===================== -->
+<!--        HERO           -->
+<!-- ===================== -->
+<section id="hero">
+    <div class="hero-box">
+        <h1>Will You Be Crowned As The 2026 Football Prophet?</h1>
+    </div>
+</section>
+
+
+<section id="login">
+    {% if session.get('user_id') %}
+        <h5 class="login_text">
+            Welcome Back! 
+            <a href="{{ url_for('logout') }}" class="logout_link">Logout</a>
+        </h5>
+    {% else %}
+        <a href="{{ url_for('login') }}">
+            <h5>Click Here For Sign In Or Register & More Info</h5>
+        </a>
+    {% endif %}
+</section>
+
+
+<section id="home_scoreboard">
+    <div class="scoreboard-container">
+        <table id="scoreboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in top_players %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ player.user.username }}</td>
+                    <td>{{ player.score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section id="all-accounts">
+    <a href="{{ url_for('all_accounts') }}" class="full-scoreboard-btn">See Full Scoreboard</a>
+</section>
+
+<section id="memo">
+    <h5>Click Scouting Combine to begin your 2026 Football Prophesy</h5>
+</section>
+
+<nav id="main-navigation">
+    <ul>
+        <li><a href="{{ url_for('scouting_combine') }}">Scouting Combine</a></li>
+        <li><a href="{{ url_for('free_agency') }}">Free Agency</a></li>
+        <li><a href="{{ url_for('draft') }}">Draft</a></li>
+        <li><a href="{{ url_for('schedule_release') }}">Schedule Release</a></li>
+        <li><a href="{{ url_for('preseason') }}">Preseason</a></li>
+        <li><a href="{{ url_for('season_predictions') }}">Season Predictions</a></li>
+        <li><a href="{{ url_for('season_picks') }}">Season Picks</a></li>
+        <li><a href="{{ url_for('postseason_predictions') }}">Postseason Predictions</a></li>
+        <li><a href="{{ url_for('postseason_picks') }}">Postseason Picks</a></li>
+    </ul>
+</nav>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Page-specific scripts -->
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
