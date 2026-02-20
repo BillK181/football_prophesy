@@ -149,7 +149,7 @@
 
 .full-scoreboard-btn {
     position: absolute;
-    bottom: 500px;
+    bottom: 600px;
     right: 8px;
     font-size: 0.6rem;              /* small button */
     padding: 4px 8px;               /* compact */
@@ -241,22 +241,29 @@
 /*               RESPONSIVE ADJUSTMENTS              */
 /* ================================================== */
 @media (max-width: 768px) {
+    #main-navigation ul {
+        grid-template-columns: repeat(3, 1fr);  /* force 3 columns */
+        grid-template-rows: repeat(3, 1fr);     /* force 3 rows */
+        gap: 0;
+    }
+
+    #main-navigation li {
+        height: 80px;   /* smaller for mobile */
+    }
+
     #main-navigation a {
-        font-size: 1.1rem;
+        font-size: 1rem;  /* slightly smaller for fit */
+        line-height: 80px; /* match li height for vertical centering */
     }
 }
 
 @media (max-width: 480px) {
-
-    #hero h1 {
-        font-size: 2rem;
+    #main-navigation li {
+        height: 60px;
     }
 
-    #login h3 {
-        font-size: 1.25rem;
-    }
-
-    #login {
-        width: 80%;
+    #main-navigation a {
+        font-size: 0.9rem;
+        line-height: 60px;
     }
 }

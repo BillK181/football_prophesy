@@ -382,6 +382,7 @@ h3 {
     }
 
     #comments .no-comments {
-        font-size: .1rem;
+        font-size: .8rem;                /* smaller, readable */
+        -webkit-text-stroke: 0.2px var(--color-accent, #fff); /* scale stroke down */
     }
 }
