@@ -249,5 +249,10 @@ section {
         margin: 0 auto;           /* center horizontally */
         text-align: center;       /* center content inside footer */
     }
+
+    #user-info p {
+        line-height: 1;     /* tight line spacing */
+        font-size: 0.7rem;    /* smaller font, adjust as needed */
+    }
 }
 

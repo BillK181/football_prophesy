@@ -156,7 +156,7 @@
 }
 
 #all-accounts .full-scoreboard-btn {
-    margin-right: 8%;          /* shift button left by ~1/3 of container */
+    margin-right: 8%;     
 }
 
 #all-accounts,
@@ -253,7 +253,7 @@
     font-family: var(--font-heading);
     font-size: 1.5rem;
     width: 100%;               /* fill li width */
-    line-height: 1.2em;        /* vertical spacing between stacked words */
+    line-height: 1.5em;        /* vertical spacing between stacked words */
 }
 
 #main-navigation a:hover {
