@@ -147,7 +147,7 @@
 
 #all-accounts {
     position: absolute;   /* float over scoreboard */
-    bottom: 70px;            /* align with bottom of scoreboard */
+    bottom: 140px;            /* align with bottom of scoreboard */
     right: 5%;            /* adjust to scoreboard margin */
     z-index: 10;          /* sit on top of table */
 }
@@ -178,7 +178,7 @@
     width: 95%;
     text-align: center;               /* center the text */
     margin: 0rem auto;                /* spacing from other content */
-    margin-top: 25px;
+    margin-top: 35px;
     padding: 0;
 }
 
@@ -250,8 +250,17 @@
         width: 90%;
     }
 
+
     .hero-box h1 {
         font-size: 2.5rem;
+    }
+
+    #login h5 {
+        font-size: 1.2rem;
+    }
+
+    #all-accounts {
+        bottom: 60px;            /* align with bottom of scoreboard */
     }
 
     #main-navigation ul {

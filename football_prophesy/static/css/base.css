@@ -243,4 +243,11 @@ section {
     #site-header .site-logo {
         max-height: 80px;         /* shrink logo on small screens */
     }
+
+    #site-footer {
+        width: 50%;
+    }
+
+
 }
+
