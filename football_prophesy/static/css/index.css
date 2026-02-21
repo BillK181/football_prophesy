@@ -37,7 +37,7 @@
 /* ================================================== */
 #login {
     display: block;               /* block makes margin auto work reliably */
-    width: 75%;         
+    width: 80%;         
     height: fit-content;
     text-align: center;
     padding: 1rem 1rem;           /* same vertical padding as hero */
@@ -211,28 +211,27 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 0;                    /* borders separate boxes */
+    gap: 0;                    /* no gap between squares */
 }
 
 #main-navigation li {
-    border: 2px solid black;   /* each small box border */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;             /* set height for uniform boxes */
+    border: 2px solid black;   /* each square border */
+    display: flex;             /* use flex to center content */
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
+    height: 100px;             /* square height, adjust as needed */
+    text-align: center;        /* center multi-line text */
 }
 
+
 #main-navigation a {
-    display: block;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    line-height: 100px;        /* vertically center text in box */
-    text-decoration: none;
-    color: var(--color-primary);
+    display: inline-block;     /* allow text to wrap */
+    text-align: center;        /* center text horizontally */
+    white-space: pre-line;     /* wrap words onto new lines at spaces */
     font-family: var(--font-heading);
     font-size: 1.5rem;
-    transition: background-color 0.2s, color 0.2s;
+    width: 100%;               /* fill li width */
+    line-height: 1.2em;        /* vertical spacing between stacked words */
 }
 
 #main-navigation a:hover {
