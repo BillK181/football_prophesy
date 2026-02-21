@@ -3,7 +3,8 @@
 /* ================================================== */
 #hero {
     text-align: center;
-    width: fit-content;
+    height: fit-content;
+    width: 90%;
     margin: 1rem auto;          /* <-- centers the section horizontally */
     margin-top: .1rem;
     padding: 0;
@@ -35,44 +36,43 @@
 /*                 LOGIN SECTION                      */
 /* ================================================== */
 #login {
-    display: block;               /* block makes margin auto work reliably */
-    width: fit-content;           /* shrink to fit content width */
-    text-align: center;
-    padding: .25rem .25rem;           /* same vertical padding as hero */
+    display: flex;
+    justify-content: center;     /* center horizontally */
+    align-items: center;
+    margin: 0.75rem auto;
+}
+
+/* Make the clickable box consistent */
+#login a,
+#login .login_text {
+    display: inline-block;
+    padding: 0.5rem 1rem;
     background-color: var(--color-secondary);
     color: var(--color-primary);
-    margin: 0.5rem auto;            /* centers horizontally */
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid black;
-}
-
-#login > a {
-    display: block;               /* make link fill the box */
-}
-
-#login h5 {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    text-decoration: none;
     font-family: var(--font-base);
-    font-weight: normal;
-    line-height: 1.2;
-    margin: 0;
-    letter-spacing: normal;
-    text-shadow: none;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-#login:hover {
+/* Remove default h5 spacing */
+#login h5 {
+    margin: 0;
+    font-weight: normal;
+}
+
+/* Hover effect */
+#login a:hover {
     background-color: var(--color-accent);
     color: var(--color-background);
 }
 
-
-/* Logout link default */
+/* Logout link styling */
 #login .logout_link {
     color: var(--color-primary);
     text-decoration: underline;
     font-weight: bold;
-    transition: color 0.2s ease;
 }
 
 
@@ -243,11 +243,6 @@
 /*               RESPONSIVE ADJUSTMENTS              */
 /* ================================================== */
 @media (max-width: 768px) {
-    
-    #hero {
-        width: 90%;
-    }
-
     .hero-box h1 {
         font-size: 2.5rem;
     }
@@ -259,22 +254,33 @@
     }
 
     #main-navigation li {
-        height: 80px;   /* smaller for mobile */
+        height: auto;        /* allow height to grow with text */
+        padding: 5px;        /* optional: some spacing inside */
     }
 
     #main-navigation a {
-        font-size: .6rem;  /* slightly smaller for fit */
-        line-height: 80px; /* match li height for vertical centering */
+        font-size: 0.6rem;  
+        line-height: normal;   /* let text wrap naturally */
+        white-space: normal;   /* allows line breaks */
+        word-break: break-word; /* break long words if needed */
+        display: inline-block; /* needed for proper wrapping */
+        text-align: center;    /* keep centered */
+        padding: 0.25rem;      /* optional: space around text */
     }
 }
 
 @media (max-width: 480px) {
     #main-navigation li {
-        height: 60px;
+        height: auto;       /* allow height to grow */
+        padding: 3px;       /* optional */
     }
 
     #main-navigation a {
-        font-size: 0.6rem;
-        line-height: 60px;
+        font-size: 0.5rem;  
+        line-height: normal; 
+        white-space: normal; 
+        word-break: break-word;
+        display: inline-block;
+        text-align: center;
     }
 }

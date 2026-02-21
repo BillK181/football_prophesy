@@ -333,7 +333,7 @@ def scouting_combine():
 def submit_combine():
     
     user_id = session.get("user_id")
-    combine_deadline = datetime(2026, 2, 26, 12, 0)
+    combine_deadline = datetime(2026, 2, 26, 20, 0)
 
     # Deadline check
     if datetime.utcnow() > combine_deadline:
