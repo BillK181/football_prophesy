@@ -245,7 +245,7 @@ section {
     }
 
     #site-footer {
-        width: 65%;               /* keep your width */
+        width: 45%;               /* keep your width */
         margin: 0 auto;           /* center horizontally */
         text-align: center;       /* center content inside footer */
     }
