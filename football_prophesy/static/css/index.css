@@ -147,7 +147,7 @@
 
 #all-accounts {
     position: absolute;   /* float over scoreboard */
-    bottom: 100px;            /* align with bottom of scoreboard */
+    bottom: 85px;            /* align with bottom of scoreboard */
     right: 5%;            /* adjust to scoreboard margin */
     z-index: 10;          /* sit on top of table */
 }
@@ -178,6 +178,7 @@
     width: 95%;
     text-align: center;               /* center the text */
     margin: 0rem auto;                /* spacing from other content */
+    margin-top: 10px;
     padding: 0;
 }
 
@@ -197,7 +198,7 @@
 /*              NAVIGATION 3x3 GRID                  */
 /* ================================================== */
 #main-navigation {
-    width: 80%;                /* big box width */
+    width: 90%;                /* big box width */
     margin: .5rem auto;         /* center horizontally */
     background-color: var(--color-secondary); /* whole nav background */
     padding: 0;                /* remove extra padding */
@@ -268,7 +269,7 @@
         white-space: pre-line;      /* wrap at spaces/newlines */
         text-align: center;         /* center text */
         line-height: 1.2em;         /* tighter vertical spacing */
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 }
 
