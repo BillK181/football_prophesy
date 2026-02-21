@@ -311,6 +311,7 @@ def logout():
 # SCOUTING COMBINE
 # =========================
 @app.route("/scouting-combine")
+@login_required
 def scouting_combine():
     user_id = session.get("user_id")
     previous_preds = Prediction.query.filter_by(user_id=user_id, year=2026, section="scouting_combine").all()
