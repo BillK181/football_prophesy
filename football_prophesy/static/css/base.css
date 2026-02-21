@@ -245,9 +245,9 @@ section {
     }
 
     #site-footer {
-        width: 50%;
+        width: 65%;               /* keep your width */
+        margin: 0 auto;           /* center horizontally */
+        text-align: center;       /* center content inside footer */
     }
-
-
 }
 
