@@ -147,7 +147,7 @@
 
 #all-accounts {
     position: absolute;   /* float over scoreboard */
-    bottom: 100;            /* align with bottom of scoreboard */
+    bottom: 100px;            /* align with bottom of scoreboard */
     right: 5%;            /* adjust to scoreboard margin */
     z-index: 10;          /* sit on top of table */
 }
@@ -268,7 +268,7 @@
         white-space: pre-line;      /* wrap at spaces/newlines */
         text-align: center;         /* center text */
         line-height: 1.2em;         /* tighter vertical spacing */
-        font-size: 1rem;
+        font-size: 1.3rem;
     }
 }
 
