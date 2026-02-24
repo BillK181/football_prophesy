@@ -1,15 +1,18 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash
-from flask_sqlalchemy import SQLAlchemy
-from collections import defaultdict
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
-from datetime import datetime
+# Standard Library
+import os
 import smtplib
+from collections import defaultdict
+from datetime import datetime
+from functools import wraps
+from smtplib import SMTPAuthenticationError
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from smtplib import SMTPAuthenticationError
+
+# Third-Party Packages
+from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
-import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # =========================
 # APP SETUP
@@ -54,8 +57,11 @@ class User(db.Model):
     # Scoring
     # -----------------
     def combine_points(self, year=2026):
-        points = sum(pred.calculate_points() for pred in self.predictions
-                     if pred.section == "scouting_combine" and pred.year == year)
+        points = sum(
+            pred.calculate_points(actual_combine_results)
+            for pred in self.predictions
+            if pred.section == "scouting_combine" and pred.year == year
+        )
         return points
 
     def total_points(self, year=2026):
@@ -96,13 +102,20 @@ class Prediction(db.Model):
     place = db.Column(db.Integer, nullable=False)
     player_name = db.Column(db.String(100), nullable=False)
 
-    def calculate_points(self):
-        top3 = actual_combine_results.get(self.position_group, {}).get(self.drill, [])
+    def calculate_points(self, results_data):
+        if self.section == "scouting_combine":
+            return self._calculate_combine_points(results_data)
+        # elif self.section == "draft":
+        #     return self._calculate_draft_points()
+        return 0
+    
+    def _calculate_combine_points(self, results_data):
+        top3 = results_data.get(self.position_group, {}).get(self.drill, [])
         points = 0
         if self.player_name in top3:
-            points += 3
+            points += 1
             if self.place == top3.index(self.player_name) + 1:
-                points += 5
+                points += 3
         return points
 
 
@@ -475,7 +488,10 @@ def user_combine_results(user_id):
 
     predictions = [p for p in user.predictions if p.section=="scouting_combine" and p.year==2026]
     predictions_dict = {f"{p.position_group}_{p.drill}_{p.place}": p.player_name for p in predictions}
-    feedback = {key: p.calculate_points() for key, p in zip(predictions_dict.keys(), predictions)}
+    feedback = {
+        key: p.calculate_points(actual_combine_results)
+        for key, p in zip(predictions_dict.keys(), predictions)
+    }
     return render_template("scouting_combine_review.html",
                            user=user,
                            profile_user=user,
@@ -605,4 +621,4 @@ def all_accounts():
 # RUN APP
 # =========================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
