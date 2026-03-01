@@ -30,18 +30,26 @@ Scouting Combine Results | Football Prophesy
                 {% set player_name = predictions_dict.get(key) %}
                 {% set points = feedback.get(key, 0) %}
 
-                <div class="prediction-row">
-                    <label>Place {{ place }}</label>
-                    <input type="text" value="{{ player_name }}" disabled>
+            <div class="prediction-row">
+                <label>Place {{ place }}</label>
+                <input type="text" value="{{ player_name }}" disabled>
 
-                    {% if player_name %}
-                        {% if points > 0 %}
+                {% if player_name %}
+                    {% if points > 0 %}
                         +{{ points }}
-                        {% else %}
+                    {% else %}
                         ❌
-                        {% endif %}
                     {% endif %}
-                </div>
+                {% endif %}
+
+                <!-- show the actual player(s) who placed -->
+                {% set actual_players = actual_players_dict.get(key, []) %}
+                {% if actual_players %}
+                    <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                {% else %}
+                    <span class="actual-player">Actual: —</span>
+                {% endif %}
+            </div>
                 {% endfor %}
 
             </div>

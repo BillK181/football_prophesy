@@ -110,12 +110,24 @@ class Prediction(db.Model):
         return 0
     
     def _calculate_combine_points(self, results_data):
-        top3 = results_data.get(self.position_group, {}).get(self.drill, [])
+        drill_results = results_data.get(self.position_group, {}).get(self.drill, {})
+
+        # Get list of players for the predicted place (1, 2, or 3)
+        actual_players_for_place = drill_results.get(self.place, [])
+
         points = 0
-        if self.player_name in top3:
-            points += 1
-            if self.place == top3.index(self.player_name) + 1:
-                points += 3
+
+        # 3 points if exact place match
+        if self.player_name in actual_players_for_place:
+            points += 3
+            return points
+
+        # 1 point if player was top 3 but wrong place
+        for place_players in drill_results.values():
+            if self.player_name in place_players:
+                points += 1
+                break
+
         return points
 
 
@@ -489,15 +501,26 @@ def user_combine_results(user_id):
     predictions = [p for p in user.predictions if p.section=="scouting_combine" and p.year==2026]
     predictions_dict = {f"{p.position_group}_{p.drill}_{p.place}": p.player_name for p in predictions}
     feedback = {
-        key: p.calculate_points(actual_combine_results)
-        for key, p in zip(predictions_dict.keys(), predictions)
+        f"{p.position_group}_{p.drill}_{p.place}":
+            p.calculate_points(actual_combine_results)
+        for p in predictions
     }
+
+    # Build a dict of actual players per spot
+    actual_players_dict = {}
+    for position, drills in actual_combine_results.items():
+        for drill_name, places in drills.items():
+            for place, players_list in places.items():
+                key = f"{position.lower().replace(' ', '_')}_{drill_name}_{place}"
+                actual_players_dict[key] = players_list if players_list else []
+
     return render_template("scouting_combine_review.html",
                            user=user,
                            profile_user=user,
                            players=players,
                            predictions_dict=predictions_dict,
                            feedback=feedback,
+                           actual_players_dict=actual_players_dict,
                            event_name="Scouting Combine")
 
 
