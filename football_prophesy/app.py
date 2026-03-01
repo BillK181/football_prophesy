@@ -101,6 +101,13 @@ class Prediction(db.Model):
     place = db.Column(db.Integer, nullable=False)
     player_name = db.Column(db.String(100), nullable=False)
 
+    # Mapping database drill names to actual_combine_results keys
+    DRILL_KEY_MAP = {
+        "40_yard_dash": "40_yard",
+        "bench_press": "bench_press",
+        "three_cone": "three_cone"
+    }
+
     def calculate_points(self, results_data):
         if self.section == "scouting_combine":
             return self._calculate_combine_points(results_data)
@@ -108,17 +115,20 @@ class Prediction(db.Model):
     
     def _calculate_combine_points(self, results_data):
         # Normalize position to match keys in results_data
-        position_key = self.position_group.strip()  # keep capitalization as in actual_combine_results
-        
-        # Normalize drill name to match actual_combine_results keys
-        drill_key = self.drill.strip().replace("_dash", "")  # <-- fix here
-        
+        position_key = self.position_group.strip()
+
+        # Map drill name to actual_combine_results key
+        drill_key = self.DRILL_KEY_MAP.get(self.drill.strip(), self.drill.strip())
         drill_results = results_data.get(position_key, {}).get(drill_key, {})
 
-        # Get players for the exact predicted place
+        # Return 0 if no data exists
+        if not drill_results:
+            return 0
+
+        # Players for predicted place
         actual_players_for_place = drill_results.get(self.place, [])
 
-        # Normalize player names for comparison
+        # Normalize player names
         predicted_name = (self.player_name or "").strip().lower()
         actual_players_lower = [p.lower() for p in actual_players_for_place if p]
 
@@ -135,7 +145,6 @@ class Prediction(db.Model):
             points += 3
 
         return points
-
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
