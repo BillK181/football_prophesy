@@ -109,24 +109,28 @@ class Prediction(db.Model):
     def _calculate_combine_points(self, results_data):
         # Normalize position to match keys in results_data
         position_key = self.position_group.strip()  # keep capitalization as in actual_combine_results
-        drill_results = results_data.get(position_key, {}).get(self.drill, {})
+        
+        # Normalize drill name to match actual_combine_results keys
+        drill_key = self.drill.strip().replace("_dash", "")  # <-- fix here
+        
+        drill_results = results_data.get(position_key, {}).get(drill_key, {})
 
         # Get players for the exact predicted place
         actual_players_for_place = drill_results.get(self.place, [])
 
         # Normalize player names for comparison
-        predicted_name = self.player_name.strip().lower()
+        predicted_name = (self.player_name or "").strip().lower()
         actual_players_lower = [p.lower() for p in actual_players_for_place if p]
 
         points = 0
 
-        # 1 point if player is in top 3 anywhere
+        # 1 point if player is in top 3 (any place)
         for place_players in drill_results.values():
             if predicted_name in [p.lower() for p in place_players if p]:
                 points += 1
                 break
 
-        # 3 additional points if exact place match
+        # +3 additional points if exact place match
         if predicted_name in actual_players_lower:
             points += 3
 
