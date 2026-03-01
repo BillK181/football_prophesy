@@ -138,9 +138,6 @@ class Prediction(db.Model):
         pos_key = position_map.get(self.position_group.strip(), self.position_group.strip())
         drill_key = drill_map.get(self.drill.strip(), self.drill.strip())
 
-        print("Checking:", pos_key, drill_key)
-        print("Result data:", results_data.get(pos_key, {}).get(drill_key, {}))
-
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
             return 0
