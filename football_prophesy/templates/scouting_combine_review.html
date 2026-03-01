@@ -15,7 +15,7 @@ Scouting Combine Results | Football Prophesy
     <p>Review the predictions they made. Correct picks are shown with points earned, incorrect picks are marked with ❌.</p>
 
     <form>
-        {% set drills = ["40_yard_dash", "bench_press", "three_cone"] %}
+        {% set drills = ["40_yard", "bench_press", "three_cone"] %}
 
         {% for position, position_players in players.items() %}
         <div class="position-group">
@@ -23,35 +23,39 @@ Scouting Combine Results | Football Prophesy
 
             {% for drill in drills %}
             <div class="drill-section">
-                <h3>{{ drill.replace("_", " ").title() }}</h3>
+                <h3>
+                    {% if drill == "40_yard" %}
+                        40 Yard Dash
+                    {% else %}
+                        {{ drill.replace("_", " ").title() }}
+                    {% endif %}
+                </h3>
 
                 {% for place in [1,2,3] %}
-                {% set key = position|lower|replace(' ', '_') ~ '_' ~ drill ~ '_' ~ place %}
-                {% set player_name = predictions_dict.get(key) %}
-                {% set points = feedback.get(key, 0) %}
+                    {% set key = position|lower|replace(' ', '_') ~ '_' ~ drill ~ '_' ~ place %}
+                    {% set player_name = predictions_dict.get(key) %}
+                    {% set points = feedback.get(key, 0) %}
 
-            <div class="prediction-row">
-                <label>Place {{ place }}</label>
-                <input type="text" value="{{ player_name }}" disabled>
+                    <div class="prediction-row">
+                        <label>Place {{ place }}</label>
+                        <input type="text" value="{{ player_name }}" disabled>
 
-                {% if player_name %}
-                    {% if points > 0 %}
-                        +{{ points }}
-                    {% else %}
-                        ❌
-                    {% endif %}
-                {% endif %}
+                        {% if player_name %}
+                            {% if points > 0 %}
+                                +{{ points }}
+                            {% else %}
+                                ❌
+                            {% endif %}
+                        {% endif %}
 
-                <!-- show the actual player(s) who placed -->
-                {% set actual_players = actual_players_dict.get(key, []) %}
-                {% if actual_players %}
-                    <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
-                {% else %}
-                    <span class="actual-player">Actual: —</span>
-                {% endif %}
-            </div>
+                        {% set actual_players = actual_players_dict.get(key, []) %}
+                        {% if actual_players %}
+                            <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                        {% else %}
+                            <span class="actual-player">Actual: —</span>
+                        {% endif %}
+                    </div>
                 {% endfor %}
-
             </div>
             {% endfor %}
         </div>
