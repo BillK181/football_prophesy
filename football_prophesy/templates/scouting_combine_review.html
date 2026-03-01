@@ -48,7 +48,14 @@ Scouting Combine Results | Football Prophesy
                             {% endif %}
                         {% endif %}
 
-                        {% set actual_players = actual_players_dict.get(key, []) %}
+                        {# Normalize drill key for actuals lookup #}
+                        {% if drill == "40_yard" %}
+                            {% set actual_key = position|lower|replace(' ', '_') ~ '_40_yard_dash_' ~ place %}
+                        {% else %}
+                            {% set actual_key = key %}
+                        {% endif %}
+
+                        {% set actual_players = actual_players_dict.get(actual_key, []) %}
                         {% if actual_players %}
                             <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
                         {% else %}
