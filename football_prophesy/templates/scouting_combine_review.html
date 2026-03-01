@@ -55,8 +55,7 @@ Scouting Combine Results | Football Prophesy
                             {% set drill_column_name = drill %}
                         {% endif %}
 
-                        {% set drill_prefix = position_drill_map[position][drill] %}
-                        {% set actual_players = actual_combine_results[position][drill_prefix][place] %}
+                        {% set actual_players = actual_combine_results[position].get(drill, {}).get(place, []) %}
 
                         {% if actual_players %}
                             <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
