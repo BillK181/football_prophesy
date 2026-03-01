@@ -493,10 +493,10 @@ def account(user_id):
 def user_combine_results(user_id):
     
     user = User.query.get_or_404(user_id)
-    unlock_datetime = datetime(2026, 3, 3, 18, 0)
-    if datetime.utcnow() < unlock_datetime:
-        flash("Scouting Combine Results unlock March 3rd at 6PM.", "info")
-        return redirect(url_for("account", user_id=user.id))
+    # unlock_datetime = datetime(2026, 3, 3, 18, 0)
+    # if datetime.utcnow() < unlock_datetime:
+    #     flash("Scouting Combine Results unlock March 3rd at 6PM.", "info")
+    #     return redirect(url_for("account", user_id=user.id))
 
     predictions = [p for p in user.predictions if p.section=="scouting_combine" and p.year==2026]
     predictions_dict = {f"{p.position_group}_{p.drill}_{p.place}": p.player_name for p in predictions}
