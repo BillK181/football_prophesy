@@ -107,7 +107,7 @@ class Prediction(db.Model):
         return 0
     
     def _calculate_combine_points(self, results_data):
-        # Map position group to human-readable section names
+        # Map DB position_group to results_data keys
         position_map = {
             "quarterbacks": "Quarterbacks",
             "quarterback": "Quarterbacks",
@@ -121,31 +121,15 @@ class Prediction(db.Model):
             "offensive linemen": "Offensive Linemen",
             "defensive": "Defensive Linemen",
             "defensive linemen": "Defensive Linemen",
-            "linebacker": "Linebackers",
             "linebackers": "Linebackers",
+            "linebacker": "Linebackers",
             "defensive b": "Defensive Backs",
             "defensive backs": "Defensive Backs",
             "specialists": "Specialists",
         }
 
-        # Function to get the correct drill key based on position
-        def get_drill_key(position_group, drill):
-            drill = drill.lower()
-            position_group = position_group.lower()
-            
-            if position_group in ["running", "running backs"]:
-                return f"backs_{drill}"
-            elif position_group in ["wide", "wide receivers"]:
-                return f"receivers_{drill}"
-            elif position_group in ["tight", "tight ends"]:
-                return f"ends_{drill}"
-            elif position_group in ["offensive", "offensive linemen", "defensive", "defensive linemen"]:
-                return f"linemen_{drill}"
-            else:  # quarterbacks, linebackers, defensive backs, specialists
-                return drill
-
         pos_key = position_map.get(self.position_group.strip().lower(), self.position_group.strip().title())
-        drill_key = get_drill_key(self.position_group, self.drill)
+        drill_key = self.drill.strip().lower()  # Use exactly what’s in the DB
 
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
