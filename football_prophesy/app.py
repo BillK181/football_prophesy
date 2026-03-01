@@ -107,6 +107,7 @@ class Prediction(db.Model):
         return 0
     
     def _calculate_combine_points(self, results_data):
+        # Map position group to human-readable section names
         position_map = {
             "quarterbacks": "Quarterbacks",
             "quarterback": "Quarterbacks",
@@ -127,18 +128,24 @@ class Prediction(db.Model):
             "specialists": "Specialists",
         }
 
-        drill_map = {
-            "40": "40_yard_dash",
-            "40_yard_dash": "40_yard_dash",
-            "40_yard": "40_yard_dash",
-            "bench": "bench_press",
-            "bench_press": "bench_press",
-            "three": "three_cone",
-            "three_cone": "three_cone",
-        }
+        # Function to get the correct drill key based on position
+        def get_drill_key(position_group, drill):
+            drill = drill.lower()
+            position_group = position_group.lower()
+            
+            if position_group in ["running", "running backs"]:
+                return f"backs_{drill}"
+            elif position_group in ["wide", "wide receivers"]:
+                return f"receivers_{drill}"
+            elif position_group in ["tight", "tight ends"]:
+                return f"ends_{drill}"
+            elif position_group in ["offensive", "offensive linemen", "defensive", "defensive linemen"]:
+                return f"linemen_{drill}"
+            else:  # quarterbacks, linebackers, defensive backs, specialists
+                return drill
 
         pos_key = position_map.get(self.position_group.strip().lower(), self.position_group.strip().title())
-        drill_key = drill_map.get(self.drill.strip().lower(), self.drill.strip().lower())
+        drill_key = get_drill_key(self.position_group, self.drill)
 
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
@@ -154,7 +161,7 @@ class Prediction(db.Model):
                     points += 1
                     break
 
-        # +3 if exact place
+        # +3 points if exact place
         actual_players_for_place = drill_results.get(self.place, [])
         actual_players_lower = [p.strip().lower() for p in actual_players_for_place if p]
         if predicted_name in actual_players_lower:
