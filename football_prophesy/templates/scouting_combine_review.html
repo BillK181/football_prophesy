@@ -40,23 +40,29 @@ Scouting Combine Results | Football Prophesy
                         <label>Place {{ place }}</label>
                         <input type="text" value="{{ player_name }}" disabled>
 
-                    {% if player_name %}
-                        {% if points > 0 %}
-                            <span class="points-earned">+{{ points }}</span>&nbsp;
-                        {% else %}
-                            <span class="incorrect">❌</span>&nbsp;
+                        {% if player_name %}
+                            {% if points > 0 %}
+                                <span class="points-earned">+{{ points }}</span>&nbsp;
+                            {% else %}
+                                <span class="incorrect">❌</span>&nbsp;
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
 
-                    {% set drill_column_name = position_players[drill][place]['drill'] %}
-                    {% set actual_key = position|lower|replace(' ', '_') ~ '_' ~ drill_column_name ~ '_' ~ place %}
-                    {% set actual_players = actual_players_dict.get(actual_key, []) %}
+                        {% set drill_data = position_players.get(drill, {}).get(place) %}
+                        {% if drill_data %}
+                            {% set drill_column_name = drill_data.get('drill', drill) %}
+                        {% else %}
+                            {% set drill_column_name = drill %}
+                        {% endif %}
 
-                    {% if actual_players %}
-                        <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
-                    {% else %}
-                        <span class="actual-player">Actual: —</span>
-                    {% endif %}
+                        {% set actual_key = position|lower|replace(' ', '_') ~ '_' ~ drill_column_name ~ '_' ~ place %}
+                        {% set actual_players = actual_players_dict.get(actual_key, []) %}
+
+                        {% if actual_players %}
+                            <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                        {% else %}
+                            <span class="actual-player">Actual: —</span>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
