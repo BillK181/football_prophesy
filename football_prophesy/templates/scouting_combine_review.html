@@ -55,7 +55,8 @@ Scouting Combine Results | Football Prophesy
                             {% set drill_column_name = drill %}
                         {% endif %}
 
-                        {% set actual_key = position|lower|replace(' ', '_') ~ '_' ~ drill_column_name ~ '_' ~ place %}
+                        {% set drill_prefix = position_drill_map[position][drill] %}
+                        {% set actual_key = drill_prefix ~ '_' ~ place %}
                         {% set actual_players = actual_players_dict.get(actual_key, []) %}
 
                         {% if actual_players %}

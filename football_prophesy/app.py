@@ -520,30 +520,51 @@ def user_combine_results(user_id):
     #     flash("Scouting Combine Results unlock March 3rd at 6PM.", "info")
     #     return redirect(url_for("account", user_id=user.id))
 
+    # ========== PREDICTIONS ==========
     predictions = [p for p in user.predictions if p.section=="scouting_combine" and p.year==2026]
-    predictions_dict = {f"{p.position_group}_{p.drill}_{p.place}": p.player_name for p in predictions}
+    predictions_dict = {
+        f"{p.position_group}_{p.drill}_{p.place}": p.player_name 
+        for p in predictions
+    }
     feedback = {
-        f"{p.position_group}_{p.drill}_{p.place}":
-            p.calculate_points(actual_combine_results)
+        f"{p.position_group}_{p.drill}_{p.place}": p.calculate_points(actual_combine_results)
         for p in predictions
     }
 
-    # Build a dict of actual players per spot
+    # ========== POSITION + DRILL MAP ==========
+    position_drill_map = {
+        "Quarterbacks": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+        "Running Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
+        "Wide Receivers": {"40_yard": "receivers_40_yard", "bench_press": "receivers_bench_press", "three_cone": "receivers_three_cone"},
+        "Tight Ends": {"40_yard": "ends_40_yard", "bench_press": "ends_bench_press", "three_cone": "ends_three_cone"},
+        "Offensive Linemen": {"40_yard": "linemen_40_yard", "bench_press": "linemen_bench_press", "three_cone": "linemen_three_cone"},
+        "Defensive Linemen": {"40_yard": "linemen_40_yard", "bench_press": "linemen_bench_press", "three_cone": "linemen_three_cone"},
+        "Linebackers": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+        "Defensive Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
+        "Specialists": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+    }
+
+    # ========== BUILD ACTUAL PLAYERS DICT ==========
     actual_players_dict = {}
     for position, drills in actual_combine_results.items():
         for drill_name, places in drills.items():
+            # Get proper drill prefix using the mapping
+            drill_prefix = position_drill_map.get(position, {}).get(drill_name, drill_name)
             for place, players_list in places.items():
-                key = f"{position.lower().replace(' ', '_')}_{drill_name}_{place}"
+                key = f"{drill_prefix}_{place}"
                 actual_players_dict[key] = players_list if players_list else []
 
-    return render_template("scouting_combine_review.html",
-                           user=user,
-                           profile_user=user,
-                           players=players,
-                           predictions_dict=predictions_dict,
-                           feedback=feedback,
-                           actual_players_dict=actual_players_dict,
-                           event_name="Scouting Combine")
+    return render_template(
+        "scouting_combine_review.html",
+        user=user,
+        profile_user=user,
+        players=players,
+        predictions_dict=predictions_dict,
+        feedback=feedback,
+        actual_players_dict=actual_players_dict,
+        position_drill_map=position_drill_map,  # <-- pass it to template
+        event_name="Scouting Combine"
+    )
 
 
 @app.route("/account/<int:user_id>/free_agency")
