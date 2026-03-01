@@ -40,27 +40,23 @@ Scouting Combine Results | Football Prophesy
                         <label>Place {{ place }}</label>
                         <input type="text" value="{{ player_name }}" disabled>
 
-                        {% if player_name %}
-                            {% if points > 0 %}
-                                +{{ points }}
-                            {% else %}
-                                ❌
-                            {% endif %}
-                        {% endif %}
-
-                        {# Normalize drill key for actuals lookup #}
-                        {% if drill == "40_yard" %}
-                            {% set actual_key = position|lower|replace(' ', '_') ~ '_40_yard_dash_' ~ place %}
+                    {% if player_name %}
+                        {% if points > 0 %}
+                            <span class="points-earned">+{{ points }}</span>&nbsp;
                         {% else %}
-                            {% set actual_key = key %}
+                            <span class="incorrect">❌</span>&nbsp;
                         {% endif %}
+                    {% endif %}
 
-                        {% set actual_players = actual_players_dict.get(actual_key, []) %}
-                        {% if actual_players %}
-                            <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
-                        {% else %}
-                            <span class="actual-player">Actual: —</span>
-                        {% endif %}
+                    {% set drill_column_name = position_players[drill][place]['drill'] %}
+                    {% set actual_key = position|lower|replace(' ', '_') ~ '_' ~ drill_column_name ~ '_' ~ place %}
+                    {% set actual_players = actual_players_dict.get(actual_key, []) %}
+
+                    {% if actual_players %}
+                        <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                    {% else %}
+                        <span class="actual-player">Actual: —</span>
+                    {% endif %}
                     </div>
                 {% endfor %}
             </div>

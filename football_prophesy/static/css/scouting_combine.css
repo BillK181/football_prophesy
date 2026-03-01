@@ -317,16 +317,17 @@ h3 {
 /* ================================================== */
 /*            SCOUTING COMBINE RESULTS                */
 /* ================================================== */
+
 .points-earned {
     color: #28a745;
     font-weight: bold;
-    margin-left: 10px;
+    margin-left: 10px;   /* space between points and actual */
 }
 
 .incorrect {
     color: #dc3545;
     font-weight: bold;
-    margin-left: 10px;
+    margin-left: 10px;   /* space between ❌ and actual */
 }
 
 /* ================================================== */
