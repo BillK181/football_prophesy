@@ -88,8 +88,8 @@ actual_combine_results = {
         }
     },
     "Specialists": {
-        "40_yard": {1: [None], 2: [None], 3: [None]},
-        "bench_press": {1: [None], 2: [None], 3: [None]},
-        "three_cone": {1: [None], 2: [None], 3: [None]}
+        "40_yard": {1: ["No Participants"]},
+        "bench_press": {1: ["No Participants"]},
+        "three_cone": {1: ["No Participants"]}
     },
 }
