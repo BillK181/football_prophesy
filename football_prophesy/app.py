@@ -91,7 +91,6 @@ class User(db.Model):
                         key=lambda x: x["score"], reverse=True)
         return ranked
 
-
 class Prediction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
@@ -105,30 +104,30 @@ class Prediction(db.Model):
     def calculate_points(self, results_data):
         if self.section == "scouting_combine":
             return self._calculate_combine_points(results_data)
-        # elif self.section == "draft":
-        #     return self._calculate_draft_points()
         return 0
     
     def _calculate_combine_points(self, results_data):
-        drill_results = results_data.get(self.position_group, {}).get(self.drill, {})
+        # Normalize position to match keys in results_data
+        position_key = self.position_group.strip()  # keep capitalization as in actual_combine_results
+        drill_results = results_data.get(position_key, {}).get(self.drill, {})
 
-        # Get list of players for the predicted place (1, 2, or 3)
+        # Get players for the exact predicted place
         actual_players_for_place = drill_results.get(self.place, [])
 
-        points = 0
+        # Normalize player names for comparison
+        predicted_name = self.player_name.strip().lower()
+        actual_players_lower = [p.lower() for p in actual_players_for_place if p]
 
         # 3 points if exact place match
-        if self.player_name in actual_players_for_place:
-            points += 3
-            return points
+        if predicted_name in actual_players_lower:
+            return 3
 
-        # 1 point if player was top 3 but wrong place
+        # 1 point if player is top 3 but wrong place
         for place_players in drill_results.values():
-            if self.player_name in place_players:
-                points += 1
-                break
+            if predicted_name in [p.lower() for p in place_players if p]:
+                return 1
 
-        return points
+        return 0
 
 
 class Comment(db.Model):
