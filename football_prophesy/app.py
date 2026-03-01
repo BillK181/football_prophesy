@@ -149,7 +149,7 @@ class Prediction(db.Model):
         if not drill_results:
             return 0
 
-        predicted_name = (self.player_name or "").strip().lower()
+        predicted_name = (self.player_name or "")
         points = 0
 
         # 1 point if in top 3 anywhere
