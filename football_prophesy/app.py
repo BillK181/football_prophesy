@@ -107,36 +107,38 @@ class Prediction(db.Model):
         return 0
     
     def _calculate_combine_points(self, results_data):
-        # Normalize stored values to match actual_combine_results keys
         position_map = {
-            "Quarterbacks": "Quarterbacks",
-            "Quarterback": "Quarterbacks",
-            "Running": "Running Backs",
-            "Running Backs": "Running Backs",
-            "Wide": "Wide Receivers",
-            "Wide Receivers": "Wide Receivers",
-            "Tight": "Tight Ends",
-            "Tight Ends": "Tight Ends",
-            "Offensive": "Offensive Linemen",
-            "Offensive Linemen": "Offensive Linemen",
-            "Defensive": "Defensive Linemen",
-            "Defensive Linemen": "Defensive Linemen",
-            "Linebackers": "Linebackers",
-            "Linebacker": "Linebackers",
-            "DefensiveB": "Defensive Backs",
-            "Defensive Backs": "Defensive Backs",
-            "Specialists": "Specialists"
+            "quarterbacks": "Quarterbacks",
+            "quarterback": "Quarterbacks",
+            "running": "Running Backs",
+            "running backs": "Running Backs",
+            "wide": "Wide Receivers",
+            "wide receivers": "Wide Receivers",
+            "tight": "Tight Ends",
+            "tight ends": "Tight Ends",
+            "offensive": "Offensive Linemen",
+            "offensive linemen": "Offensive Linemen",
+            "defensive": "Defensive Linemen",
+            "defensive linemen": "Defensive Linemen",
+            "linebacker": "Linebackers",
+            "linebackers": "Linebackers",
+            "defensive b": "Defensive Backs",
+            "defensive backs": "Defensive Backs",
+            "specialists": "Specialists",
         }
 
         drill_map = {
+            "40": "40_yard_dash",
             "40_yard_dash": "40_yard_dash",
             "40_yard": "40_yard_dash",
+            "bench": "bench_press",
             "bench_press": "bench_press",
+            "three": "three_cone",
             "three_cone": "three_cone",
         }
 
-        pos_key = position_map.get(self.position_group.strip(), self.position_group.strip())
-        drill_key = drill_map.get(self.drill.strip(), self.drill.strip())
+        pos_key = position_map.get(self.position_group.strip().lower(), self.position_group.strip().title())
+        drill_key = drill_map.get(self.drill.strip().lower(), self.drill.strip().lower())
 
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:

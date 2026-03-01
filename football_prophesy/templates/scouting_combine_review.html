@@ -54,24 +54,13 @@ Scouting Combine Results | Football Prophesy
                         {% else %}
                             {% set actual_key = key %}
                         {% endif %}
+
                         {% set actual_players = actual_players_dict.get(actual_key, []) %}
-                        {% set predicted_player = predictions_dict.get(actual_key, "—") %}
-
-                        {% set parts = actual_key.split('_') %}
-                        {% set predicted_position = parts[0] %}
-                        {% set predicted_drill = parts[1] %}
-
-                        <div class="player-comparison">
-                            <span class="predicted-info">
-                                Predicted: {{ predicted_player }} 
-                                (Position: {{ predicted_position }}, Drill: {{ predicted_drill }})
-                            </span>
-                            {% if actual_players %}
-                                <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
-                            {% else %}
-                                <span class="actual-player">Actual: —</span>
-                            {% endif %}
-                        </div>
+                        {% if actual_players %}
+                            <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                        {% else %}
+                            <span class="actual-player">Actual: —</span>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
