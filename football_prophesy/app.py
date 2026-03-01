@@ -101,13 +101,6 @@ class Prediction(db.Model):
     place = db.Column(db.Integer, nullable=False)
     player_name = db.Column(db.String(100), nullable=False)
 
-    # Mapping database drill names to actual_combine_results keys
-    DRILL_KEY_MAP = {
-        "40_yard_dash": "40_yard",
-        "bench_press": "bench_press",
-        "three_cone": "three_cone"
-    }
-
     def calculate_points(self, results_data):
         if self.section == "scouting_combine":
             return self._calculate_combine_points(results_data)
@@ -145,11 +138,14 @@ class Prediction(db.Model):
         pos_key = position_map.get(self.position_group.strip(), self.position_group.strip())
         drill_key = drill_map.get(self.drill.strip(), self.drill.strip())
 
+        print("Checking:", pos_key, drill_key)
+        print("Result data:", results_data.get(pos_key, {}).get(drill_key, {}))
+
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
             return 0
 
-        predicted_name = (self.player_name or "")
+        predicted_name = (self.player_name or "").strip().lower()
         points = 0
 
         # 1 point if in top 3 anywhere
