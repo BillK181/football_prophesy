@@ -114,33 +114,54 @@ class Prediction(db.Model):
         return 0
     
     def _calculate_combine_points(self, results_data):
-        # Normalize position to match keys in results_data
-        position_key = self.position_group.strip()
-
-        # Map drill name to actual_combine_results key
-        drill_key = self.DRILL_KEY_MAP.get(self.drill.strip(), self.drill.strip())
-        drill_results = results_data.get(position_key, {}).get(drill_key, {})
-
-        # Return 0 if no data exists
-        if not drill_results:
-            return 0
-
-        # Players for predicted place
-        actual_players_for_place = drill_results.get(self.place, [])
+        # =========================
+        # FIX: normalize keys to match actual_combine_results
+        # =========================
+        
+        # Correct position names (map chopped names back to full names)
+        position_map = {
+            "Quarterbacks": "Quarterbacks",
+            "Running": "Running Backs",
+            "Wide": "Wide Receivers",
+            "Tight": "Tight Ends",
+            "Offensive": "Offensive Linemen",
+            "Defensive": "Defensive Linemen",
+            "Linebackers": "Linebackers",
+            "DefensiveB": "Defensive Backs",
+            "Specialists": "Specialists"
+        }
+        
+        # Fix drill names if route munged them
+        drill_map = {
+            "40_yard": "40_yard",
+            "Linemen_40_yard": "40_yard",
+            "Quarterbacks_40_yard": "40_yard",
+            "bench_press": "bench_press",
+            "three_cone": "three_cone"
+        }
+        
+        # Normalize position and drill
+        pos_key = position_map.get(self.position_group, self.position_group)
+        drill_key = drill_map.get(self.drill, self.drill)
+        
+        # Grab results
+        drill_results = results_data.get(pos_key, {}).get(drill_key, {})
 
         # Normalize player names
         predicted_name = (self.player_name or "").strip().lower()
-        actual_players_lower = [p.lower() for p in actual_players_for_place if p]
-
+        
         points = 0
 
-        # 1 point if player is in top 3 (any place)
+        # 1 point if in top 3
         for place_players in drill_results.values():
-            if predicted_name in [p.lower() for p in place_players if p]:
-                points += 1
-                break
+            for p in place_players:
+                if p and predicted_name == p.lower():
+                    points += 1
+                    break
 
-        # +3 additional points if exact place match
+        # +3 extra if exact place
+        actual_players_for_place = drill_results.get(self.place, [])
+        actual_players_lower = [p.lower() for p in actual_players_for_place if p]
         if predicted_name in actual_players_lower:
             points += 3
 
