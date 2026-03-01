@@ -118,16 +118,19 @@ class Prediction(db.Model):
         predicted_name = self.player_name.strip().lower()
         actual_players_lower = [p.lower() for p in actual_players_for_place if p]
 
-        # 3 points if exact place match
-        if predicted_name in actual_players_lower:
-            return 3
+        points = 0
 
-        # 1 point if player is top 3 but wrong place
+        # 1 point if player is in top 3 anywhere
         for place_players in drill_results.values():
             if predicted_name in [p.lower() for p in place_players if p]:
-                return 1
+                points += 1
+                break
 
-        return 0
+        # 3 additional points if exact place match
+        if predicted_name in actual_players_lower:
+            points += 3
+
+        return points
 
 
 class Comment(db.Model):
