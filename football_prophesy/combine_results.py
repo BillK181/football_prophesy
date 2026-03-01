@@ -5,14 +5,14 @@ actual_combine_results = {
         "three_cone": {1: [], 2: [], 3: []}
     },
     "Running Backs": {
-        "backs_40_yard": {1: [], 2: [], 3: []},
-        "backs_bench_press": {1: [], 2: [], 3: []},
-        "backs_three_cone": {1: [], 2: [], 3: []}
+        "backs_40_yard": {1: ["Adam Randall"], 2: ["Desmond Reid"], 3: ["Nicholas Singleton"]},
+        "backs_bench_press": {1: ["Adam Randall"], 2: ["Jonah Coleman"], 3: ["Mike Washington Jr."]},
+        "backs_three_cone": {1: ["Desmond Reid"], 2: ["J'Mari Taylor"], 3: ["Demond Claiborne"]}
     },
     "Wide Receivers": {
-        "receivers_40_yard": {1: [], 2: [], 3: []},
-        "receivers_bench_press": {1: [], 2: [], 3: []},
-        "receivers_three_cone": {1: [], 2: [], 3: []}
+        "receivers_40_yard": {1: ["Barion Brown"], 2: ["Brenen Thompson"], 3: ["Aaron Anderson"]},
+        "receivers_bench_press": {1: ["Josh Cameron"], 2: ["Chris Bell"], 3: ["Malachi Fields"]},
+        "receivers_three_cone": {1: ["Brenen Thompson"], 2: ["Kevin Coleman Jr."], 3: ["Barion Brown"]}
     },
     "Tight Ends": {
         "ends_40_yard": {1: ["Kenyon Sadiq"], 2: ["RJ Maryland", "Eli Stowers"], 3: []},
@@ -36,12 +36,12 @@ actual_combine_results = {
     },
     "Defensive Backs": {
         "backs_40_yard": {1: ["Domani Jackson"], 2: ["Davison Igbinosun"], 3: ["Daylen Everette"]},
-        "backs_bench_press": {1: ["A.J. Haulcy"], 2: ["Xavier Nwankpa"], 3: ["Jalon Kilgore"]},
-        "backs_three_cone": {1: ["D'Angelo Ponds"], 2: ["Avieon Terrell"], 3: ["Hezekiah Masses"]}
+        "backs_bench_press": {1: ["A.J. Haulcy"], 2: ["Chris Johnson"], 3: ["Jalon Kilgore"]},
+        "backs_three_cone": {1: ["Latrell McCutchin Sr."], 2: ["Avery Smith"], 3: ["Julian Neal"]}
     },
     "Specialists": {
-        "40_yard": {1: [None], 2: [None], 3: [None]},
-        "bench_press": {1: [None], 2: [None], 3: [None]},
-        "three_cone": {1: [None], 2: [None], 3: [None]}
+        "40_yard": {1: [], 2: [], 3: []},
+        "bench_press": {1: [], 2: [], 3: []},
+        "three_cone": {1: [], 2: [], 3: []}
     },
 }
