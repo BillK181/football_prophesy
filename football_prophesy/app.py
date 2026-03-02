@@ -135,40 +135,35 @@ class Prediction(db.Model):
             "tight ends": "Tight Ends",
             "offensive": "Offensive Linemen",
             "offensive linemen": "Offensive Linemen",
-            "defensive": "Defensive Linemen",
             "defensive linemen": "Defensive Linemen",
+            "defensive backs": "Defensive Backs",
             "linebackers": "Linebackers",
             "linebacker": "Linebackers",
-            "defensive b": "Defensive Backs",
-            "defensive backs": "Defensive Backs",
             "specialists": "Specialists",
         }
 
         # Normalize position
-        normalized_position = self.position_group.strip().lower()
+        normalized_position = (self.position_group or "").strip().lower()
+        pos_key = None  # Always initialize
 
         # Special handling for ambiguous "defensive"
         if normalized_position == "defensive":
-            pos_key = None
             for group in ["Defensive Linemen", "Defensive Backs"]:
-                if group in results_data:
-                    # Check if this drill exists in that defensive group
-                    mapped_drill = position_drill_map.get(group, {}).get(self.drill.strip())
-                    if mapped_drill and mapped_drill in results_data.get(group, {}):
-                        pos_key = group
-                        break
+                mapped_drill = position_drill_map.get(group, {}).get(self.drill.strip())
+                if mapped_drill and mapped_drill in results_data.get(group, {}):
+                    pos_key = group
+                    break
+        else:
+            pos_key = position_map.get(normalized_position)
 
-            if not pos_key:
-                return 0
-            else:
-                pos_key = position_map.get(normalized_position)
-                if not pos_key:
-                    return 0
+        # If still unresolved, return safely
+        if not pos_key:
+            return 0
 
-        # Use position_drill_map to get the actual drill key in results_data
-        drill_key = position_drill_map.get(pos_key, {}).get(self.drill.strip(), None)
+        # Get correct drill key
+        drill_key = position_drill_map.get(pos_key, {}).get(self.drill.strip())
         if not drill_key:
-            return 0  # prevents breaking if mapping is missing
+            return 0
 
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
@@ -177,7 +172,7 @@ class Prediction(db.Model):
         predicted_name = (self.player_name or "").strip().lower()
         points = 0
 
-        # Helper function to flatten nested lists
+        # Helper to flatten nested lists
         def flatten(items):
             for item in items:
                 if isinstance(item, list):
@@ -185,17 +180,25 @@ class Prediction(db.Model):
                 else:
                     yield item
 
-        # 1 point if in top 3 anywhere
+        # +1 point if player appears anywhere in top 3
+        found_top3 = False
         for place_players in drill_results.values():
             for p in flatten(place_players):
                 if isinstance(p, str) and predicted_name == p.strip().lower():
                     points += 1
+                    found_top3 = True
                     break
+            if found_top3:
+                break
 
-        # +3 points if exact place
+        # +3 points if exact place match
         actual_players_for_place = drill_results.get(self.place, [])
-        flat_actual_players = [p for p in flatten(actual_players_for_place) if isinstance(p, str) and p]
+        flat_actual_players = [
+            p for p in flatten(actual_players_for_place)
+            if isinstance(p, str) and p
+        ]
         actual_players_lower = [p.strip().lower() for p in flat_actual_players]
+
         if predicted_name in actual_players_lower:
             points += 3
 
