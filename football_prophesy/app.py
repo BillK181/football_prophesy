@@ -56,9 +56,9 @@ class User(db.Model):
     # -----------------
     # Scoring
     # -----------------
-    def combine_points(self, year=2026):
+    def combine_points(self, position_drill_map, year=2026):
         points = sum(
-            pred.calculate_points(actual_combine_results)
+            pred.calculate_points(actual_combine_results, position_drill_map)
             for pred in self.predictions
             if pred.section == "scouting_combine" and pred.year == year
         )
@@ -101,9 +101,9 @@ class Prediction(db.Model):
     place = db.Column(db.Integer, nullable=False)
     player_name = db.Column(db.String(100), nullable=False)
 
-    def calculate_points(self, results_data):
+    def calculate_points(self, results_data, position_drill_map):
         if self.section == "scouting_combine":
-            return self._calculate_combine_points(results_data)
+            return self._calculate_combine_points(results_data, position_drill_map)
         return 0
     
     def _calculate_combine_points(self, results_data, position_drill_map):
