@@ -141,7 +141,7 @@ class Prediction(db.Model):
         # 1 point if in top 3 anywhere
         for place_players in drill_results.values():
             for p in place_players:
-                if p and predicted_name == p.lower():
+                if p and predicted_name == p.strip().lower():
                     points += 1
                     break
 
