@@ -144,31 +144,42 @@ class Prediction(db.Model):
 
         # Normalize position
         normalized_position = (self.position_group or "").strip().lower()
-        pos_key = None  # Always initialize
+        drill = self.drill.strip()
 
-        # Special handling for ambiguous "defensive"
+        # Resolve defensive/offensive using drill prefix
         if normalized_position == "defensive":
-            for group in ["Defensive Linemen", "Defensive Backs"]:
-                mapped_drill = position_drill_map.get(group, {}).get(self.drill.strip())
-                if mapped_drill and mapped_drill in results_data.get(group, {}):
-                    pos_key = group
-                    break
+            if drill.startswith("linemen_"):
+                pos_key = "Defensive Linemen"
+            elif drill.startswith("backs_"):
+                pos_key = "Defensive Backs"
+            else:
+                return 0
+
+        elif normalized_position == "offensive":
+            if drill.startswith("linemen_"):
+                pos_key = "Offensive Linemen"
+            elif drill.startswith("backs_"):
+                pos_key = "Running Backs"
+            elif drill.startswith("receivers_"):
+                pos_key = "Wide Receivers"
+            elif drill.startswith("ends_"):
+                pos_key = "Tight Ends"
+            else:
+                return 0
+
         else:
             pos_key = position_map.get(normalized_position)
+            if not pos_key:
+                return 0
 
         # If still unresolved, return safely
         if not pos_key:
             return 0
 
-        # Get correct drill key
-        drill_key = position_drill_map.get(pos_key, {}).get(self.drill.strip())
-        if not drill_key:
-            return 0
-
-        drill_results = results_data.get(pos_key, {}).get(drill_key, {})
+        drill_results = results_data.get(pos_key, {}).get(drill, {})
         if not drill_results:
             return 0
-
+        
         predicted_name = (self.player_name or "").strip().lower()
         points = 0
 
