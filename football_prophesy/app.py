@@ -145,7 +145,25 @@ class Prediction(db.Model):
         }
 
         # Normalize position
-        pos_key = position_map.get(self.position_group.strip().lower(), self.position_group.strip().title())
+        normalized_position = self.position_group.strip().lower()
+
+        # Special handling for ambiguous "defensive"
+        if normalized_position == "defensive":
+            pos_key = None
+            for group in ["Defensive Linemen", "Defensive Backs"]:
+                if group in results_data:
+                    # Check if this drill exists in that defensive group
+                    mapped_drill = position_drill_map.get(group, {}).get(self.drill.strip())
+                    if mapped_drill and mapped_drill in results_data.get(group, {}):
+                        pos_key = group
+                        break
+
+            if not pos_key:
+                return 0
+            else:
+                pos_key = position_map.get(normalized_position)
+                if not pos_key:
+                    return 0
 
         # Use position_drill_map to get the actual drill key in results_data
         drill_key = position_drill_map.get(pos_key, {}).get(self.drill.strip(), None)
