@@ -103,7 +103,7 @@ class User(db.Model):
     @classmethod
     def combine_leaderboard(cls, year=2026):
         users = cls.query.all()
-        ranked = sorted([{"user": u, "score": u.combine_points(year)} for u in users],
+        ranked = sorted([{"user": u, "score": u.combine_points(year, position_drill_map=position_drill_map)} for u in users],
                         key=lambda x: x["score"], reverse=True)
         return ranked
 
