@@ -6,7 +6,7 @@ actual_combine_results = {
             3: ["Cole Payton"]
         },
         "bench_press": {
-            1: [["No Participants"]],
+            1: ["No Participants"],
             2: [],
             3: []
         },
