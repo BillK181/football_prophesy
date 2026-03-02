@@ -159,16 +159,25 @@ class Prediction(db.Model):
         predicted_name = (self.player_name or "").strip().lower()
         points = 0
 
+        # Helper function to flatten nested lists
+        def flatten(items):
+            for item in items:
+                if isinstance(item, list):
+                    yield from flatten(item)
+                else:
+                    yield item
+
         # 1 point if in top 3 anywhere
         for place_players in drill_results.values():
-            for p in place_players:
-                if p and predicted_name == p.strip().lower():
+            for p in flatten(place_players):
+                if isinstance(p, str) and predicted_name == p.strip().lower():
                     points += 1
                     break
 
         # +3 points if exact place
         actual_players_for_place = drill_results.get(self.place, [])
-        actual_players_lower = [p.strip().lower() for p in actual_players_for_place if p]
+        flat_actual_players = [p for p in flatten(actual_players_for_place) if isinstance(p, str) and p]
+        actual_players_lower = [p.strip().lower() for p in flat_actual_players]
         if predicted_name in actual_players_lower:
             points += 3
 
