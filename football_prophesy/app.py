@@ -29,6 +29,19 @@ db = SQLAlchemy(app)
 from scouting_combine_participants import players
 from combine_results import actual_combine_results
 
+
+position_drill_map = {
+    "Quarterbacks": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+    "Running Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
+    "Wide Receivers": {"40_yard": "receivers_40_yard", "bench_press": "receivers_bench_press", "three_cone": "receivers_three_cone"},
+    "Tight Ends": {"40_yard": "ends_40_yard", "bench_press": "ends_bench_press", "three_cone": "ends_three_cone"},
+    "Offensive Linemen": {"40_yard": "linemen_40_yard", "bench_press": "linemen_bench_press", "three_cone": "linemen_three_cone"},
+    "Defensive Linemen": {"40_yard": "linemen_40_yard", "bench_press": "linemen_bench_press", "three_cone": "linemen_three_cone"},
+    "Linebackers": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+    "Defensive Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
+    "Specialists": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+}
+
 # =========================
 # MODELS
 # =========================
@@ -56,7 +69,10 @@ class User(db.Model):
     # -----------------
     # Scoring
     # -----------------
-    def combine_points(self, position_drill_map, year=2026):
+    def combine_points(self, year=2026, position_drill_map=None):
+        if position_drill_map is None:
+            raise ValueError("position_drill_map must be provided")
+
         points = sum(
             pred.calculate_points(actual_combine_results, position_drill_map)
             for pred in self.predictions
@@ -64,15 +80,15 @@ class User(db.Model):
         )
         return points
 
-    def total_points(self, year=2026):
-        return self.combine_points(year)
+    def total_points(self, year=2026, position_drill_map=None):
+        return self.combine_points(year, position_drill_map)
 
     # -----------------
     # Ranking
     # -----------------
     def rank(self, year=2026):
-        my_points = self.total_points(year)
-        better_users = [u for u in User.query.all() if u.total_points(year) > my_points]
+        my_points = self.total_points(year, position_drill_map=position_drill_map)
+        better_users = [u for u in User.query.all() if u.total_points(year, position_drill_map=position_drill_map) > my_points]
         return len(better_users) + 1
     # -----------------
     # Leaderboards
@@ -80,7 +96,7 @@ class User(db.Model):
     @classmethod
     def leaderboard(cls, year=2026):
         users = cls.query.all()
-        ranked = sorted([{"user": u, "score": u.total_points(year)} for u in users],
+        ranked = sorted([{"user": u, "score": u.total_points(year, position_drill_map=position_drill_map)} for u in users],
                         key=lambda x: x["score"], reverse=True)
         return ranked
 
@@ -268,11 +284,11 @@ def load_user_info():
     if user_id:
         user = User.query.get(user_id)
         if user:
-            session["total_points"] = user.total_points()
+            session["total_points"] = user.total_points(position_drill_map=position_drill_map)
 
             better_users = [
                 u for u in User.query.all()
-                if u.total_points() > session["total_points"]
+                if u.total_points(position_drill_map=position_drill_map) > session["total_points"]
             ]
 
             session["rank"] = len(better_users) + 1
@@ -501,7 +517,7 @@ def delete_comment(comment_id):
 def account(user_id):
     
     profile_user = User.query.get_or_404(user_id)
-    total_points = profile_user.total_points()
+    total_points = profile_user.total_points(position_drill_map=position_drill_map)
     rank = profile_user.rank()
     comments = profile_user.comments
     return render_template("account.html",
@@ -672,7 +688,7 @@ def postseason_picks():
 def all_accounts():
     
     users = User.query.all()
-    users_with_points = [(user, user.total_points()) for user in users]
+    users_with_points = [(user, user.total_points(position_drill_map=position_drill_map)) for user in users]
     users_sorted = sorted(users_with_points, key=lambda x: x[1], reverse=True)
     return render_template("all_accounts.html", users_sorted=users_sorted)
 
