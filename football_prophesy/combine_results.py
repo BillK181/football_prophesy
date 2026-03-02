@@ -11,9 +11,9 @@ actual_combine_results = {
             3: []
         },
         "three_cone": {
-        1: ["Haynes King"], 
-        2: ["Cole Payton"],
-        3: ["Sawyer Robertson"]
+            1: ["Haynes King"], 
+            2: ["Cole Payton"],
+            3: ["Sawyer Robertson"]
         }
     },
     "Running Backs": {
