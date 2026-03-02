@@ -106,7 +106,7 @@ class Prediction(db.Model):
             return self._calculate_combine_points(results_data)
         return 0
     
-    def _calculate_combine_points(self, results_data):
+    def _calculate_combine_points(self, results_data, position_drill_map):
         # Map DB position_group to results_data keys
         position_map = {
             "quarterbacks": "Quarterbacks",
@@ -128,8 +128,13 @@ class Prediction(db.Model):
             "specialists": "Specialists",
         }
 
+        # Normalize position
         pos_key = position_map.get(self.position_group.strip().lower(), self.position_group.strip().title())
-        drill_key = self.drill.strip().lower()  # Use exactly what’s in the DB
+
+        # Use position_drill_map to get the actual drill key in results_data
+        drill_key = position_drill_map.get(pos_key, {}).get(self.drill.strip(), None)
+        if not drill_key:
+            return 0  # prevents breaking if mapping is missing
 
         drill_results = results_data.get(pos_key, {}).get(drill_key, {})
         if not drill_results:
@@ -522,10 +527,6 @@ def user_combine_results(user_id):
         f"{p.position_group}_{p.drill}_{p.place}": p.player_name 
         for p in predictions
     }
-    feedback = {
-        f"{p.position_group}_{p.drill}_{p.place}": p.calculate_points(actual_combine_results)
-        for p in predictions
-    }
 
     # ========== POSITION + DRILL MAP ==========
     position_drill_map = {
@@ -538,6 +539,12 @@ def user_combine_results(user_id):
         "Linebackers": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
         "Defensive Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
         "Specialists": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
+    }
+
+
+    feedback = {
+        f"{p.position_group}_{p.drill}_{p.place}": p.calculate_points(actual_combine_results, position_drill_map)
+        for p in predictions
     }
 
     return render_template(
