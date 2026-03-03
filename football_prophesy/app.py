@@ -340,12 +340,12 @@ def load_user_info():
 @app.route("/")
 def index():
     # Get top 10 leaderboard users
-    leaderboard = User.leaderboard()[:10]  # assuming returns list of (User, points)
-    combine_leaderboard = User.combine_leaderboard()[:10]  # same here
+    leaderboard = User.leaderboard()[:10]          # returns list of {"user": User, "score": points}
+    combine_leaderboard = User.combine_leaderboard()[:10]
 
-    # Ensure each item is (User, points) tuple
-    top_players = [(user, points) for user, points in leaderboard]
-    combine_top_players = [(user, points) for user, points in combine_leaderboard]
+    # Correct unpacking
+    top_players = [(entry["user"], entry["score"]) for entry in leaderboard]
+    combine_top_players = [(entry["user"], entry["score"]) for entry in combine_leaderboard]
 
     return render_template(
         "index.html",
