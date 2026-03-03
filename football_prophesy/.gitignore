@@ -21,4 +21,5 @@ Thumbs.db
 # Environment / secret files
 *.env
 .env.local
-.env.*.local
+.env.*.local__pycache__/
+*.pyc
