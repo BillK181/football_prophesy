@@ -48,11 +48,15 @@ Home | Football Prophesy
                 </tr>
             </thead>
             <tbody>
-                {% for player in top_players %}
+                {% for user, points in top_players %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td><a href="{{ url_for('account', player.user_id=player.user.id) }}">{{ player.user.username }}</a></td>
-                    <td>{{ player.score }}</td>
+                    <td>
+                        <a href="{{ url_for('account', user_id=user.id) }}">
+                            {{ user.username }}
+                        </a>
+                    </td>
+                    <td>{{ points }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
