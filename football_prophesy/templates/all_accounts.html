@@ -24,10 +24,14 @@ All Accounts | Football Prophesy
             </tr>
         </thead>
         <tbody>
-            {% for user, points in users_sorted %}
-            <tr class="{% if loop.index <= 3 %}top-player{% endif %}">
+            {% for user, points in top_players %}
+            <tr>
                 <td>{{ loop.index }}</td>
-                <td><a href="{{ url_for('account', user_id=user.id) }}">{{ user.username }}</a></td>
+                <td>
+                    <a href="{{ url_for('account', user_id=user.id) }}">
+                        {{ user.username }}
+                    </a>
+                </td>
                 <td>{{ points }}</td>
             </tr>
             {% endfor %}
