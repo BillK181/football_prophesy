@@ -51,7 +51,7 @@ Home | Football Prophesy
                 {% for player in top_players %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td><a href="{{ url_for('account', user_id=user.id) }}">{{ player.user.username }}</a></td>
+                    <td>{{ player.user.username }}</td>
                     <td>{{ player.score }}</td>
                 </tr>
                 {% endfor %}
@@ -61,7 +61,7 @@ Home | Football Prophesy
 </section>
 
 <section id="memo">
-    <h5>Click Username For User's Page</h5>
+    <h5>Click Scouting Combine to begin to Prophesy</h5>
 </section>
 
 <nav id="main-navigation">
