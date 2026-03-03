@@ -318,6 +318,24 @@ h3 {
 /*            SCOUTING COMBINE RESULTS                */
 /* ================================================== */
 
+.results-button-container {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.results-button-container .btn {
+    padding: 10px 20px;
+    background-color: var(--color-secondary, #fff);
+    color: var(--color-primary, #fff);
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.results-button-container .btn:hover {
+    background-color: var(--color-accent, #fff);
+    color: var(--color-secondary, #fff);
+}
+
 .points-earned {
     color: #28a745;
     font-weight: bold;

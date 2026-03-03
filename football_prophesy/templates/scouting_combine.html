@@ -42,6 +42,12 @@ Scouting Combine | Football Prophesy
     </table>
 </section>
 
+<div class="results-button-container" style="margin: 20px 0; text-align: center;">
+    <a href="{{ url_for('user_combine_results', user_id=session.get('user_id')) }}" class="btn btn-primary">
+        View My Results
+    </a>
+</div>
+
 <section class="combine-container">
     <h1>2026 Scouting Combine Predictions</h1>
     <h5>Submissions Lock 2/26 at 12pm PST</h5>
