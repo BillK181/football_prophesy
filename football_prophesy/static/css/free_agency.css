@@ -340,8 +340,11 @@ h3 {
     }
 
     #comments .no-comments {
-        font-size: 1.1rem;                
-        -webkit-text-stroke: 0.2px var(--color-accent, #fff); 
+    width: 100%;                  /* ensure it spans full container */
+    text-align: center;           /* center the text */
+    font-size: 1.1rem;                
+    -webkit-text-stroke: 0.2px var(--color-accent, #fff); 
+    margin: 20px 0;               /* optional: some vertical spacing */
     }
 }
 
