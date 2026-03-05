@@ -9,10 +9,17 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Third-Party Packages
-from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from flask_migrate import Migrate
+from free_agency_results import actual_results
+
+
+# LOAD ENV VARIABLES
+load_dotenv()
 
 # =========================
 # APP SETUP
@@ -22,6 +29,8 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///football_prophesy.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 # =========================
 # IMPORT PLAYERS
@@ -41,6 +50,27 @@ position_drill_map = {
     "Defensive Backs": {"40_yard": "backs_40_yard", "bench_press": "backs_bench_press", "three_cone": "backs_three_cone"},
     "Specialists": {"40_yard": "40_yard", "bench_press": "bench_press", "three_cone": "three_cone"},
 }
+
+# =========================
+# FREE AGENCY PLAYERS LIST
+# =========================
+free_agency_players = [
+    "Kyler Murray",
+    "Malik Willis",
+    "Kenneth Walker III",
+    "Travis Etienne",
+    "Rico Dowdle",
+    "Tyler Allgeier",
+    "Alec Pierce",
+    "Mike Evans",
+    "Rashid Shaheed",
+    "Deebo Samuel",
+    "David Njoku",
+    "Isaiah Likely",
+    "Tyler Linderbaum",
+    "Jaelon Phillips",
+    "Devin Lloyd"
+]
 
 # =========================
 # MODELS
@@ -79,9 +109,26 @@ class User(db.Model):
             if pred.section == "scouting_combine" and pred.year == year
         )
         return points
+    
+    def free_agency_points(self, year=2026):
+        from free_agency_results import actual_results
+        points = 0
+        for pred in self.predictions:
+            if pred.section != "free_agency" or pred.year != year:
+                continue
+
+            actual = actual_results.get(pred.player_name, {})
+
+            # Only award points if the user actually made a prediction (not empty)
+            if pred.team_prediction and actual.get("team") == pred.team_prediction:
+                points += 5
+            if pred.salary_prediction and actual.get("salary") == pred.salary_prediction:
+                points += 5
+
+        return points
 
     def total_points(self, year=2026, position_drill_map=None):
-        return self.combine_points(year, position_drill_map)
+        return self.combine_points(year, position_drill_map) + self.free_agency_points(year)
 
     # -----------------
     # Ranking
@@ -106,16 +153,32 @@ class User(db.Model):
         ranked = sorted([{"user": u, "score": u.combine_points(year, position_drill_map=position_drill_map)} for u in users],
                         key=lambda x: x["score"], reverse=True)
         return ranked
+    
+    @classmethod
+    def free_agency_leaderboard(cls, year=2026):
+        users = cls.query.all()
+        ranked = sorted(
+            [{"user": u, "score": u.free_agency_points(year)} for u in users],
+            key=lambda x: x["score"],
+            reverse=True
+        )
+        return ranked
 
 class Prediction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     year = db.Column(db.Integer, default=2026)
     section = db.Column(db.String(50), default="scouting_combine")
-    position_group = db.Column(db.String(50), nullable=False)
-    drill = db.Column(db.String(50), nullable=False)
-    place = db.Column(db.Integer, nullable=False)
+
+    # Free Agency predictions (one row per player)
     player_name = db.Column(db.String(100), nullable=False)
+    team_prediction = db.Column(db.String(100), nullable=True)
+    salary_prediction = db.Column(db.String(50), nullable=True)
+
+    # Scouting Combine fields
+    position_group = db.Column(db.String(50), nullable=True)
+    drill = db.Column(db.String(50), nullable=True)
+    place = db.Column(db.Integer, nullable=True)
 
     def calculate_points(self, results_data, position_drill_map):
         if self.section == "scouting_combine":
@@ -213,6 +276,27 @@ class Prediction(db.Model):
         if predicted_name in actual_players_lower:
             points += 3
 
+        return points
+    
+    def calculate_free_agency_points(self, year=2026):
+        """
+        Calculate points for Free Agency predictions.
+        Example scoring:
+        - 5 points for correctly predicting the team
+        - 5 points for correctly predicting the salary/AAV range
+        """
+        points = 0
+        for pred in self.predictions:
+            if pred.section == "free_agency" and pred.year == year:
+                # pred.player_name is the player predicted
+                # You’ll need the actual results dictionary somewhere
+                # Example: actual_results[player_name] = {"team": "...", "salary": "..."}
+                actual = getattr(pred, "actual_result", None)  # placeholder
+                if actual:
+                    if pred.team_prediction == actual.get("team"):
+                        points += 5
+                    if pred.salary_prediction == actual.get("salary"):
+                        points += 5
         return points
 
 class Comment(db.Model):
@@ -318,14 +402,14 @@ def send_welcome_email(user):
 def load_user_info():
     user_id = session.get("user_id")
 
-    # Auto track route usage
     if user_id and request.endpoint:
         track_route_usage(request.endpoint)
 
     if user_id:
         user = User.query.get(user_id)
         if user:
-            session["total_points"] = user.total_points(position_drill_map=position_drill_map)
+            total = user.total_points(position_drill_map=position_drill_map)
+            session["total_points"] = int(total) if total is not None else 0
 
             better_users = [
                 u for u in User.query.all()
@@ -340,17 +424,20 @@ def load_user_info():
 @app.route("/")
 def index():
     # Get top 10 leaderboard users
-    leaderboard = User.leaderboard()[:10]          # returns list of {"user": User, "score": points}
+    leaderboard = User.leaderboard()[:10]          # Overall leaderboard
     combine_leaderboard = User.combine_leaderboard()[:10]
+    free_agency_leaderboard = User.free_agency_leaderboard()[:10]  # <-- add this
 
-    # Correct unpacking
+    # Unpack users and scores
     top_players = [(entry["user"], entry["score"]) for entry in leaderboard]
     combine_top_players = [(entry["user"], entry["score"]) for entry in combine_leaderboard]
+    free_agency_top_players = [(entry["user"], entry["score"]) for entry in free_agency_leaderboard]
 
     return render_template(
         "index.html",
         top_players=top_players,
-        combine_top_players=combine_top_players
+        combine_top_players=combine_top_players,   # <-- missing comma before
+        free_agency_top_players=free_agency_top_players
     )
 
 
@@ -529,20 +616,30 @@ def submit_combine():
 # =========================
 # COMMENT ROUTES
 # =========================
-@app.route("/submit-comment", methods=["POST"])
-@login_required
+@app.route("/submit_comment", methods=["POST"])
 def submit_comment():
-    
-    page = request.form.get("page").lstrip('/')
-    content = request.form.get("content")
+    page = request.form.get("page", "").lstrip('/')
+    content = request.form.get("content", "").strip()
     user_id = session.get("user_id")
-    if not content or not content.strip():
-        flash("Comment cannot be empty.", "warning")
-        return redirect(request.referrer)
-    db.session.add(Comment(user_id=user_id, page=page, content=content))
+
+    if not content:
+        return jsonify({"success": False, "error": "Comment cannot be empty."})
+
+    # Create and save the comment
+    comment = Comment(user_id=user_id, page=page, content=content)
+    db.session.add(comment)
     db.session.commit()
-    flash("Comment posted!", "success")
-    return redirect(request.referrer + "#comments")
+
+    # Get the username and timestamp to send back to the front-end
+    username = comment.user.username
+    timestamp = comment.timestamp.strftime("%m-%d-%Y") if hasattr(comment, "timestamp") else datetime.utcnow().strftime("%m-%d-%Y")
+
+    return jsonify({
+        "success": True,
+        "username": username,
+        "content": content,
+        "timestamp": timestamp
+    })
 
 @app.route("/delete-comment/<int:comment_id>", methods=["POST"])
 @login_required
@@ -628,11 +725,49 @@ def user_combine_results(user_id):
 
 @app.route("/account/<int:user_id>/free_agency")
 @login_required
-def user_free_agency_results(user_id):
-    
+def free_agency_review(user_id):
     user = User.query.get_or_404(user_id)
-    flash("Free Agency results are not implemented yet.", "info")
-    return redirect(url_for("account", user_id=user.id))
+
+    # Lock until March 9, 2026, 12:00 UTC
+    unlock_time = datetime(2026, 3, 9, 12, 0)  # UTC
+    if datetime.utcnow() < unlock_time:
+        flash("Free Agency Review will be available on March 9th at 6am PST", "danger")
+        return redirect(url_for("account", user_id=user.id))
+
+    # Build dict keyed by player name
+    user_predictions = {p.player_name: p for p in predictions}
+
+    # Build points feedback dict
+    points_feedback = {}
+    for player in free_agency_players:
+        pred = user_predictions.get(player)
+        actual = actual_results.get(player, {})
+        
+        team_pred = pred.team_prediction if pred else None
+        team_actual = actual.get("team")
+        salary_pred = pred.salary_prediction if pred else None
+        salary_actual = actual.get("salary")
+        
+        points_feedback[player] = {
+            "team": {
+                "predicted": team_pred,
+                "actual": team_actual,
+                "points": 5 if team_pred == team_actual else 0
+            },
+            "salary": {
+                "predicted": salary_pred,
+                "actual": salary_actual,
+                "points": 5 if salary_pred == salary_actual else 0
+            }
+        }
+
+    return render_template(
+        "free_agency_review.html",
+        user=user,
+        players=free_agency_players,
+        points_feedback=points_feedback,
+        no_predictions=not bool(predictions)
+    )
 
 @app.route("/account/<int:user_id>/draft")
 @login_required
@@ -694,9 +829,87 @@ def user_postseason_picks_results(user_id):
 # OTHER PAGES ROUTES
 # =========================
 @app.route("/free_agency")
+@login_required
 def free_agency():
-    
-    return render_template("free_agency.html", players=players)
+    user_id = session.get("user_id")
+    user = User.query.get_or_404(user_id)
+
+    top_players = [(entry["user"], entry["score"]) for entry in User.free_agency_leaderboard()[:10]]
+
+    # Fetch the user's existing predictions
+    existing_predictions = Prediction.query.filter_by(
+        user_id=user.id, year=2026, section="free_agency"
+    ).all()
+
+    # Prefill dictionary
+    user_predictions = {}
+    for p in existing_predictions:
+        key_team = f"{p.player_name.replace(' ', '_')}_team"
+        key_salary = f"{p.player_name.replace(' ', '_')}_salary"
+        user_predictions[key_team] = p.team_prediction
+        user_predictions[key_salary] = p.salary_prediction
+
+    # Fetch comments for this page
+    page = request.path.lstrip('/')
+    comments = Comment.query.filter_by(page=page).order_by(Comment.timestamp.desc()).all()
+
+    return render_template(
+        "free_agency.html",
+        user=user,
+        players=free_agency_players,
+        top_players=top_players,
+        user_predictions=user_predictions,
+        comments=comments
+    )
+
+@app.route("/submit-free-agency", methods=["POST"])
+@login_required
+def submit_free_agency():
+    user_id = session.get("user_id")
+    free_agency_deadline = datetime(2026, 3, 9, 12, 0)
+
+    if datetime.utcnow() > free_agency_deadline:
+        flash("Free Agency predictions are now closed.", "danger")
+        return redirect(url_for("free_agency"))
+
+    for key, value in request.form.items():
+        if not value:
+            continue
+
+        # Expect keys like: "Kyler_Murray_team" or "Kyler_Murray_salary"
+        if key.endswith("_team"):
+            player_name = key[:-5].replace("_", " ")  # remove "_team"
+            field = "team"
+        elif key.endswith("_salary"):
+            player_name = key[:-7].replace("_", " ")  # remove "_salary"
+            field = "salary"
+        else:
+            continue  # ignore unexpected keys
+
+        # Fetch or create prediction
+        pred = Prediction.query.filter_by(
+            user_id=user_id, player_name=player_name, section="free_agency"
+        ).first()
+
+        if not pred:
+            pred = Prediction(
+                user_id=user_id,
+                player_name=player_name,
+                section="free_agency",
+                year=2026
+            )
+
+        # Update correct field
+        if field == "team":
+            pred.team_prediction = value
+        else:
+            pred.salary_prediction = value
+
+        db.session.add(pred)
+
+    db.session.commit()
+    flash("Free Agency predictions saved!", "success")
+    return redirect(url_for("free_agency"))
 
 @app.route("/draft")
 def draft():

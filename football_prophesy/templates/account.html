@@ -35,7 +35,7 @@ Account | Football Prophesy
         <h2>Event Results</h2>
         <ul>
             <li><a href="{{ url_for('user_combine_results', user_id=profile_user.id) }}">Scouting Combine</a></li>
-            <li><a href="{{ url_for('user_free_agency_results', user_id=profile_user.id) }}">Free Agency</a></li>
+            <li><a href="{{ url_for('free_agency_review', user_id=profile_user.id) }}">Free Agency</a></li>
             <li><a href="{{ url_for('user_draft_results', user_id=profile_user.id) }}">Draft</a></li>
             <li><a href="{{ url_for('user_schedule_release_results', user_id=profile_user.id) }}">Schedule Release</a></li>
             <li><a href="{{ url_for('user_preseason_results', user_id=profile_user.id) }}">Preseason</a></li>

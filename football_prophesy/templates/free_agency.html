@@ -1,40 +1,233 @@
 {% extends "base.html" %}
 
 {% block title %}
-Coming Soon | Football Prophesy
+Free Agency | Football Prophesy
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/free_agency.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<section class="coming-soon-container">
-    <h1>Coming Soon!</h1>
-    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
-    <div class="tentative-scoring">
-        <h2>Tentative Scoring</h2>
-        <ul>
-            <li>Predict Where a Handful of Free Agents Will Go and For How Much
-                <ul>
-                    <li>10pts for guessing team correctly</li>
-                    <li>5pts for guessing closest to yearly average for salary</li>
-                </ul>
-            </li>
-            <li>Predict Which Teams Will Spend The Most Money
-                <ul>
-                    <li>Predict top 3 teams
-                        <ul>
-                            <li>If guessed a team in top 3 correctly, 3pts</li>
-                            <li>If spot in top 3 guessed correctly, 5pts additional</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+<section id="free_agency_scoreboard">
+    <div class="scoreboard-container">
+        <table id="scoreboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, points in top_players %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <a href="{{ url_for('account', user_id=user.id) }}">
+                            {{ user.username }}
+                        </a>
+                    </td>
+                    <td>{{ points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </section>
 
+<div class="results-button-container" style="margin: 20px 0; text-align: center;">
+    <a href="{{ url_for('free_agency_review', user_id=session.get('user_id')) }}" class="btn btn-primary">
+        View My Results
+    </a>
+</div>
+
+<section class="free-agency-container">
+    <h1>2026 Free Agency Predictions</h1>
+    <h5>Submissions Lock 3/9 at 6am PST</h5>
+    <h5>Prophesy Where Each Free Agency Lands And For How Much</h5>
+    <p> 
+        Be sure to scroll down to see full list of players to prophesy<br>
+        You may submit unfinished results and return to them<br>
+        <strong>Scoring:</strong> 5 Points for correctly predicting team, 5 Points for correctly predicting Average Annual Value of their Contract <br>
+        Feel free to leave a comment at the bottom
+    </p>
+
+    {% set teams = [
+    "Arizona Cardinals","Atlanta Falcons","Baltimore Ravens","Buffalo Bills",
+    "Carolina Panthers","Chicago Bears","Cincinnati Bengals","Cleveland Browns",
+    "Dallas Cowboys","Denver Broncos","Detroit Lions","Green Bay Packers",
+    "Houston Texans","Indianapolis Colts","Jacksonville Jaguars","Kansas City Chiefs",
+    "Las Vegas Raiders","Los Angeles Chargers","Los Angeles Rams","Miami Dolphins",
+    "Minnesota Vikings","New England Patriots","New Orleans Saints","New York Giants",
+    "New York Jets","Philadelphia Eagles","Pittsburgh Steelers","San Francisco 49ers",
+    "Seattle Seahawks","Tampa Bay Buccaneers","Tennessee Titans","Washington Commanders"
+    ] %}
+
+    {% set salaries = [
+        "$0-$2.99M",
+        "$3-$5.99M",
+        "$6-$8.99M",
+        "$9-$11.99M",
+        "$12-$14.99M",
+        "$15-$17.99M",
+        "$18-$20.99M",
+        "$21-$23.99M",
+        "$24-$26.99M",
+        "$27-$29.99M",
+        "$30-$32.99M",
+        "$33-$35.99M",
+        "$36-$38.99M",
+        "$39-$41.99M",
+        "$42-$44.99M",
+        "$45-$47.99M",
+        "$48-$50.99M",
+        "$51-$53.99M",
+        "$54-$56.99M",
+        "$57-$59.99M",
+        "$60M+"
+    ] %}
+
+    <form method="POST" action="{{ url_for('submit_free_agency') }}">
+        <table class="prediction-table">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Team Prediction</th>
+                    <th>Salary Prediction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr>
+                    <td>{{ player }}</td>
+
+                    <!-- Team Select -->
+                    <td>
+                        <select name="{{ player|replace(' ', '_') }}_team" required>
+                            <option value="">Select Team</option>
+                            {% for team in teams %}
+                            <option value="{{ team }}"
+                                {% if user_predictions.get(player|replace(' ', '_') ~ '_team') == team %}
+                                    selected
+                                {% endif %}
+                            >{{ team }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <!-- Salary Select -->
+                    <td>
+                        <select name="{{ player|replace(' ', '_') }}_salary" required>
+                            <option value="">Select Salary</option>
+                            {% for salary in salaries %}
+                            <option value="{{ salary }}"
+                                {% if user_predictions.get(player|replace(' ', '_') ~ '_salary') == salary %}
+                                    selected
+                                {% endif %}
+                            >{{ salary }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="submit-section">
+            <button type="submit">Submit/Update Prophecy</button>
+        </div>
+    </form>
+
+</section>
+
+<h3>Comments</h3>
+
+<div id="comments">
+    {% if session.get('user_id') %}
+    <form id="comment-form" action="{{ url_for('submit_comment') }}" method="POST" class="comment-form">
+        <input type="hidden" name="page" value="{{ request.path.lstrip('/') }}">
+        <textarea name="content" placeholder="Write a comment..." required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    {% else %}
+    <p class="comment_login_text">
+    <a href="{{ url_for('login') }}">Log in</a> to post a comment.
+    </p>
+    {% endif %}
+
+    <div id="comments-list">
+        {% for comment in comments %}
+        <div class="comment">
+            <strong>{{ comment.user.username }}</strong>
+            <em>{{ comment.timestamp.strftime('%m-%d-%Y') }}</em>
+            <p>{{ comment.content }}</p>
+            {% if session.get('user_id') == comment.user_id or session.get('is_admin') %}
+            <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST" class="delete-form">
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
+            {% endif %}
+        </div>
+        {% else %}
+        <p class="no-comments">No comments yet. Be the first!</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("comment-form");
+
+    if(form){
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    const commentsList = document.getElementById("comments-list");
+
+                    const noComments = commentsList.querySelector(".no-comments");
+                    if(noComments) noComments.remove();
+
+                    const div = document.createElement("div");
+                    div.className = "comment";
+                    div.innerHTML = `
+                        <strong>${data.username}</strong>
+                        <em>${data.timestamp}</em>
+                        <p>${data.content}</p>
+                    `;
+                    commentsList.prepend(div);
+
+                    form.reset();
+                } else {
+                    alert(data.error || "Something went wrong!");
+                }
+            })
+            .catch(err => console.error(err));
+        });
+    }
+});
+</script>
 {% endblock %}

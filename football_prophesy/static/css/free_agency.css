@@ -1,7 +1,7 @@
 /* ================================================== */
-/*               SCOUTING COMBINE SCOREBOARD         */
+/*               FREE AGENCY SCOREBOARD             */
 /* ================================================== */
-#scouting_combine_scoreboard {
+#free_agency_scoreboard {
     display: flex;
     justify-content: center;   /* center table horizontally */
     align-items: flex-start;   /* push table to top */
@@ -12,8 +12,8 @@
 
 #scoreboard {
     width: 100%;               /* table fills parent */
-    max-width: 350px;          /* optional: cap table width */
-    max-height: 200px;         
+    max-width: 900px;          /* optional: cap table width */
+    max-height: 200px;       
     border-collapse: collapse;
     font-family: var(--font-base, Arial);
     background-color: #000;    
@@ -54,10 +54,10 @@
 }
 
 /* ================================================== */
-/*            SCOUTING COMBINE CONTAINER             */
+/*            FREE AGENCY CONTAINER                  */
 /* ================================================== */
 
-.combine-container {
+.free-agency-container {
     max-width: 80%;
     margin: 10px auto;
     padding: 20px;
@@ -71,87 +71,25 @@
     padding-bottom: 40px;    /* space for submit button */
 }
 
-.combine-container h1 {
+.free-agency-container h1 {
     text-align: center;
     color: var(--color-primary, #fff);
     -webkit-text-stroke: .7px black;
     margin-bottom: 10px;
 }
 
-.combine-container h5 {
+.free-agency-container h5 {
     text-align: center;
     color: var(--color-primary, #fff);
     -webkit-text-stroke: .5px black;
     margin-bottom: 10px;
 }
 
-
-
-.combine-container p {
+.free-agency-container p {
     text-align: center;
     font-size: 16px;
     color: var(--color-primary, #fff);
     margin-bottom: 20px;
-}
-
-.position-group {
-    margin-bottom: 20px;
-}
-
-.position-group h2 {
-    font-size: 28px;
-    color: var(--color-primary, #fff);
-    -webkit-text-stroke: .7px black;
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--color-primary, #fff);
-    padding-bottom: 10px;
-}
-
-.drill-section {
-    margin-bottom: 25px;
-}
-
-.drill-section h3 {
-    font-size: 20px;
-    color: var(--color-primary, #fff);
-    -webkit-text-stroke: .5px black;
-    margin-bottom: 10px;
-}
-
-.prediction-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.prediction-row label {
-    width: 90px;
-    font-weight: bold;
-    color: var(--color-primary, #fff);
-}
-
-.prediction-row select {
-    flex-grow: 1;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--color-primary, #fff);
-    font-size: 16px;
-    background-color: var(--color-primary, #fff);
-    color: #000;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.prediction-row select:focus {
-    outline: none;
-    border-color: var(--color-secondary, #0f0);
-    box-shadow: 0 0 5px var(--color-secondary, #0f0);
-}
-
-hr {
-    border: none;
-    height: 1px;
-    background-color: var(--color-primary, #fff);
-    margin: 30px 0;
 }
 
 /* ================================================== */
@@ -187,7 +125,7 @@ hr {
 /* ================================================== */
 
 #comments {
-    display: flex;
+    display: block;
     flex-direction: column;
     align-items: stretch;
     width: 100%;
@@ -224,9 +162,9 @@ h3 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 auto 12px auto;
     width: 75%;
     max-width: 600px;
+    margin: 0 auto 12px auto;
     margin-bottom: 20px;
 }
 
@@ -260,13 +198,14 @@ h3 {
 
 #comments .comment {
     position: relative;
-    width: 60%;
-    max-width: 300px;
+    width: 60%;           /* use most of the container width */
+    max-width: 800px;     /* cap it so it doesn't stretch too far */
+    margin: 0 auto 12px auto;
     background-color: var(--color-secondary, #000);
     color: var(--color-primary, #fff);
     border-radius: 6px;
     padding: 10px 15px;
-    margin: 0 auto 12px auto;
+    margin-bottom: 12px;
     border-bottom: 1px solid var(--color-secondary, #fff);
     box-sizing: border-box;
 }
@@ -316,7 +255,7 @@ h3 {
 }
 
 /* ================================================== */
-/*            SCOUTING COMBINE RESULTS                */
+/*            FREE AGENCY RESULTS                     */
 /* ================================================== */
 
 .results-button-container {
@@ -370,7 +309,6 @@ h3 {
 .flash.warning { background-color: #f44336; color: var(--color-primary, #fff); }
 .flash.danger  { background-color: #f44336; color: var(--color-primary, #fff); }
 
-
 /* ================================================== */
 /*                     RESPONSIVE                      */
 /* ================================================== */
@@ -393,7 +331,7 @@ h3 {
         width: 90%;
     }
 
-    .combine-container {
+    .free-agency-container {
         padding-bottom: 10px; /* more space for mobile */
     }
 
@@ -402,7 +340,64 @@ h3 {
     }
 
     #comments .no-comments {
-        font-size: 1.1rem;                /* smaller, readable */
-        -webkit-text-stroke: 0.2px var(--color-accent, #fff); /* scale stroke down */
+        font-size: 1.1rem;                
+        -webkit-text-stroke: 0.2px var(--color-accent, #fff); 
     }
+}
+
+/* ================================================== */
+/*            FREE AGENCY PREDICTION TABLE           */
+/* ================================================== */
+.free-agency-container {
+    width: 80%; /* smaller than the full container */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.prediction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    color: var(--color-primary, #fff);
+    font-family: var(--font-base, Arial);
+}
+
+.prediction-table th,
+.prediction-table td {
+    border-bottom: 1px solid var(--color-secondary, #444);
+    padding: 6px 4px;
+    font-size: .85rem;
+    text-align: left;
+}
+
+.prediction-table th {
+    background-color: var(--color-secondary, #111);
+    font-weight: bold;
+    font-size: .9rem;
+    color: var(--color-accent, #f0f);
+}
+
+.prediction-table td select {
+    width: 100%;
+    padding: 6px;
+    border-radius: 5px;
+    border: 1px solid var(--color-secondary, #333);
+    background-color: var(--color-secondary, #111);
+    color: var(--color-primary, #fff);
+    font-size: 0.9rem;
+}
+
+.prediction-table td select:hover {
+    border-color: var(--color-accent, #f0f);
+}
+
+.prediction-table tbody tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.03);
+}
+
+/* Make table horizontally scrollable on small screens */
+.free-agency-container table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
 }

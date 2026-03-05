@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}
+Free Agency Review | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/free_agency.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Free Agency Review Section -->
+<section class="free-agency-container">
+    <h1>{{ user.username }}'s 2026 Free Agency Review</h1>
+    <h5>See your predictions and points earned</h5>
+
+    <p>
+        Points are awarded as follows: <strong>5 points for correct team, 5 points for correct salary</strong>.<br>
+        Correct predictions are highlighted, incorrect ones show ❌.
+    </p>
+
+    <table class="prediction-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Your Prediction</th>
+                <th>Actual</th>
+                <th>Points Earned</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if no_predictions %}
+            <tr>
+                <td colspan="4" style="text-align:center;">No Free Agency predictions submitted.</td>
+            </tr>
+            {% else %}
+            {% for player in players %}
+            <tr>
+                <td>{{ player }}</td>
+                <td>
+                    Team: {{ points_feedback[player]['team']['predicted'] or '—' }}<br>
+                    Salary: {{ points_feedback[player]['salary']['predicted'] or '—' }}
+                </td>
+                <td>
+                    Team: {{ points_feedback[player]['team']['actual'] or '—' }}<br>
+                    Salary: {{ points_feedback[player]['salary']['actual'] or '—' }}
+                </td>
+                <td>
+                    {% set total_points = points_feedback[player]['team']['points'] + points_feedback[player]['salary']['points'] %}
+                    {% if total_points > 0 %}
+                        <span class="points-earned">+{{ total_points }}</span>
+                    {% else %}
+                        <span class="incorrect">❌</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</section>
+
+{% endblock %}
