@@ -367,7 +367,7 @@ h3 {
     border-bottom: 1px solid var(--color-secondary, #444);
     padding: 6px 4px;
     font-size: .85rem;
-    text-align: left;
+    text-align: center;
 }
 
 .prediction-table th {
@@ -378,21 +378,23 @@ h3 {
 }
 
 .prediction-table td select {
-    width: 100%;
+    display: inline-block;      /* let it shrink to content */
+    width: auto;                /* do not fill entire cell */
+    min-width: 80px;            /* optional: prevents being too narrow */
+    max-width: 150px;           /* optional: cap width */
     padding: 6px;
     border-radius: 5px;
     border: 1px solid var(--color-secondary, #333);
     background-color: var(--color-secondary, #111);
     color: var(--color-primary, #fff);
     font-size: 0.9rem;
+
+    text-align: center;         /* centers text inside select */
+    margin: 0 auto;             /* centers select inside td */
 }
 
 .prediction-table td select:hover {
     border-color: var(--color-accent, #f0f);
-}
-
-.prediction-table tbody tr:nth-child(even) {
-    background-color: rgba(255,255,255,0.03);
 }
 
 /* Make table horizontally scrollable on small screens */

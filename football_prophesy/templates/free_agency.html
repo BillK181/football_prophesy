@@ -101,50 +101,52 @@ Free Agency | Football Prophesy
     ] %}
 
     <form method="POST" action="{{ url_for('submit_free_agency') }}">
-        <table class="prediction-table">
-            <thead>
-                <tr>
-                    <th>Player</th>
-                    <th>Team Prediction</th>
-                    <th>Salary Prediction</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in players %}
-                <tr>
-                    <td>{{ player }}</td>
+        <div class="table-wrapper">
+            <table class="prediction-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Team Prediction</th>
+                        <th>Salary Prediction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>{{ player }}</td>
 
-                    <!-- Team Select -->
-                    <td>
-                        <select name="{{ player|replace(' ', '_') }}_team" required>
-                            <option value="">Select Team</option>
-                            {% for team in teams %}
-                            <option value="{{ team }}"
-                                {% if user_predictions.get(player|replace(' ', '_') ~ '_team') == team %}
-                                    selected
-                                {% endif %}
-                            >{{ team }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
+                        <!-- Team Select -->
+                        <td>
+                            <select name="{{ player|replace(' ', '_') }}_team" required>
+                                <option value="">Select Team</option>
+                                {% for team in teams %}
+                                <option value="{{ team }}"
+                                    {% if user_predictions.get(player|replace(' ', '_') ~ '_team') == team %}
+                                        selected
+                                    {% endif %}
+                                >{{ team }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
 
-                    <!-- Salary Select -->
-                    <td>
-                        <select name="{{ player|replace(' ', '_') }}_salary" required>
-                            <option value="">Select Salary</option>
-                            {% for salary in salaries %}
-                            <option value="{{ salary }}"
-                                {% if user_predictions.get(player|replace(' ', '_') ~ '_salary') == salary %}
-                                    selected
-                                {% endif %}
-                            >{{ salary }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <!-- Salary Select -->
+                        <td>
+                            <select name="{{ player|replace(' ', '_') }}_salary" required>
+                                <option value="">Select Salary</option>
+                                {% for salary in salaries %}
+                                <option value="{{ salary }}"
+                                    {% if user_predictions.get(player|replace(' ', '_') ~ '_salary') == salary %}
+                                        selected
+                                    {% endif %}
+                                >{{ salary }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <div class="submit-section">
             <button type="submit">Submit/Update Prophecy</button>
