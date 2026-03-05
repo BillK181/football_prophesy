@@ -370,7 +370,7 @@ h3 {
     border-bottom: 1px solid var(--color-secondary, #444);
     padding: 6px 4px;
     font-size: .85rem;
-    text-align: center;
+    text-align: left;
 }
 
 .prediction-table th {
