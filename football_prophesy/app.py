@@ -728,26 +728,32 @@ def user_combine_results(user_id):
 def free_agency_review(user_id):
     user = User.query.get_or_404(user_id)
 
-    # Lock until March 9, 2026, 12:00 UTC
-    unlock_time = datetime(2026, 3, 9, 12, 0)  # UTC
-    if datetime.utcnow() < unlock_time:
-        flash("Free Agency Review will be available on March 9th at 6am PST", "danger")
-        return redirect(url_for("account", user_id=user.id))
+    # Only fetch Free Agency predictions for 2026
+    predictions = Prediction.query.filter_by(
+        user_id=user.id, section="free_agency", year=2026
+    ).all()
 
-    # Build dict keyed by player name
-    user_predictions = {p.player_name: p for p in predictions}
+    # Merge user predictions into dict keyed by exact free_agency_players names
+    user_predictions = {player: {"team": None, "salary": None} for player in free_agency_players}
+    for p in predictions:
+        name = p.player_name
+        if name in user_predictions:
+            if p.team_prediction:
+                user_predictions[name]["team"] = p.team_prediction
+            if p.salary_prediction:
+                user_predictions[name]["salary"] = p.salary_prediction
 
     # Build points feedback dict
     points_feedback = {}
     for player in free_agency_players:
-        pred = user_predictions.get(player)
-        actual = actual_results.get(player, {})
-        
-        team_pred = pred.team_prediction if pred else None
-        team_actual = actual.get("team")
-        salary_pred = pred.salary_prediction if pred else None
-        salary_actual = actual.get("salary")
-        
+        pred = user_predictions.get(player, {"team": None, "salary": None})
+        actual = actual_results.get(player, {"team": None, "salary": None})
+
+        team_pred = pred["team"] or "—"
+        team_actual = actual.get("team") or "—"
+        salary_pred = pred["salary"] or "—"
+        salary_actual = actual.get("salary") or "—"
+
         points_feedback[player] = {
             "team": {
                 "predicted": team_pred,
