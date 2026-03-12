@@ -24,17 +24,17 @@ Home | Football Prophesy
     {% if session.get('user_id') %}
         <h5 class="login_text">
             Welcome Back! 
-            <a href="{{ url_for('logout') }}" class="logout_link">Logout</a>
+            <a href="{{ url_for('auth.logout') }}" class="logout_link">Logout</a>
         </h5>
     {% else %}
-        <a href="{{ url_for('login') }}">
+        <a href="{{ url_for('auth.login') }}">
             <h5>Click Here For Sign In Or Register & More Info</h5>
         </a>
     {% endif %}
 </section>
 
 <section id="all-accounts">
-    <a href="{{ url_for('all_accounts') }}" class="full-scoreboard-btn">See Full Scoreboard</a>
+    <a href="{{ url_for('account.all_accounts') }}" class="full-scoreboard-btn">See Full Scoreboard</a>
 </section>
 
 <section id="home_scoreboard">
@@ -52,7 +52,7 @@ Home | Football Prophesy
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>
-                        <a href="{{ url_for('account', user_id=user.id) }}">
+                        <a href="{{ url_for('account.account', user_id=user.id) }}">
                             {{ user.username }}
                         </a>
                     </td>
@@ -70,15 +70,15 @@ Home | Football Prophesy
 
 <nav id="main-navigation">
     <ul>
-        <li><a href="{{ url_for('scouting_combine') }}">Scouting Combine</a></li>
-        <li><a href="{{ url_for('free_agency') }}">Free Agency</a></li>
-        <li><a href="{{ url_for('draft') }}">Draft</a></li>
-        <li><a href="{{ url_for('schedule_release') }}">Schedule Release</a></li>
-        <li><a href="{{ url_for('preseason') }}">Preseason</a></li>
-        <li><a href="{{ url_for('season_predictions') }}">Season Predictions</a></li>
-        <li><a href="{{ url_for('season_picks') }}">Season Picks</a></li>
-        <li><a href="{{ url_for('postseason_predictions') }}">Postseason Predictions</a></li>
-        <li><a href="{{ url_for('postseason_picks') }}">Postseason Picks</a></li>
+        <li><a href="{{ url_for('combine.scouting_combine') }}">Scouting Combine</a></li>
+        <li><a href="{{ url_for('free_agency.free_agency') }}">Free Agency</a></li>
+        <li><a href="{{ url_for('main.draft') }}">Draft</a></li>
+        <li><a href="{{ url_for('main.schedule_release') }}">Schedule Release</a></li>
+        <li><a href="{{ url_for('main.preseason') }}">Preseason</a></li>
+        <li><a href="{{ url_for('main.season_predictions') }}">Season Predictions</a></li>
+        <li><a href="{{ url_for('main.season_picks') }}">Season Picks</a></li>
+        <li><a href="{{ url_for('main.postseason_predictions') }}">Postseason Predictions</a></li>
+        <li><a href="{{ url_for('main.postseason_picks') }}">Postseason Picks</a></li>
     </ul>
 </nav>
 

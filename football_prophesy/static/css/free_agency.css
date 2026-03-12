@@ -369,14 +369,14 @@ h3 {
 .prediction-table td {
     border-bottom: 1px solid var(--color-secondary, #444);
     padding: 6px 4px;
-    font-size: .85rem;
+    font-size: .6rem;
     text-align: left;
 }
 
 .prediction-table th {
     background-color: var(--color-secondary, #111);
     font-weight: bold;
-    font-size: .9rem;
+    font-size: .8rem;
     color: var(--color-accent, #f0f);
 }
 
@@ -390,7 +390,7 @@ h3 {
     border: 1px solid var(--color-secondary, #333);
     background-color: var(--color-secondary, #111);
     color: var(--color-primary, #fff);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 
     text-align: center;         /* centers text inside select */
     margin: 0 auto;             /* centers select inside td */

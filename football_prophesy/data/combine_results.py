@@ -1,4 +1,4 @@
-actual_combine_results = {
+ACTUAL_COMBINE_RESULTS = {
     "Quarterbacks": {
         "40_yard": {
             1: ["Taylen Green"], 

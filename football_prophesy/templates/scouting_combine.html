@@ -12,150 +12,237 @@ Scouting Combine | Football Prophesy
 
 <!-- Flash messages -->
 {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div id="flash-messages">
-      {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
+{% if messages %}
+<div id="flash-messages">
+{% for category, message in messages %}
+<div class="flash {{ category }}">{{ message }}</div>
+{% endfor %}
+</div>
+{% endif %}
 {% endwith %}
 
+<!-- Leaderboard -->
 <section id="scouting_combine_scoreboard">
-    <table id="scoreboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for player in combine_top_players %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ player.user.username }}</td>
-                <td>{{ player.score }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+<table id="scoreboard">
+
+<thead>
+<tr>
+<th>Rank</th>
+<th>Name</th>
+<th>Score</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for entry in combine_top_players %}
+<tr>
+<td>{{ loop.index }}</td>
+<td>{{ entry.user.username }}</td>
+<td>{{ entry.score }}</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
 </section>
 
-<div class="results-button-container" style="margin: 20px 0; text-align: center;">
-    <a href="{{ url_for('user_combine_results', user_id=session.get('user_id')) }}" class="btn btn-primary">
-        View My Results
-    </a>
+
+<div class="results-button-container" style="margin:20px 0;text-align:center;">
+<a href="{{ url_for('account.user_combine_results', user_id=session.get('user_id')) }}" class="btn btn-primary">
+View My Results
+</a>
 </div>
 
+
 <section class="combine-container">
-    <h1>2026 Scouting Combine Predictions</h1>
-    <h5>Submissions Lock 2/26 at 12pm PST</h5>
-    <h5>Prophesy the Top 3 performers at each position for each drill.</h5>
-    <p> 
-        Be sure to scroll down to see full list of drills to prophesy<br>
-        You may not put the same player twice for the same drill<br>
-        You may submit unfinished results and return to them<br>
-        <strong>Scoring:</strong> 1 point if your player is in the top 3 for the drill, plus 3 bonus points if you correctly predicted their exact placement.<br>
-        Feel free to leave a comment at the bottom
-    </p>
 
-    <form method="POST" action="{{ url_for('submit_combine') }}">
-        {% set drills = ["40_yard", "bench_press", "three_cone"] %}
+<h1>2026 Scouting Combine Predictions</h1>
 
-        {% for position, position_players in players.items() %}
-        <div class="position-group">
-            <h2>{{ position }}</h2>
+<h5>Submissions Lock 2/26 at 12pm PST</h5>
 
-            {% for drill in drills %}
-            <div class="drill-section">
-                <h3>{{ drill.replace("_", " ").title() }}</h3>
+<h5>Prophesy the Top 3 performers at each position for each drill.</h5>
 
-                {% for place in [1,2,3] %}
-                <div class="prediction-row">
-                    <label>Place {{ place }}</label>
-                    <select name="{{ position|lower|replace(' ', '_') }}_{{ drill }}_{{ place }}">
-                        <option value="">Select Player</option>
-                        {% for name, school in position_players.items() %}
-                        <option value="{{ name }}"
-                            {% if previous_predictions.get(position|lower|replace(' ', '_') ~ '_' ~ drill ~ '_' ~ place) == name %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ name }} - {{ school }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endfor %}
+<p>
+Be sure to scroll down to see full list of drills to prophesy<br>
+You may not put the same player twice for the same drill<br>
+You may submit unfinished results and return to them<br>
 
-            </div>
-            {% endfor %}
-        </div>
-        <hr>
-        {% endfor %}
+<strong>Scoring:</strong>
 
-        <div class="submit-section">
-            <button type="submit">Submit Predictions</button>
-        </div>
-    </form>
+1 point if your player is in the top 3 for the drill,
+plus 3 bonus points if you correctly predicted their exact placement.
+
+<br><br>
+
+Feel free to leave a comment at the bottom
+</p>
+
+
+<form method="POST" action="{{ url_for('combine.submit_combine') }}">
+
+{% set drills = ["40_yard","bench_press","three_cone"] %}
+
+{% for position, position_players in players.items() %}
+
+<div class="position-group">
+
+<h2>{{ position }}</h2>
+
+{% for drill in drills %}
+
+<div class="drill-section">
+
+<h3>{{ drill.replace("_"," ").title() }}</h3>
+
+{% for place in [1,2,3] %}
+
+<div class="prediction-row">
+
+<label>Place {{ place }}</label>
+
+<select name="{{ position|lower|replace(' ','_') }}_{{ drill }}_{{ place }}">
+
+<option value="">Select Player</option>
+
+{% for name, school in position_players.items() %}
+
+<option
+value="{{ name }}"
+{% if previous_predictions and previous_predictions.get(position|lower|replace(' ','_') ~ '_' ~ drill ~ '_' ~ place) == name %}
+selected
+{% endif %}
+>
+{{ name }} - {{ school }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<hr>
+
+{% endfor %}
+
+<div class="submit-section">
+<button type="submit">Submit Predictions</button>
+</div>
+
+</form>
+
 </section>
+
 
 <h3>Comments</h3>
 
 <div id="comments">
 
-    {% if session.get('user_id') %}
-    <form id="comment-form" class="comment-form">
-        <input type="hidden" name="page" value="scouting_combine">
-        <textarea name="content" placeholder="Write a comment..." required></textarea>
-        <button type="submit">Submit</button>
-    </form>
-    {% else %}
-    <p class="comment_login_text">
-        <a href="{{ url_for('login') }}">Log in</a> to post a comment.
-    </p>
-    {% endif %}
+{% if session.get('user_id') %}
 
-    <div id="comments-list">
+<form
+id="comment-form"
+action="{{ url_for('comment.submit_comment') }}"
+method="POST"
+class="comment-form"
+>
 
-        {% for comment in comments %}
-        <div class="comment">
-            <strong>{{ comment.user.username }}</strong>
-            <em>{{ comment.timestamp.strftime('%m-%d-%Y') }}</em>
-            <p>{{ comment.content }}</p>
+<input type="hidden" name="page" value="scouting_combine">
 
-            {% if session.get('user_id') == comment.user_id or session.get('is_admin') %}
-            <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST" class="delete-form">
-                <button type="submit" class="delete-btn">Delete</button>
-            </form>
-            {% endif %}
-        </div>
-        {% else %}
-        <p class="no-comments">No comments yet. Be the first!</p>
-        {% endfor %}
+<textarea
+name="content"
+placeholder="Write a comment..."
+required
+></textarea>
 
-    </div>
+<button type="submit">Submit</button>
+
+</form>
+
+{% else %}
+
+<p class="comment_login_text">
+<a href="{{ url_for('auth.login') }}">Log in</a> to post a comment.
+</p>
+
+{% endif %}
+
+
+<div id="comments-list">
+
+{% for comment in comments %}
+
+<div class="comment">
+
+<strong>{{ comment.user.username }}</strong>
+
+<em>{{ comment.timestamp.strftime('%m-%d-%Y') }}</em>
+
+<p>{{ comment.content }}</p>
+
+{% if session.get('user_id') == comment.user_id or session.get('is_admin') %}
+
+<form
+action="{{ url_for('comment.delete_comment', comment_id=comment.id) }}"
+method="POST"
+class="delete-form"
+>
+
+<button type="submit" class="delete-btn">
+Delete
+</button>
+
+</form>
+
+{% endif %}
+
+</div>
+
+{% else %}
+
+<p class="no-comments">No comments yet. Be the first!</p>
+
+{% endfor %}
+
+</div>
+
 </div>
 
 {% endblock %}
 
+
 {% block extra_js %}
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+
+document.addEventListener("DOMContentLoaded", function(){
 
     const form = document.getElementById("comment-form");
 
     if(form){
-        form.addEventListener("submit", function(e) {
+
+        form.addEventListener("submit", function(e){
 
             e.preventDefault();
 
             const formData = new FormData(form);
 
-            fetch("{{ url_for('submit_comment') }}", {
-                method: "POST",
-                body: formData
+            fetch(form.getAttribute("action"),{
+                method:"POST",
+                credentials:"same-origin",
+                body:formData
             })
             .then(response => response.json())
             .then(data => {
@@ -170,17 +257,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     const div = document.createElement("div");
                     div.className = "comment";
 
-                    div.innerHTML = `
-                        <strong>${data.username}</strong>
-                        <em>${data.timestamp}</em>
-                        <p></p>
-                    `;
+                    const username = document.createElement("strong");
+                    username.textContent = data.username;
 
-                    div.querySelector("p").textContent = data.content;
+                    const timestamp = document.createElement("em");
+                    timestamp.textContent = data.timestamp;
+
+                    const content = document.createElement("p");
+                    content.textContent = data.content;
+
+                    div.appendChild(username);
+                    div.appendChild(timestamp);
+                    div.appendChild(content);
 
                     commentsList.prepend(div);
-
-                    div.scrollIntoView({ behavior: "smooth" });
 
                     form.reset();
 
@@ -189,11 +279,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
             })
-            .catch(err => console.error(err));
+            .catch(err=>{
+                console.error("Comment error:", err);
+            });
 
         });
+
     }
 
 });
 </script>
+
 {% endblock %}

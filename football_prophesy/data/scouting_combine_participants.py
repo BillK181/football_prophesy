@@ -1,4 +1,4 @@
-players = {
+SCOUTING_COMBINE_PLAYERS = {
     "Quarterbacks": {
         "Drew Allar": "Penn State",
         "Luke Altmyer": "Illinois",

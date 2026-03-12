@@ -15,24 +15,49 @@ All Accounts | Football Prophesy
 </h3>
 
 <section id="home_scoreboard">
+
     <table id="scoreboard">
+
         <thead>
             <tr>
                 <th>Rank</th>
-                <th>Name</th>
+                <th>Username</th>
                 <th>Score</th>
             </tr>
         </thead>
+
         <tbody>
+
             {% for user, points in users_sorted %}
+
             <tr class="{% if loop.index <= 3 %}top-player{% endif %}">
+
                 <td>{{ loop.index }}</td>
-                <td><a href="{{ url_for('account', user_id=user.id) }}">{{ user.username }}</a></td>
+
+                <td>
+                    <a href="{{ url_for('account.account', user_id=user.id) }}">
+                        {{ user.username }}
+                    </a>
+                </td>
+
                 <td>{{ points }}</td>
+
             </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="3" class="no-users">
+                    No users found.
+                </td>
+            </tr>
+
             {% endfor %}
+
         </tbody>
+
     </table>
+
 </section>
 
 {% endblock %}
