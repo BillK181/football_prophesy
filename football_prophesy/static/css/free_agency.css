@@ -369,7 +369,7 @@ h3 {
 .prediction-table td {
     border-bottom: 1px solid var(--color-secondary, #444);
     padding: 6px 4px;
-    font-size: .6rem;
+    font-size: .7rem;
     text-align: left;
 }
 
