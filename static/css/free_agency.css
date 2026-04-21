@@ -1,0 +1,71 @@
+/* ================================================== */
+/*           FREE AGENCY PREDICTION TABLE             */
+/* ================================================== */
+
+h1,
+.prediction-container p{
+    color: var(--color-secondary, #111);
+    -webkit-text-stroke: .2px var(--color-accent, #111);
+    text-align: center;
+}
+
+
+.prediction-container {
+    max-width: 95%;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.prediction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    color: var(--color-primary, #fff);
+    font-family: var(--font-base, Arial);
+    background-color: var(--color-secondary, #111);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.prediction-table th {
+    background-color: var(--color-accent, #111);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-secondary, #f0f);
+    padding: 10px;
+    text-align: left;
+}
+
+/* CELLS */
+.prediction-table td {
+    border-bottom: 1px solid #333;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+/* SELECTS */
+.prediction-table td select {
+    width: 100%;
+    padding: 6px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background-color: var(--color-accent, #111);
+    color: var(--color-secondary, #111);
+    font-size: 0.85rem;
+}
+
+/* hover */
+.prediction-table td select:hover {
+    border-color: var(--color-accent, #f0f);
+}
+
+/* RESPONSIVE SCROLL (CORRECT WAY) */
+.prediction-container {
+    overflow-x: auto;
+}
+
+.points-earned {
+    color: rgb(41, 255, 41);
+}

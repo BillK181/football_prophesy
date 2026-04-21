@@ -1,0 +1,39 @@
+{% extends "predictions_base.html" %}
+
+{% block prediction_form %}
+
+{% set drills = ["40_yard","bench_press","three_cone"] %}
+
+{% for position, position_players in players.items() %}
+<div class="position-group">
+    <h2>{{ position }}</h2>
+    {% for drill in drills %}
+    <div class="drill-section">
+        <h3>{{ drill.replace("_"," ").title() }}</h3>
+        {% for place in [1,2,3] %}
+        <div class="prediction-row">
+            <label>Place {{ place }}</label>
+            <select name="{{ position|lower|replace(' ','_') }}_{{ drill }}_{{ place }}">
+                <option value="">Select Player</option>
+                {% for name, school in position_players.items() %}
+                <option value="{{ player_id }}"
+                    {% if previous_predictions.get(
+                        (position|lower|replace(' ','_'), drill, place)
+                    ) == name_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ name }} - {{ school }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+<hr>
+{% endfor %}
+
+{% endblock %}

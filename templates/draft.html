@@ -1,0 +1,39 @@
+{% extends "predictions_base.html" %}
+
+{% block prediction_form %}
+
+<h3>Players recieve a score equivalent to their draft selection number</h3>
+<h3>All selected players will be combined into a final total</h3>
+<h3>Lower total = Higher Score!</h3>
+<h3>400 or Less = 100 Points <br>
+    401-500 = 90 Points <br>
+    501-550 = 75 Points <br>
+    551-600 = 50 Points <br>
+    601-650 = 25 Points <br>
+    650-700 = 10 Points <br>
+    701+ = 0 Points <br>
+</h3>
+<h3>{{ user.username }}'s Current Total = {{ current_score }}</h3>
+{% for position, position_players in players.items() %}
+<div class="draft-position-group">
+    <h2>{{ position }}</h2>
+    <div class="draft-prediction-row" data-position="{{ position }}">
+        {% for player in position_players %}
+        <button type="button" class="selector-btn {% if previous_predictions[position] == player.id %}selected{% endif %}"
+                data-player="{{ player.id }}">
+            <span class="player-name">{{ player.name }}</span>
+            <span class="player-grade">Grade: {{ player.grade }}</span>
+            <span class="player-projection">Projection: {{ player.projection }}</span>
+            <span class="player-projection">Actual: {{ actual_picks.get(player.id) or "TBD" }}</span>
+        </button>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/draft.js') }}"></script>
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+{% endblock %}

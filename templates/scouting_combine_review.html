@@ -1,0 +1,56 @@
+{% extends "review_base.html" %}
+
+{% block review_content %}
+
+<form>
+    {% set drills = ["40_yard", "bench_press", "three_cone"] %}
+
+    {% for position, position_players in players.items() %}
+    <div class="position-group">
+        <h2>{{ position }}</h2>
+
+        {% for drill in drills %}
+        <div class="drill-section">
+            <h3>
+                {% if drill == "40_yard" %}
+                    40 Yard Dash
+                {% else %}
+                    {{ drill.replace("_", " ").title() }}
+                {% endif %}
+            </h3>
+
+            {% for place in [1,2,3] %}
+                {% set key = position|lower|replace(' ', '_') ~ '_' ~ drill ~ '_' ~ place %}
+                {% set player_name = predictions_dict.get(key) %}
+                {% set points = feedback.get(key, 0) %}
+
+                <div class="prediction-row">
+                    <label>Place {{ place }}</label>
+                    <input type="text" value="{{ player_name }}" disabled>
+
+                    {% if player_name %}
+                        {% if points > 0 %}
+                            <span class="points-earned">+{{ points }}</span>
+                        {% else %}
+                            <span class="incorrect">❌</span>
+                        {% endif %}
+                    {% endif %}
+
+                    {% set drill_prefix = position_drill_map[position][drill] %}
+                    {% set actual_players = actual_combine_results[position][drill_prefix][place] %}
+
+                    {% if actual_players %}
+                        <span class="actual-player">Actual: {{ actual_players | join(', ') }}</span>
+                    {% else %}
+                        <span class="actual-player">Actual: —</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+    {% endfor %}
+</form>
+
+{% endblock %}

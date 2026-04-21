@@ -1,0 +1,58 @@
+/* ================================================== */
+/*                    SCOREBOARD                      */
+/* ================================================== */
+
+#scoreboard {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    padding: 4px 0;
+    border-collapse: collapse;
+    font-family: var(--font-base, Arial);
+    background-color: #000;    
+    color: var(--color-primary, #fff);
+    text-align: center;
+    overflow-y: auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+#scoreboard th,
+#scoreboard td {
+    border: none;               /* no borders */
+    padding: 0.35rem 1rem;
+    text-align: center;
+    text-shadow: 
+        0 0 5px var(--color-accent),
+        0 0 10px var(--color-primary),
+        0 0 15px var(--color-accent);  /* glowing effect */
+}
+
+#scoreboard th {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 8px var(--color-accent),
+        0 0 16px var(--color-primary);
+}
+
+#scoreboard tr:nth-child(-n+3) td {
+    color: var(--color-accent);
+    text-shadow: 
+        0 0 8px var(--color-accent),
+        0 0 16px var(--color-primary);
+}
+
+#scoreboard tr {
+    background-color: transparent;  /* no row distinction */
+}
+
+/* ================================================== */
+/*                    RESPONSIVE                      */
+/* ================================================== */
+
+@media (max-width: 768px) {
+    #scoreboard {
+        width: 90%;
+    }
+}

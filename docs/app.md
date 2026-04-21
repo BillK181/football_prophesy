@@ -1,0 +1,27 @@
+# app.py - Flask Application Factory
+
+- Imports are at the top of the file.
+- Uses the application factory pattern:
+    - Wraps all app creation inside create_app() for controlled initialization.
+    - Helps avoid circular imports.
+    - Makes the app scalable and testable.
+- Creates the Flask app instance using Flask(__name__).
+- Loads configuration from Config.py via app.config.from_object(Config).
+- Initializes extensions:
+    - db → connects SQLAlchemy to the app.
+    - migrate → enables Flask-Migrate for database migrations.
+- Sets up authentication with Flask-Login:
+    - LoginManager redirects unauthorized users to the auth.login route.
+    - Defines user_loader callback:
+        - Uses user_id from the session.
+        - Queries database to return the full User object.
+- Imports models inside the factory:
+    - User, Prediction, Comment, RouteUsage.
+    - Delaying imports prevents circular dependencies between models and app/extensions.
+- Registers blueprints for modular routes:
+    - Keeps routes organized by feature/file.
+    - Examples: auth_bp, main_bp, combine_bp, free_agency_bp, comment_bp, account_bp.
+- Initializes custom services:
+    - init_route_tracking(app) → logs route usage across the app.
+- Returns the fully configured app from create_app().
+- Calls create_app() to build the app and runs it using app.run() in debug mode for development.

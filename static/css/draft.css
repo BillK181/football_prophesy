@@ -1,0 +1,84 @@
+/* ================================================== */
+/*              DRAFT PREDICTION SECTION              */
+/* ================================================== */
+
+h3 {
+    color: var(--color-secondary, #fff);
+    margin: 13px auto;
+    padding: auto;
+    font: var(--font-base);
+    font-size: 18px;
+    text-align: center;
+    width: 80%;
+    background-color: var(--color-primary, #fff);
+    border-radius: 6px;
+}
+
+
+/* Group each position (QB, WR, etc.) */
+.draft-position-group {
+    margin-bottom: 25px;
+}
+
+/* Position heading */
+.draft-position-group h2 {
+    font-size: 28px;
+    color: var(--color-primary, #fff);
+    -webkit-text-stroke: 0.7px black;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--color-primary, #fff);
+    padding-bottom: 10px;
+}
+
+/* Row of predictions (buttons) */
+.draft-prediction-row {
+    display: flex;
+    flex-direction: column; /* stack buttons vertically */
+    gap: 10px;              /* space between buttons */
+    margin-bottom: 5px;
+}
+
+/* Each player button */
+.selector-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--color-primary, #fff);
+    background-color: var(--color-primary, #fff);
+    color: #000;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    font-size: 16px;
+}
+
+.selector-btn span {
+    display: block;
+}
+
+/* Hover effect for buttons */
+.selector-btn:hover {
+    background-color: var(--color-secondary, #0f0);
+    color: #000;
+    box-shadow: 0 0 5px var(--color-secondary, #0f0);
+}
+
+/* Highlight selected button */
+.selector-btn.selected {
+    border: 2px solid var(--color-accent, #ff0);
+    background-color: var(--color-accent, #ff0);
+}
+
+/* Player name styling */
+.player-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+/* Player grade styling */
+.player-grade, .player-projection {
+    font-size: 14px;
+    color: black;
+}

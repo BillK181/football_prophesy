@@ -1,0 +1,87 @@
+
+/* ================================================== */
+/*      SCOUTING COMBINE PREDICTION SECTION           */
+/* ================================================== */
+
+.position-group {
+    margin-bottom: 20px;
+}
+
+.position-group h2 {
+    font-size: 28px;
+    color: var(--color-primary, #fff);
+    -webkit-text-stroke: .7px black;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--color-primary, #fff);
+    padding-bottom: 10px;
+}
+
+.drill-section {
+    margin-bottom: 25px;
+}
+
+.drill-section h3 {
+    font-size: 20px;
+    color: var(--color-primary, #fff);
+    -webkit-text-stroke: .5px black;
+    margin-bottom: 10px;
+}
+
+.prediction-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.prediction-row label {
+    width: 90px;
+    font-weight: bold;
+    color: var(--color-primary, #fff);
+}
+
+.prediction-row select {
+    flex-grow: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--color-primary, #fff);
+    font-size: 16px;
+    background-color: var(--color-primary, #fff);
+    color: #000;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prediction-row select:focus {
+    outline: none;
+    border-color: var(--color-secondary, #0f0);
+    box-shadow: 0 0 5px var(--color-secondary, #0f0);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: var(--color-primary, #fff);
+    margin: 30px 0;
+}
+
+
+/* ================================================== */
+/*                     RESPONSIVE                      */
+/* ================================================== */
+@media (max-width: 768px) {
+    .prediction-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .prediction-row label {
+        margin-bottom: 5px;
+    }
+
+    .prediction-row select {
+        width: 100%;
+        flex-grow: 0;
+    }
+    .prediction-container {
+        padding-bottom: 10px; /* more space for mobile */
+    }
+}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+Postseason Picks | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="coming-soon-container">
+    <h1>Coming Soon!</h1>
+    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+
+    <div class="tentative-scoring">
+        <h2>Tentative Scoring</h2>
+        <ul>
+            <li>Predict Every Postseason Game the Week of</li>
+            <li>5 Points per Wild Card Winner Guessed Correctly</li>
+            <li>5 Points per Division Winner Guessed Correctly</li>
+            <li>10 Points per Championship Winner Guessed Correctly</li>
+            <li>20 Points per Super Bowl Winner Guessed Correctly</li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}

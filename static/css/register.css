@@ -1,0 +1,162 @@
+/* ================================================== */
+/*                 REGISTER PAGE CSS                  */
+/* ================================================== */
+
+/* Overall container spacing */
+#information {
+    max-width: 800px;
+    margin: 0px auto 20px auto;
+    text-align: center;
+    font-family: var(--font-primary, 'Arial', sans-serif);
+    color: var(--color-secondary, #fff);
+     -webkit-text-stroke: .1px black;
+    padding: 0 20px;
+    text-transform: uppercase;
+}
+
+#information h3 {
+    font-size: 1.4rem;
+    line-height: 1.5;
+}
+
+/* Register section */
+#register-section {
+    max-width: 450px;
+    margin: 20px auto 60px auto;
+    background-color: var(--color-secondary, #111);
+    padding: 30px 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    font-family: var(--font-primary, 'Arial', sans-serif);
+    color: var(--color-primary, #fff);
+}
+
+/* Section heading */
+#register-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+/* Flash messages */
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.flash {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.flash.success {
+    background-color: #28a745;
+    color: var(--color-primary);
+}
+
+.flash.danger {
+    background-color: #dc3545;
+    color: var(--color-primary);
+}
+
+.flash.warning {
+    background-color: #ffc107;
+    color: var(--color-secondary);
+}
+
+/* Form groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: var(--color-primary, #fff);
+}
+
+.form-group input {
+    padding: 10px 12px;
+    border: 1px solid var(--color-primary, #fff);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: var(--color-primary, #fff);
+    color: #000;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--color-primary, #fff);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: var(--color-primary, #fff);
+    color: #000;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--color-accent, #f0f);
+    box-shadow: 0 0 5px var(--color-accent, #f0f);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-accent, #f0f);
+    box-shadow: 0 0 5px var(--color-accent, #f0f);
+}
+
+#register-section button {
+    display: block;                   /* makes width and margin auto work */
+    width: 50%;                       /* keeps it half the container width */
+    margin: 20px auto 0 auto;         /* centers horizontally, adds top spacing */
+    text-align: center;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-secondary, #111);
+    background-color: var(--color-accent, #fff);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+#register-section button:hover {
+    background-color: var(--color-primary, #0f0); /* optional hover color */
+    transform: translateY(-2px);
+}
+
+/* Bottom text */
+#register-section p {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#register-section a {
+    color: var(--color-accent, #f0f);
+    text-decoration: none;
+}
+
+#register-section a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    #register-section {
+        padding: 20px 15px;
+        width: 90%;
+    }
+
+    #information {
+        padding: 0 10px;
+    }
+}

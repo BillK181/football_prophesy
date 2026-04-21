@@ -1,0 +1,143 @@
+/* ================================================== */
+/*            PREDICTION CONTAINER & FORM             */
+/* ================================================== */
+
+.prediction-container {
+    max-width: 70%;
+    margin: 10px auto;
+    background-color: var(--color-secondary, #111);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+}
+
+.prediction-container form {
+    max-height: 60vh;      /* limit form height */
+    overflow-y: auto;      /* enable scrolling */
+    padding-bottom: 30px;  /* space for sticky submit button */
+}
+
+
+/* TOP OF FORM */
+.prediction-container h1,
+.prediction-container h5,
+.prediction-container p {
+    text-align: center;
+    color: var(--color-primary, #fff);
+    margin-bottom: 10px;
+}
+
+/* TOP OF FORM */
+.prediction-container h1 {
+    -webkit-text-stroke: .7px black;
+}
+
+/* TOP OF FORM */
+.prediction-container h5 {
+    -webkit-text-stroke: .5px black;
+}
+
+/* TOP OF FORM */
+.prediction-container p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* ================================================== */
+/*                   SUBMIT BUTTON                    */
+/* ================================================== */
+
+.submit-section {
+    position: sticky;
+    bottom: 0;                  
+    text-align: center;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.submit-section button {
+    background-color: var(--color-primary, #fff);
+    color: var(--color-secondary, #111);
+    font-size: 18px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.submit-section button:hover {
+    background-color: var(--color-accent, #f0f);
+    transform: translateY(-2px);
+}
+
+/* ================================================== */
+/*                    RESULTS                         */
+/* ================================================== */
+
+.results-button-container {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.results-button-container .btn {
+    padding: 10px 20px;
+    background-color: var(--color-secondary, #fff);
+    color: var(--color-primary, #fff);
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.results-button-container .btn:hover {
+    background-color: var(--color-accent, #fff);
+    color: var(--color-secondary, #fff);
+}
+
+.points-earned {
+    color: #28a745;
+    font-weight: bold;
+    margin-left: 10px;   /* space between points and actual */
+}
+
+.incorrect {
+    color: #dc3545;
+    font-weight: bold;
+    margin-left: 10px;   /* space between ❌ and actual */
+}
+
+/* ================================================== */
+/*                     FLASHES                        */
+/* ================================================== */
+
+#flash-messages {
+    width: 80%;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+.flash {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.flash.success { background-color: #4caf50; color: var(--color-primary, #fff); }
+.flash.warning { background-color: #f44336; color: var(--color-primary, #fff); }
+.flash.danger  { background-color: #f44336; color: var(--color-primary, #fff); }
+
+
+/* ================================================== */
+/*                     RESPONSIVE                      */
+/* ================================================== */
+
+@media (max-width: 768px) {
+    .prediction-container {
+        padding-bottom: 10px;
+    }
+
+    .submit-section {
+        bottom: 2px;
+    }
+}

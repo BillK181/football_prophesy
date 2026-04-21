@@ -1,0 +1,19 @@
+# routes/__init__.py
+- Purpose: Central place to import and register all Flask blueprints with the app.
+- Function: register_blueprints(app: Flask)
+    - Accepts the main Flask app instance as an argument.
+    - Imports all blueprints used in the application:
+        - from .account_routes import account_bp → Account-related routes
+        - from .auth_routes import auth_bp → Authentication routes (login/logout)
+        - from .combine_routes import combine_bp → Scouting Combine routes
+        - from .comment_routes import comment_bp → Comment submission and retrieval
+        - from .free_agency_routes import free_agency_bp → Free Agency routes
+        - from .main_routes import main_bp → Main pages like index, draft, season pages
+    - Registers each blueprint with the Flask app using app.register_blueprint():
+        - combine_bp → accessible at /scouting-combine (as defined in the blueprint)
+        - free_agency_bp → accessible at /free_agency
+        - other blueprints → accessible at their respective URL prefixes
+    - Benefits:
+        - Keeps route definitions modular and organized
+        - Makes app scalable and maintainable
+        - Adding a new module only requires importing its blueprint and calling app.register_blueprint()

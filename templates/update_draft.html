@@ -1,0 +1,21 @@
+{% extends "predictions_base.html" %}
+
+{% block prediction_form %}
+
+    {% for player in all_players %}
+        <div class="form-group">
+            <label for="player_{{ loop.index }}">
+                {{ player.name }}
+            </label>
+
+            <input 
+                type="number"
+                name="actual_pick_{{ player.id }}"
+                id="player_{{ loop.index }}"
+                value="{{ actual_picks[player.id] if actual_picks[player.id] is not none else '' }}"
+                placeholder="tbd"
+            >
+        </div>
+    {% endfor %}
+
+{% endblock %}

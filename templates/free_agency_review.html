@@ -1,0 +1,61 @@
+{% extends "review_base.html" %}
+
+{% block review_content %}
+
+<p>
+    Points are awarded as follows: <strong>5 points for correct team, 5 points for correct salary</strong>.<br>
+    Correct predictions are highlighted, incorrect ones show ❌.
+</p>
+
+<table class="prediction-table">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Your Prediction</th>
+            <th>Actual</th>
+            <th>Points Earned</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if no_predictions %}
+        <tr>
+            <td colspan="4" style="text-align:center;">
+                No Free Agency predictions submitted.
+            </td>
+        </tr>
+        {% else %}
+
+        {% for pred in predictions %}
+        {% set fb = points_feedback[pred.id] %}
+
+        <tr>
+            <td>{{ fb.player_name }}</td>
+
+            <td>
+                Team: {{ fb.team.predicted or '—' }}<br>
+                Salary: {{ fb.salary.predicted or '—' }}
+            </td>
+
+            <td>
+                Team: {{ fb.team.actual or '—' }}<br>
+                Salary: {{ fb.salary.actual or '—' }}
+            </td>
+
+            <td>
+                {% set total_points = fb.team.points + fb.salary.points %}
+
+                {% if total_points > 0 %}
+                    <span class="points-earned">+{{ total_points }}</span>
+                {% else %}
+                    <span class="incorrect">❌</span>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

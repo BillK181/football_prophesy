@@ -1,0 +1,150 @@
+Imports:
+    - Blueprint – Organizes Flask routes into modular components; allows you to separate related routes (e.g., auth, main, combine) and register them in app.py.
+    - request – Access incoming HTTP request data (form fields, query params, headers, cookies).
+    - redirect, url_for – redirect sends a user to another route; url_for generates the URL for a route based on the function name to avoid hardcoding.
+    - flash – Sends one-time messages to templates (success, warning, error) that disappear after being displayed.
+    - render_template – Renders HTML templates using Jinja2 and allows passing Python variables to the template.
+    - session – Stores user-specific data across requests (login state, temporary variables); Flask stores it in a signed cookie.
+    - defaultdict (from collections) – A dictionary subclass that automatically creates a default value (e.g., empty list) when a key is accessed for the first time; useful for grouping or counting items dynamically.
+    - datetime (from datetime) – Provides classes for date and time manipulation; commonly used for timestamps, comparisons, and deadline enforcement.
+Database Models:
+    - db – SQLAlchemy database instance for creating, querying, updating, deleting rows.
+    - User, Prediction, Comment – SQLAlchemy models representing database tables:
+    - User – Stores account info
+    - Prediction – Stores combine predictions
+    - Comment – Stores user comments
+Constants
+    - POSITION_DRILL_MAP – Maps football positions to drills for scoring or display.
+    - SCOUTING_COMBINE_PLAYERS – List of combine participants for scoring, display, or iteration.
+
+Blueprint("combine", __name__, url_prefix="/scouting-combine")
+    - Creates a Flask Blueprint for all combine-related routes
+    - combine_bp – Flask Blueprint for all scouting combine-related routes; modularizes code, allows a URL prefix /scouting-combine, and enables easy registration in app.py.
+    - Blueprints help scale applications by separating concerns (auth, main, API, etc.)
+
+@combine_bp.route("/")
+@login_required
+def scouting_combine():
+    - Displays the Scouting Combine page where users can:
+        - View the leaderboard
+        - See their previous predictions
+        - Read and post comments
+        - See all available players for prediction
+    - Authentication:
+        - Uses @login_required to ensure only logged-in users can access
+        - Uses current_user from Flask-Login to get the authenticated user
+    - Fetch current user:
+        - current_user is a User object already loaded by Flask-Login
+        - No need to query User by ID manually
+    - Retrieve previous predictions:
+        - Queries Prediction table filtered by:
+            - user_id=current_user.id
+            - year=2026
+            - section="scouting_combine" or "scouting combine"
+        - Converts previous predictions into a dictionary:
+            - Keys like "position_drill_place"
+            - Values are player_name
+            - Makes it easy to pre-fill the template form
+    - Fetch comments:
+        - Queries Comment table filtered by page="scouting_combine"
+        - Orders by timestamp descending
+    - Fetch leaderboard:
+        - Queries all users
+        - Calls Score.section_leaderboard(users, section="scouting_combine")
+        - Takes top 10 users for display
+    - Template rendering
+        - Template: scouting_combine.html
+- Variables passed:
+    - page_title → "Scouting Combine"
+        - css_file → "css/scouting_combine.css"
+        - scoreboard_id → "scouting_combine_scoreboard"
+        - leaderboard → combine_top_players (top 10 leaderboard)
+        - results_url → URL to view current user's combine results
+        - prediction_title → "2026 Scouting Combine Predictions"
+        - submission_deadline → "Submissions Lock 2/26 at 12pm PST"
+        - instructions → "Prophesy the Top 3 performers at each position for each drill."
+        - form_action → URL to submit combine predictions
+        - submit_text → "Submit Predictions"
+        - page_name → "scouting_combine" (used for comments)
+        - comments → comments for the page
+        - players → SCOUTING_COMBINE_PLAYERS (list/dict of participants)
+        - previous_predictions → dict of user's prior predictions
+        - position_drill_map → mapping of positions to drills
+
+
+@combine_bp.route("/submit", methods=["POST"])
+def submit_combine():
+    - High-level flow: validate → parse form → update/create predictions → commit → redirect (PRG pattern)
+    - Handles POST submissions of user predictions for the Scouting Combine.
+    - Authentication:
+        - Uses @login_required to ensure only logged-in users can access
+        - Uses current_user from Flask-Login to get the authenticated user
+    - Deadline enforcement
+        - Sets combine_deadline = datetime(2026, 2, 26, 20, 0)
+        - Compares datetime.utcnow() to deadline.
+        - If past deadline, flashes a message and redirects back to the combine page.
+    - Existing predictions
+        - Queries Prediction table for current user, year, and section.
+        - Converts to a dictionary mapping keys like "position_drill_place" → Prediction object for easier updates.
+    - Form parsing and grouping
+        - drill_groups = defaultdict(list) creates a dictionary that automatically initializes empty lists for new keys, allowing easy grouping of players by drill.
+            - defaultdict is a special type of dictionary from the collections module. Normally in a Python dictionary, if you try to access a key that doesn’t exist, you get a KeyError.
+            - With defaultdict(list), if you access a key that doesn’t exist yet, Python automatically creates it and sets its value to a new empty list.
+            - You don't have to initialize drill_groups["drill"] = [] first. Python does it automatically
+        - Iterates through all form fields submitted via POST; each key represents a unique prediction in the format 'position_drill_place', and the value is the player the user predicted.
+                - Example key "WR_3_cone_2"
+                - request.form is a dictionary-like object containing all form data submitted via POST.
+                - .items() is a method that returns key-value pairs from the dictionary, just like a normal Python dict.
+                    - Each key is something like "QB_40yd_1" (position_drill_place).
+                    - Each value is the player the user predicted for that drill/position.
+                    - request.form.items() lets you loop over all submitted predictions and process them dynamically.
+            - Skips empty form values (empty strings)
+                - This allows for incomplete forms to be submitted
+            - Splits form field key like "WR_3_cone_2" into position_group="WR", drill="3_cone", and place=2
+                - .split("_") splits the string into a list using _ as the separator.
+                - position_group = parts[0]
+                    - Takes the first part of the split list as the position group.
+                - drill = "_".join(parts[1:-1])
+                    - parts[1:-1] → everything except the first and last item
+                    - "_".join() → joins the list back into a string with _ as separator
+                    - Handles drill names that may include underscores, ensuring correct parsing.
+                - place = int(parts[-1])
+                    - parts[-1] → the last element, representing the predicted place.
+                    - int() converts it from a string to a number for comparison, scoring, or database storage.
+                    - Because the place is parsed directly from the input name, each player is assigned to the correct place automatically.
+            - Group all submitted player names under their drill_key (position_group_drill) using defaultdict(list); this allows easy calculation of drill-level scores or display of grouped predictions.
+                - Each key looks like: "WR_3_cone"
+                - Each player_name is what the user entered for that prediction.
+                - Create a drill key
+                    - drill_key = f"{position_group}_{drill}"
+                    - Combines position_group (like "WR") and drill (like "3_cone") into a single string.
+                    - "WR_3_cone"
+                    - This groups all player predictions for the same drill together, regardless of their place.
+                - Add the player name to the drill grouping dictionary for scoring or display
+                    - drill_groups[drill_key].append(player_name.strip())
+                    - drill_groups is a defaultdict(list).
+                    - Appends the stripped player name to the list under that drill key.
+                    - Now all player names submitted for each drill are grouped together.
+                - Create a prediction key
+                    - prediction_key = f"{drill_key}_{place}"
+                    - Combines the drill key with the predicted place (1, 2, 3, etc.) to uniquely identify a single prediction.
+                    - This is used to check if this exact prediction already exists in the database.
+                    - prediction_key is the unique identifier for a single predicted place in a drill. It ensures updates are applied to the correct record in the database.
+                - If a prediction for this position, drill, and place already exists:
+                    - existing_dict is a dictionary of all current predictions for this user (from the database), keyed the same way ("position_drill_place").
+                    - Update the player_name in the existing Prediction object.
+                    - Add it to the session (db.session.add()) so SQLAlchemy tracks the change and includes it in the next commit.
+                - Else (if not found):
+                    - Create a new Prediction object with fields:
+                        - user_id
+                        - year
+                        - section
+                        - position_group
+                        - drill
+                        - place
+                        - player_name
+                    - Add the new object to the session (db.session.add) so it will be inserted on commit
+    - Commit the data to the db
+    - Present a flash message confirming successful submission
+    - Redirect user to combine page 
+        - Uses Post → Redirect → Get (PRG) pattern to prevent duplicate form submissions if the user refreshes

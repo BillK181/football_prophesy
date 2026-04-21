@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename=css_file) }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<section class="prediction-container">
+    <h1>{{ user.username }}'s {{ header_title }}</h1>
+    <p>{{ subtext }}</p>
+
+    {% block review_content %}
+    {% endblock %}
+</section>
+
+{% endblock %}

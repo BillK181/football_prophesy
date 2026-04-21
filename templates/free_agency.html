@@ -1,0 +1,75 @@
+{% extends "predictions_base.html" %}
+
+{% block prediction_form %}
+
+{% set teams = [
+"Arizona Cardinals","Atlanta Falcons","Baltimore Ravens","Buffalo Bills",
+"Carolina Panthers","Chicago Bears","Cincinnati Bengals","Cleveland Browns",
+"Dallas Cowboys","Denver Broncos","Detroit Lions","Green Bay Packers",
+"Houston Texans","Indianapolis Colts","Jacksonville Jaguars","Kansas City Chiefs",
+"Las Vegas Raiders","Los Angeles Chargers","Los Angeles Rams","Miami Dolphins",
+"Minnesota Vikings","New England Patriots","New Orleans Saints","New York Giants",
+"New York Jets","Philadelphia Eagles","Pittsburgh Steelers","San Francisco 49ers",
+"Seattle Seahawks","Tampa Bay Buccaneers","Tennessee Titans","Washington Commanders"
+] %}
+
+{% set salaries = [
+"$0-$2.99M","$3-$5.99M","$6-$8.99M","$9-$11.99M","$12-$14.99M",
+"$15-$17.99M","$18-$20.99M","$21-$23.99M","$24-$26.99M","$27-$29.99M",
+"$30-$32.99M","$33-$35.99M","$36-$38.99M","$39-$41.99M","$42-$44.99M",
+"$45-$47.99M","$48-$50.99M","$51-$53.99M","$54-$56.99M","$57-$59.99M",
+"$60M+"
+] %}
+
+<div class="table-wrapper">
+    <table class="prediction-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Team Prediction</th>
+                <th>Salary Prediction</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player, p in paired %}
+            <tr>
+
+                <td>{{ player }}</td>
+
+                <td>
+                    <select name="prediction_{{ p.id }}_team" required>
+                        <option value="">Select Team</option>
+                        {% for team in teams %}
+                        <option value="{{ team }}"
+                            {% if p.team_prediction == team %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ team }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+
+                <td>
+                    <select name="prediction_{{ p.id }}_salary" required>
+                        <option value="">Select Salary</option>
+                        {% for salary in salaries %}
+                        <option value="{{ salary }}"
+                            {% if p.salary_prediction == salary %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ salary }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,302 @@
+/* ================================================== */
+/*                 HERO SECTION                       */
+/* ================================================== */
+#hero {
+    text-align: center;
+    width: 90%;
+    height: fit-content;
+    margin: 1rem auto;          /* <-- centers the section horizontally */
+    margin-top: .1rem;
+    padding: 0;
+    background-color: var(--color-background);
+    border: 3px solid black;
+    text-transform: uppercase;
+}
+
+.hero-box {
+    display: inline-block; /* makes the box shrink to fit content */
+    background-color: var(--color-secondary); /* box background */
+    padding: .5rem .75rem;    /* space inside the box */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* subtle depth */
+}
+
+.hero-box h1 {
+    font-family: var(--font-heading); /* your heading font */
+    line-height: 1.2;
+    letter-spacing: 2px;
+    font-size: 4rem;
+    color: var(--color-primary); /* text color */
+    -webkit-text-stroke: .1px black;
+    text-shadow: 0 0 8px var(--color-accent), 0 0 16px var(--color-primary);
+    margin: 0;
+}
+
+
+/* ================================================== */
+/*                 LOGIN SECTION                      */
+/* ================================================== */
+#login {
+    display: block;               /* block makes margin auto work reliably */
+    width: 80%;         
+    height: fit-content;
+    text-align: center;
+    padding: .25rem .2rem;           /* same vertical padding as hero */
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    margin: 0.5rem auto;            /* centers horizontally */
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 3px solid black;
+}
+
+#login > a {
+    display: block;               /* make link fill the box */
+}
+
+#login h5 {
+    font-family: var(--font-base);
+    font-weight: normal;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: normal;
+    text-shadow: none;
+}
+
+#login:hover {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+}
+
+
+/* Logout link default */
+#login .logout_link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+
+/* ================================================== */
+/*               SCOREBOARD SECTION                   */
+/* ================================================== */
+#home_scoreboard {
+    position: relative;   
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* center content horizontally */
+    justify-content: flex-start;
+    padding: 1rem 0;
+    margin: 0.5rem auto;      /* center container */
+    margin-top: 0px;
+    width: 90%;              /* take full width of parent */
+    max-width: 800px;         /* optional: limit max width */
+}
+
+.scoreboard-container {
+    position: relative;       
+    width: 100%;              /* full width of parent */
+    max-width: 600px;         /* optional: cap table width */
+}
+
+/* Main scoreboard table */
+#scoreboard {
+    width: 100%;              /* fill container */
+    max-height: 350px;        
+    border-collapse: collapse;
+    font-family: var(--font-base);
+    background-color: #000;
+    color: var(--color-primary);
+    text-align: center;
+    overflow-y: auto;         
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+#scoreboard th,
+#scoreboard td {
+    border: 1px solid #000;         /* hides borders */
+    padding: 0.35rem 1rem;
+    text-shadow: 
+        0 0 5px var(--color-accent),
+        0 0 10px var(--color-primary),
+        0 0 15px var(--color-accent);  /* glowing effect */
+}
+
+#scoreboard th {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 8px var(--color-accent),
+        0 0 16px var(--color-primary);
+}
+
+#scoreboard tr:nth-child(1) td,
+#scoreboard tr:nth-child(2) td,
+#scoreboard tr:nth-child(3) td {
+    color: var(--color-accent);
+}
+
+#scoreboard tr {
+    background-color: transparent;  /* no row distinction */
+}
+
+/* ================================================== */
+/*            Full Scoreboard Button                  */
+/* ================================================== */
+
+#all-accounts {
+    display: flex;
+    justify-content: flex-end;  /* push content to the right */
+    padding: 0;                 /* no vertical padding */
+    margin: 0;                  /* no vertical margin */
+    width: 100%;                /* full width of page */
+}
+
+#all-accounts .full-scoreboard-btn {
+    margin-right: 8%;     
+}
+
+#all-accounts,
+#home_scoreboard {
+    margin-top: 5px;       /* no top/bottom margin */
+    padding: 0;      /* no internal padding */
+}
+
+
+/* Optional: tighten scoreboard container */
+.scoreboard-container {
+    margin: 0;
+    padding: 0;
+}
+
+
+.full-scoreboard-btn {
+    display: inline-block;      /* shrink to fit text */
+    padding: 5px 7px;
+    font-size: .6rem;
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    text-decoration: none;
+    border: 2px solid var(--color-accent);
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+
+.full-scoreboard-btn:hover {
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+}
+
+/* ================================================== */
+/*                       MEMO                         */
+/* ================================================== */
+
+#memo {
+    width: 95%;
+    text-align: center;               /* center the text */
+    margin: 0rem auto;                /* spacing from other content */
+    padding: 0;
+}
+
+#memo h5 {
+    font-family: var(--font-base); /* heading font for impact */
+    color: var(--color-secondary);    /* secondary color text */
+    -webkit-text-stroke: .01px var(--color-base);
+    font-weight: bold;                /* make it stand out */
+    line-height: 1.4;
+    letter-spacing: 0.5px;            /* subtle spacing for readability */
+    text-transform: uppercase;
+}
+
+
+
+/* ================================================== */
+/*              NAVIGATION 3x3 GRID                  */
+/* ================================================== */
+#main-navigation {
+    width: 90%;                /* big box width */
+    margin: .5rem auto;         /* center horizontally */
+    background-color: var(--color-secondary); /* whole nav background */
+    padding: 0;                /* remove extra padding */
+    border: 2px solid black;
+}
+
+#main-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;                    /* no gap between squares */
+}
+
+#main-navigation li {
+    border: 2px solid black;   /* each square border */
+    display: flex;             /* use flex to center content */
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center */
+    height: 100px;             /* square height, adjust as needed */
+    text-align: center;        /* center multi-line text */
+}
+
+
+#main-navigation a {
+    display: inline-block;     /* allow text to wrap */
+    text-align: center;        /* center text horizontally */
+    white-space: pre-line;     /* wrap words onto new lines at spaces */
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    -webkit-text-stroke: .2px black;
+    width: 100%;               /* fill li width */
+    line-height: 1.5em;        /* vertical spacing between stacked words */
+}
+
+
+/* ================================================== */
+/*               RESPONSIVE ADJUSTMENTS              */
+/* ================================================== */
+@media (max-width: 768px) {
+    
+    #hero {
+        width: 90%;
+    }
+
+
+    .hero-box h1 {
+        font-size: 2.5rem;
+    }
+
+    #login h5 {
+        font-size: 1.2rem;
+    }
+
+    #main-navigation ul {
+        grid-template-columns: repeat(3, 1fr);  /* force 3 columns */
+        grid-template-rows: repeat(3, 1fr);     /* force 3 rows */
+        gap: 0;
+    }
+
+    #main-navigation li {
+        height: 80px;   /* smaller for mobile */
+    }
+
+    #main-navigation a {
+        display: inline-block;      /* allow text wrapping inside link */
+        white-space: pre-line;      /* wrap at spaces/newlines */
+        text-align: center;         /* center text */
+        line-height: 1.2em;         /* tighter vertical spacing */
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #main-navigation li {
+        height: 60px;
+    }
+}

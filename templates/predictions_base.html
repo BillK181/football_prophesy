@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Football Prophesy{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/predictions_base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/comments.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/scoreboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename=css_file) }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Leaderboard -->
+<section id="{{ scoreboard_id }}">
+    <div class="scoreboard-container">
+        <table id="scoreboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in leaderboard %}
+                <tr>
+                    <td>{{ entry.rank or loop.index }}</td>
+                    <td>
+                        <a href="{{ url_for('account.account', user_id=entry.user.id) }}">
+                            {{ entry.user.username }}
+                        </a>
+                    </td>
+                    <td>{{ entry.points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Results Button -->
+<div class="results-button-container" style="margin: 20px 0; text-align: center;">
+    <a href="{{ results_url }}" class="btn btn-primary">View My Results</a>
+</div>
+
+<!-- Prediction Form -->
+<section class="prediction-container">
+    <h1>{{ prediction_title }}</h1>
+    <h5>{{ submission_deadline }}</h5>
+    <h5>{{ instructions }}</h5>
+
+    <form method="POST" action="{{ form_action }}">
+        {% block prediction_form %}
+        <!-- Specific prediction form fields go here -->
+        {% endblock %}
+
+        <div class="submit-section">
+            <button type="submit">{{ submit_text }}</button>
+        </div>
+    </form>
+</section>
+
+<!-- Comments Section -->
+<h6>Comments</h6>
+
+<div id="comments">
+{% if current_user.is_authenticated %}
+<form id="comment-form" action="{{ url_for('comment.submit_comment') }}" method="POST" class="comment-form">
+    <input type="hidden" name="page" value="{{ page_name }}">
+    <textarea name="content" placeholder="Write a comment..." required></textarea>
+    <button type="submit">Submit</button>
+</form>
+{% else %}
+<p class="comment_login_text">
+    <a href="{{ url_for('auth.login') }}">Log in</a> to post a comment.
+</p>
+{% endif %}
+
+<div id="comments-list">
+{% for comment in comments %}
+<div class="comment" id="comment-{{ comment.id }}">
+    <strong>{{ comment.user.username }}</strong>
+    <em>{{ comment.timestamp }}</em>
+    <p>{{ comment.content }}</p>
+
+    {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+    <button class="delete-comment-btn" data-comment-id="{{ comment.id }}">Delete</button>
+    {% endif %}
+</div>
+{% else %}
+<p class="no-comments">No comments yet. Be the first!</p>
+{% endfor %}
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+{% endblock %}

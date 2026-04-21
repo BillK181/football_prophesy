@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+Coming Soon | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="coming-soon-container">
+    <h1>Coming Soon!</h1>
+    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+
+    <div class="tentative-scoring">
+        <h2>Tentative Scoring</h2>
+        <ul>
+            <li>Predict Every Playoff Team Including Seeding
+                <ul>
+                    <li>Correctly Predicting Playoff Birth = 5 pts</li>
+                    <li>Correctly Predicting Playoff Seed = 10 pts additional</li>
+                </ul>
+            </li>
+            <li>Predict Championship Games and Super Bowl
+                <ul>
+                    <li>10 pts per Championship Team Predicted Correctly</li>
+                    <li>30 pts per Super Bowl Team Predicted Correctly</li>
+                    <li>Correctly Predicting Super Bowl Champion = 50 pts</li>
+                </ul>
+            </li>
+            <li>Predict MVP, OPOY, DPOY, OROY, DROY
+                <ul>
+                    <li>Correctly Predicting MVP = 50 pts</li>
+                    <li>Correctly Predicting OPOY = 20 pts</li>
+                    <li>Correctly Predicting DPOY = 20 pts</li>
+                    <li>Correctly Predicting OROY = 15 pts</li>
+                    <li>Correctly Predicting DROY = 15 pts</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}

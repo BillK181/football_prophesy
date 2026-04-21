@@ -1,0 +1,13 @@
+.form-group input{
+    color: var(--color-secondary, #111);
+    font-size: 1.2rem;
+    margin: 3px 50px;
+    padding: 3px 7px;
+    text-align: center;
+    border-radius: 6px;
+    width: 65px;
+}
+
+.form-group label{
+    font-size: 1.5rem;
+}

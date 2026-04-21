@@ -1,0 +1,29 @@
+# Ignore local SQLite database
+instance/
+football_prophesy.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# IDE / OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Environment / secret files
+*.env
+.env.local
+.env.*.local__pycache__/
+
+echo ".DS_Store" >> .gitignore
+echo "*.pyc" >> .gitignore
+echo "venv/" >> .gitignore
+echo "Sleeper_Reveal/Sleeper_Reveal/get-pip.py" >> .gitignore
