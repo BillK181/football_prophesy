@@ -235,19 +235,13 @@ def update_draft():
 @admin_required
 def seed_players():
 
-    from football_prophesy.extensions import db
-    from football_prophesy.models.player import Player
-    from football_prophesy.data.draft_profiles import PLAYERS_DATA
-
-    existing_players = {
-        p.name.strip().lower(): p
-        for p in Player.query.all()
-    }
+    db_players = Player.query.all()
+    existing_players = {p.name.strip().lower(): p for p in db_players}
 
     added = 0
     skipped = 0
 
-    for _, players_list in PLAYERS_DATA.items():
+    for position, players_list in PLAYERS_DATA.items():
         for p in players_list:
 
             name_key = p["name"].strip().lower()
@@ -256,16 +250,19 @@ def seed_players():
                 skipped += 1
                 continue
 
-            db.session.add(Player(
+            player = Player(
                 name=p["name"].strip(),
                 actual_pick=None
-            ))
+            )
+
+            db.session.add(player)
             added += 1
 
     db.session.commit()
 
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
     return redirect(url_for("draft.update_draft"))
+
 
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
@@ -275,7 +272,6 @@ def send_draft_emails():
     from flask_mail import Message
     from football_prophesy.extensions import mail
     from football_prophesy.models.user import User
-    import time
 
     users = User.query.all()
 
@@ -290,24 +286,23 @@ def send_draft_emails():
         try:
             msg = Message(
                 subject="Draft Prophesy Now Available 🏈",
-                recipients=[user.email],
-                body=f"""Hi {user.name},
+                sender="your_email@example.com",
+                recipients=[user.email]
+            )
+
+            msg.body = f"""Hi {user.name},
 
 The Draft Prophesy is now available!
 
-Go here to make your picks:
 https://footballprophesy.com/draft
 """
-            )
 
             mail.send(msg)
             sent += 1
 
         except Exception as e:
-            print(f"[EMAIL ERROR] {user.email}: {e}")
+            print(f"Email failed for {user.email}: {e}")
             failed += 1
-
-        time.sleep(0.2)
 
     flash(f"Emails sent → {sent} success, {failed} failed", "success")
     return redirect(url_for("draft.update_draft"))

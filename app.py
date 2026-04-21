@@ -33,7 +33,6 @@ def create_app():
     # -------------------------
     db.init_app(app)
     migrate.init_app(app, db)
-
     mail.init_app(app)
     # -------------------------
     # 4. Login setup
