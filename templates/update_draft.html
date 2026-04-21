@@ -19,6 +19,10 @@
     {% endfor %}
 
     <hr>
+    
+    <button type="submit" class="btn btn-success">
+        Update Actual Picks
+    </button>
 
         <form method="POST" action="{{ url_for('draft.seed_players') }}">
             <button type="submit" class="btn btn-warning">
