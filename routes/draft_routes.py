@@ -11,8 +11,6 @@ from football_prophesy.models.prediction import Prediction
 from football_prophesy.models.comment import Comment
 from football_prophesy.models.score import Score
 from football_prophesy.extensions import db
-from football_prophesy.services.email_service import send_draft_email_to_all_users
-from football_prophesy.services.seed_service import seed_draft_players
 
 from football_prophesy.data.draft_profiles import PLAYERS_DATA
 
@@ -237,20 +235,79 @@ def update_draft():
 @admin_required
 def seed_players():
 
-    added, skipped = seed_draft_players()
+    from football_prophesy.extensions import db
+    from football_prophesy.models.player import Player
+    from football_prophesy.data.draft_profiles import PLAYERS_DATA
+
+    existing_players = {
+        p.name.strip().lower(): p
+        for p in Player.query.all()
+    }
+
+    added = 0
+    skipped = 0
+
+    for _, players_list in PLAYERS_DATA.items():
+        for p in players_list:
+
+            name_key = p["name"].strip().lower()
+
+            if name_key in existing_players:
+                skipped += 1
+                continue
+
+            db.session.add(Player(
+                name=p["name"].strip(),
+                actual_pick=None
+            ))
+            added += 1
+
+    db.session.commit()
 
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
-
     return redirect(url_for("draft.update_draft"))
-
 
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
 @admin_required
 def send_draft_emails():
 
-    send_draft_email_to_all_users()
+    from flask_mail import Message
+    from football_prophesy.extensions import mail
+    from football_prophesy.models.user import User
+    import time
 
-    flash("Draft emails sent successfully", "success")
+    users = User.query.all()
 
+    sent = 0
+    failed = 0
+
+    for user in users:
+
+        if not user.email:
+            continue
+
+        try:
+            msg = Message(
+                subject="Draft Prophesy Now Available 🏈",
+                recipients=[user.email],
+                body=f"""Hi {user.name},
+
+The Draft Prophesy is now available!
+
+Go here to make your picks:
+https://footballprophesy.com/draft
+"""
+            )
+
+            mail.send(msg)
+            sent += 1
+
+        except Exception as e:
+            print(f"[EMAIL ERROR] {user.email}: {e}")
+            failed += 1
+
+        time.sleep(0.2)
+
+    flash(f"Emails sent → {sent} success, {failed} failed", "success")
     return redirect(url_for("draft.update_draft"))
