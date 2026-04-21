@@ -3,6 +3,9 @@ from flask_login import login_required, current_user
 from collections import defaultdict
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from flask_mail import Message
+import traceback
+from football_prophesy.extensions import mail
 
 from football_prophesy.decorators import admin_required
 from football_prophesy.models.user import User
@@ -226,13 +229,11 @@ def update_draft():
         page_name="draft",
     )
 
-# =========================
-# SEED PLAYERS (FIXED INLINE)
-# =========================
 @draft_bp.route("/seed_players", methods=["POST"])
 @login_required
-@admin_required
 def seed_players():
+
+    print("🔥 SEED ROUTE HIT")  # DEBUG
 
     db_players = Player.query.all()
     existing = {p.name.strip().lower() for p in db_players}
@@ -258,16 +259,14 @@ def seed_players():
 
     db.session.commit()
 
+    print(f"Seed done: added={added}, skipped={skipped}")
+
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
     return redirect(url_for("draft.update_draft"))
 
 
-# =========================
-# SEND EMAILS (FIXED INLINE)
-# =========================
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
-@admin_required
 def send_draft_emails():
 
     users = User.query.all()
@@ -275,19 +274,19 @@ def send_draft_emails():
     sent = 0
     failed = 0
 
-    for user in users:
+    for u in users:
 
-        if not user.email:
+        if not u.email:
             continue
 
         try:
             msg = Message(
                 subject="Draft Prophesy Now Available 🏈",
                 sender="your_email@example.com",
-                recipients=[user.email]
+                recipients=[u.email]
             )
 
-            msg.body = f"""Hi {user.name},
+            msg.body = f"""Hi {u.name},
 
 The Draft Prophesy is now available!
 
@@ -298,7 +297,7 @@ https://footballprophesy.com/draft
             sent += 1
 
         except Exception as e:
-            print(f"[ERROR] Email failed for {user.email}: {e}")
+            print(f"[EMAIL ERROR] {u.email}: {e}")
             traceback.print_exc()
             failed += 1
 
