@@ -1,4 +1,4 @@
-from football_prophesy.app import create_app
+from football_prophesy import create_app
 from football_prophesy.extensions import db
 from football_prophesy.models.player import Player
 from football_prophesy.data.draft_profiles import PLAYERS_DATA
