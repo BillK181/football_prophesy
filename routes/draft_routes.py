@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from collections import defaultdict
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from flask_mail import Message
 import traceback
 from football_prophesy.extensions import mail
 
@@ -264,6 +263,12 @@ def seed_players():
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
     return redirect(url_for("draft.update_draft"))
 
+from football_prophesy.email_service import send_draft_email
+
+
+# =========================
+# SEND DRAFT EMAILS (FIXED)
+# =========================
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
 def send_draft_emails():
@@ -278,27 +283,16 @@ def send_draft_emails():
         if not u.email:
             continue
 
-        try:
-            msg = Message(
-                subject="Draft Prophesy Now Available 🏈",
-                sender="your_email@example.com",
-                recipients=[u.email]
-            )
+        success = send_draft_email(u)
 
-            msg.body = f"""Hi {u.name},
-
-The Draft Prophesy is now available!
-
-https://footballprophesy.com/draft
-"""
-
-            mail.send(msg)
+        if success:
             sent += 1
-
-        except Exception as e:
-            print(f"[EMAIL ERROR] {u.email}: {e}")
-            traceback.print_exc()
+        else:
             failed += 1
 
-    flash(f"Emails sent → {sent} success, {failed} failed", "success")
+    flash(
+        f"Emails sent → {sent} success, {failed} failed",
+        "success"
+    )
+
     return redirect(url_for("draft.update_draft"))

@@ -19,9 +19,19 @@ SENDER = "ThrillBill@footballprophesy.com"
 
 
 # ==============================
+# SAFETY CHECK (IMPORTANT)
+# ==============================
+if not SMTP_USERNAME or not SMTP_PASSWORD:
+    raise ValueError("Missing Mailgun SMTP credentials in environment variables")
+
+
+# ==============================
 # CORE EMAIL SENDER
 # ==============================
 def send_email(msg, receiver):
+    """
+    Low-level SMTP sender using Mailgun
+    """
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls()
         server.login(SMTP_USERNAME, SMTP_PASSWORD)
@@ -49,7 +59,7 @@ Visit: https://footballprophesy.com
         <h2>Hi {user.name},</h2>
         <p>
           Thanks for signing up to <b>Football Prophesy</b>!<br><br>
-          Check out the events on the homepage and start making predictions today!
+          Start making predictions today on the platform.
         </p>
       </body>
     </html>
@@ -79,7 +89,7 @@ def send_password_reset_email(user, reset_link):
 
 We received a request to reset your password.
 
-Reset it here:
+Reset here:
 {reset_link}
 
 If you didn’t request this, ignore this email.
@@ -90,13 +100,15 @@ If you didn’t request this, ignore this email.
       <body>
         <h2>Hi {user.name},</h2>
         <p>We received a request to reset your password.</p>
+
         <p style="text-align:center;">
           <a href="{reset_link}" 
              style="background:#1E90FF;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">
              Reset Password
           </a>
         </p>
-        <p>If you didn’t request this, you can ignore this email.</p>
+
+        <p>If you didn’t request this, ignore this email.</p>
       </body>
     </html>
     """
@@ -113,7 +125,7 @@ If you didn’t request this, ignore this email.
 
 
 # ==============================
-# DRAFT EMAIL (BUILD + SEND)
+# DRAFT EMAIL BUILDER
 # ==============================
 def build_draft_email(user):
     msg = MIMEMultipart("alternative")
@@ -135,7 +147,7 @@ https://footballprophesy.com/draft
         <h2>Hi {user.name},</h2>
         <p>
           The Draft Prophesy is now available!<br><br>
-          Click <a href="https://footballprophesy.com/draft">here</a> to make your predictions!
+          Click <a href="https://footballprophesy.com/draft">here</a> to make your predictions.
         </p>
       </body>
     </html>
@@ -147,6 +159,9 @@ https://footballprophesy.com/draft
     return msg
 
 
+# ==============================
+# DRAFT EMAIL SENDER (SINGLE USER)
+# ==============================
 def send_draft_email(user):
     try:
         msg = build_draft_email(user)
@@ -171,6 +186,7 @@ def send_draft_email_to_all_users(batch_size=50, delay=0.5):
         users = User.query.offset(offset).limit(batch_size).all()
 
         for user in users:
+
             if not user.email:
                 continue
 
