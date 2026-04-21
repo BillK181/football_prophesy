@@ -11,6 +11,8 @@ from football_prophesy.models.prediction import Prediction
 from football_prophesy.models.comment import Comment
 from football_prophesy.models.score import Score
 from football_prophesy.extensions import db
+from football_prophesy.services.email_service import send_draft_email_to_all_users
+from football_prophesy.services.seed_service import seed_draft_players
 
 from football_prophesy.data.draft_profiles import PLAYERS_DATA
 
@@ -225,3 +227,30 @@ def update_draft():
         submit_text="Submit",
         page_name="draft",
     )
+
+# =========================
+# Admin Actions (Seed + Email)
+# =========================
+
+@draft_bp.route("/seed_players", methods=["POST"])
+@login_required
+@admin_required
+def seed_players():
+
+    added, skipped = seed_draft_players()
+
+    flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
+
+    return redirect(url_for("draft.update_draft"))
+
+
+@draft_bp.route("/send_draft_emails", methods=["POST"])
+@login_required
+@admin_required
+def send_draft_emails():
+
+    send_draft_email_to_all_users()
+
+    flash("Draft emails sent successfully", "success")
+
+    return redirect(url_for("draft.update_draft"))
