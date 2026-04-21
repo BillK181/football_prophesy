@@ -263,7 +263,7 @@ def seed_players():
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
     return redirect(url_for("draft.update_draft"))
 
-from football_prophesy.email_service import send_draft_email
+from football_prophesy.services.email_service import send_draft_email
 
 
 # =========================
