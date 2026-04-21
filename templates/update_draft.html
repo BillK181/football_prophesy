@@ -16,8 +16,9 @@
                 placeholder="tbd"
             >
         </div>
+    {% endfor %}
 
-        <hr>
+    <hr>
 
         <form method="POST" action="{{ url_for('draft.seed_players') }}">
             <button type="submit" class="btn btn-warning">
@@ -30,6 +31,5 @@
                 Send Draft Emails
             </button>
         </form>
-    {% endfor %}
-
+        
 {% endblock %}
