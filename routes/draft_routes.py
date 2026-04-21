@@ -229,42 +229,57 @@ def update_draft():
         page_name="draft",
     )
 
-@draft_bp.route("/seed_players", methods=["POST"])
-@login_required
-def seed_players():
-
-    print("🔥 SEED ROUTE HIT")  # DEBUG
-
-    db_players = Player.query.all()
-    existing = {p.name.strip().lower() for p in db_players}
-
-    added = 0
-    skipped = 0
-
-    for _, players_list in PLAYERS_DATA.items():
-        for p in players_list:
-
-            key = p["name"].strip().lower()
-
-            if key in existing:
-                skipped += 1
-                continue
-
-            db.session.add(Player(
-                name=p["name"].strip(),
-                actual_pick=None
-            ))
-
-            added += 1
-
-    db.session.commit()
-
-    print(f"Seed done: added={added}, skipped={skipped}")
-
-    flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
-    return redirect(url_for("draft.update_draft"))
+# =========================
+# EMAIL CONFIG (MAILGUN SMTP)
+# =========================
+SMTP_SERVER = "smtp.mailgun.org"
+SMTP_PORT = 587
+SMTP_USERNAME = os.environ.get("MAILGUN_SMTP_USER")
+SMTP_PASSWORD = os.environ.get("MAILGUN_SMTP_PASS")
+SENDER = "ThrillBill@footballprophesy.com"
 
 
+def send_email(msg, receiver):
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        server.sendmail(SENDER, receiver, msg.as_string())
+
+
+def build_draft_email(user):
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "Draft Prophesy Now Available 🏈"
+    msg["From"] = SENDER
+    msg["To"] = user.email
+
+    text = f"""Hi {user.name},
+
+The Draft Prophesy is now available!
+
+https://footballprophesy.com/draft
+"""
+
+    html = f"""
+    <html>
+      <body>
+        <h2>Hi {user.name},</h2>
+        <p>
+          The Draft Prophesy is now available!<br><br>
+          <a href="https://footballprophesy.com/draft">Click here to play</a>
+        </p>
+      </body>
+    </html>
+    """
+
+    msg.attach(MIMEText(text, "plain"))
+    msg.attach(MIMEText(html, "html"))
+
+    return msg
+
+
+# =========================
+# SEND DRAFT EMAIL TO ALL USERS
+# =========================
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
 def send_draft_emails():
@@ -275,25 +290,12 @@ def send_draft_emails():
     failed = 0
 
     for u in users:
-
         if not u.email:
             continue
 
         try:
-            msg = Message(
-                subject="Draft Prophesy Now Available 🏈",
-                sender="your_email@example.com",
-                recipients=[u.email]
-            )
-
-            msg.body = f"""Hi {u.name},
-
-The Draft Prophesy is now available!
-
-https://footballprophesy.com/draft
-"""
-
-            mail.send(msg)
+            msg = build_draft_email(u)
+            send_email(msg, u.email)
             sent += 1
 
         except Exception as e:
