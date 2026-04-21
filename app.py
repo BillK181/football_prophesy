@@ -12,7 +12,7 @@ from flask_login import LoginManager, current_user
 
 # ✅ FIX: package-level imports (required for Flask CLI)
 from football_prophesy.config import Config
-from football_prophesy.extensions import db, migrate
+from football_prophesy.extensions import db, migrate, mail
 from football_prophesy.services.route_tracking import init_app as init_route_tracking
 from football_prophesy.routes import register_blueprints
 
