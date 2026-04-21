@@ -1,14 +1,11 @@
-from app import app
-from extensions import db
-from models.player import Player
-from data.draft_profiles import PLAYERS_DATA
+from football_prophesy.app import create_app
+from football_prophesy.extensions import db
+from football_prophesy.models.player import Player
+from football_prophesy.data.draft_profiles import PLAYERS_DATA
 
 
 def seed_draft_players():
-    """
-    Seed database with players from PLAYERS_DATA.
-    Prevents duplicates and handles name normalization.
-    """
+    app = create_app()
 
     with app.app_context():
 
