@@ -2,17 +2,19 @@
 
 {% block prediction_form %}
 
+<form method="POST">
+
     {% for player in all_players %}
         <div class="form-group">
-            <label for="player_{{ loop.index }}">
+            <label for="player_{{ player.id }}">
                 {{ player.name }}
             </label>
 
             <input 
                 type="number"
                 name="actual_pick_{{ player.id }}"
-                id="player_{{ loop.index }}"
-                value="{{ actual_picks[player.id] if actual_picks[player.id] is not none else '' }}"
+                id="player_{{ player.id }}"
+                value="{{ actual_picks.get(player.id, '') }}"
                 placeholder="tbd"
             >
         </div>
@@ -20,16 +22,24 @@
 
     <hr>
 
-        <form method="POST" action="{{ url_for('draft.seed_players') }}">
-            <button type="submit" class="btn btn-warning">
-                Seed Players
-            </button>
-        </form>
+    <button type="submit" class="btn btn-success">
+        Save Picks
+    </button>
 
-        <form method="POST" action="{{ url_for('draft.send_draft_emails') }}">
-            <button type="submit" class="btn btn-primary">
-                Send Draft Emails
-            </button>
-        </form>
-        
+</form>
+
+<hr>
+
+<form method="POST" action="{{ url_for('draft.seed_players') }}">
+    <button type="submit" class="btn btn-warning">
+        Seed Players
+    </button>
+</form>
+
+<form method="POST" action="{{ url_for('draft.send_draft_emails') }}">
+    <button type="submit" class="btn btn-primary">
+        Send Draft Emails
+    </button>
+</form>
+
 {% endblock %}
