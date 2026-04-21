@@ -1,58 +1,26 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
+from collections import defaultdict
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from flask_mail import Message
 import traceback
+from football_prophesy.extensions import mail
 
-from football_prophesy.extensions import mail, db
 from football_prophesy.decorators import admin_required
-
 from football_prophesy.models.user import User
 from football_prophesy.models.player import Player
 from football_prophesy.models.prediction import Prediction
 from football_prophesy.models.comment import Comment
 from football_prophesy.models.score import Score
+from football_prophesy.extensions import db
 
 from football_prophesy.data.draft_profiles import PLAYERS_DATA
 
 
-# =========================
+
 # Blueprint
-# =========================
 draft_bp = Blueprint("draft", __name__, url_prefix="/draft")
-
-
-# =========================
-# SEED FUNCTION (REAL LOGIC)
-# =========================
-def seed_draft_players():
-    existing_players = {
-        p.name.strip().lower(): p
-        for p in Player.query.all()
-    }
-
-    added = 0
-    skipped = 0
-
-    for _, players_list in PLAYERS_DATA.items():
-        for p in players_list:
-
-            name_key = p["name"].strip().lower()
-
-            if name_key in existing_players:
-                skipped += 1
-                continue
-
-            db.session.add(Player(
-                name=p["name"].strip(),
-                actual_pick=None
-            ))
-
-            added += 1
-
-    db.session.commit()
-    return added, skipped
 
 
 # =========================
@@ -61,23 +29,26 @@ def seed_draft_players():
 @draft_bp.route("/")
 @login_required
 def draft():
-
+    # Get user
     user = current_user
 
+    # Get previous predictions first
     previous_preds = Prediction.query.filter_by(
         user_id=user.id,
         year=2026,
         section="draft"
     ).all()
 
-    previous_predictions = {
+    previous_predictions = { 
         pred.draft_position_group: pred.player_id
         for pred in previous_preds
     }
 
+    # Get players from db
     db_players = Player.query.all()
     players_by_name = {p.name: p for p in db_players}
 
+    # ✅ merge DB + static data safely
     players = {
         position: [
             {
@@ -91,54 +62,86 @@ def draft():
         for position, position_players in PLAYERS_DATA.items()
     }
 
-    actual_picks = {p.id: p.actual_pick for p in db_players}
+    # Actual pick data
+    actual_picks = {
+        player.id: player.actual_pick
+        for player in db_players
+    }
 
+    # Calculate total for only the players the user picked
     current_score = sum(
-        actual_picks.get(pid) or 0
-        for pid in previous_predictions.values()
+        actual_picks.get(player_id) or 0
+        for player_id in previous_predictions.values()
     )
 
-    comments = Comment.query.order_by(Comment.timestamp.desc()).all()
+    # Comments 
+    pages = ["draft"]
+    comments = Comment.query.filter(Comment.page.in_(pages)).order_by(Comment.timestamp.desc()).all()
+
+    # Leaderboard
     draft_leaderboard = Score.section_leaderboard(section="draft", limit=10)
 
     return render_template(
         "draft.html",
         user=user,
         page_title="Draft",
+        css_file="css/draft.css",
+        scoreboard_id="scoreboard",
+        leaderboard=draft_leaderboard,
+        results_url=url_for('account.user_draft_results', user_id=user.id),
+        prediction_title="2026 Draft Predictions",
+        instructions="Prophesy which player at each position will be drafted first",
+        form_action=url_for('draft.submit_draft'),
+        submit_text="Submit/Change Predictions",
+        page_name="draft",
+        comments=comments,
         players=players,
         db_players=db_players,
         previous_predictions=previous_predictions,
         current_score=current_score,
-        actual_picks=actual_picks,
-        comments=comments,
-        leaderboard=draft_leaderboard,
-        form_action=url_for('draft.submit_draft')
+        actual_picks=actual_picks
     )
 
 
 # =========================
-# SUBMIT DRAFT
+# Submit draft page
 # =========================
 @draft_bp.route("/submit_draft", methods=["POST"])
 @login_required
 def submit_draft():
-
+    # Get player data
     data = request.get_json(silent=True) or {}
+    
+    DRAFT_DEADLINE = datetime(2026, 4, 23, 20, 0, tzinfo=ZoneInfo("America/New_York"))
 
-    DEADLINE = datetime(2026, 4, 23, 20, 0, tzinfo=ZoneInfo("America/New_York"))
     now = datetime.now(ZoneInfo("America/New_York"))
 
-    if now >= DEADLINE:
-        return jsonify({"status": "error", "message": "Closed"}), 403
-
+    if now >= DRAFT_DEADLINE:
+        return jsonify({
+            "status": "error",
+            "message": "Draft submissions are closed."
+        }), 403
+    
+    # Get current user
     user = current_user
 
-    for position, player_id in data.items():
+    # All positions are required
+    required_positions = list(PLAYERS_DATA.keys())
 
+    # Check for missing selections
+    missing_positions = [pos for pos in required_positions if pos not in data]
+    if missing_positions:
+        return jsonify({
+            "status": "error",
+            "message": f"Please select a player for all positions. Missing: {', '.join(missing_positions)}"
+        }), 400
+
+    # Get existing predictions
+    for position, player_id in data.items():
         try:
             player_id = int(player_id)
-        except:
-            continue
+        except (ValueError, TypeError):
+            continue  # or return an error
 
         pred = Prediction.query.filter_by(
             user_id=user.id,
@@ -150,76 +153,119 @@ def submit_draft():
         if pred:
             pred.player_id = player_id
         else:
-            db.session.add(Prediction(
+            pred = Prediction(
                 user_id=user.id,
                 year=2026,
                 section="draft",
                 draft_position_group=position,
                 player_id=player_id
-            ))
+            )
+            db.session.add(pred)
 
     db.session.commit()
-
-    return jsonify({"status": "ok"})
-
+    return jsonify({
+        "status": "ok",
+        "message": "Predictions submitted successfully!"
+    })
 
 # =========================
-# UPDATE DRAFT (ADMIN)
+# Update draft page
 # =========================
 @draft_bp.route("/update_draft", methods=["GET", "POST"])
 @login_required
 @admin_required
 def update_draft():
 
+    # 1) Map static draft list to DB players
     db_players = Player.query.all()
+    players_by_name = {p.name: p for p in db_players}
 
     all_players = []
 
-    for _, players_list in PLAYERS_DATA.items():
-        for p in players_list:
-            match = next((dbp for dbp in db_players if dbp.name == p["name"]), None)
-            if match:
-                all_players.append(match)
+    for position, position_players in PLAYERS_DATA.items():
+        for p in position_players:
 
+            db_player = players_by_name.get(p["name"])
+            if not db_player:
+                continue
+
+            all_players.append(db_player)  # keep ORM objects
+
+    # =========================
+    # POST
+    # =========================
     if request.method == "POST":
 
         for player in all_players:
-            value = request.form.get(f"actual_pick_{player.id}")
+
+            field_name = f"actual_pick_{player.id}"
+            submitted_value = request.form.get(field_name)
 
             try:
-                player.actual_pick = int(value) if value else None
-            except:
-                player.actual_pick = None
+                new_value = int(submitted_value) if submitted_value else None
+            except ValueError:
+                new_value = None
+
+            player.actual_pick = new_value
 
         db.session.commit()
         return redirect(url_for("draft.update_draft"))
 
+    # =========================
+    # GET
+    # =========================
+    actual_picks = {
+        player.id: player.actual_pick
+        for player in all_players
+    }
+
     return render_template(
         "update_draft.html",
-        all_players=all_players
+        all_players=all_players,
+        actual_picks=actual_picks,
+        page_title="Update Draft",
+        css_file="css/update_draft.css",
+        submit_text="Submit",
+        page_name="draft",
     )
 
-
-# =========================
-# SEED ROUTE (NOW CLEAN)
-# =========================
 @draft_bp.route("/seed_players", methods=["POST"])
 @login_required
-@admin_required
 def seed_players():
 
-    added, skipped = seed_draft_players()
+    print("🔥 SEED ROUTE HIT")  # DEBUG
+
+    db_players = Player.query.all()
+    existing = {p.name.strip().lower() for p in db_players}
+
+    added = 0
+    skipped = 0
+
+    for _, players_list in PLAYERS_DATA.items():
+        for p in players_list:
+
+            key = p["name"].strip().lower()
+
+            if key in existing:
+                skipped += 1
+                continue
+
+            db.session.add(Player(
+                name=p["name"].strip(),
+                actual_pick=None
+            ))
+
+            added += 1
+
+    db.session.commit()
+
+    print(f"Seed done: added={added}, skipped={skipped}")
 
     flash(f"Seed complete → Added: {added}, Skipped: {skipped}", "success")
     return redirect(url_for("draft.update_draft"))
 
-
-# =========================
-# EMAIL ROUTE
-# =========================
 @draft_bp.route("/send_draft_emails", methods=["POST"])
 @login_required
-@admin_required
 def send_draft_emails():
 
     users = User.query.all()
@@ -235,7 +281,7 @@ def send_draft_emails():
         try:
             msg = Message(
                 subject="Draft Prophesy Now Available 🏈",
-                sender="ThrillBill@footballprophesy.com",
+                sender="your_email@example.com",
                 recipients=[u.email]
             )
 
