@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Draft Review | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/draft_review.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h2>All Users' Draft Review</h2>
+
+{% for entry in draft_data %}
+
+  <h2>
+    {{ entry.user.username }} — {{ entry.points }} pts
+  </h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Player</th>
+        <th>Pick</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for pred in entry.picks %}
+      <tr>
+        <td>{{ pred.draft_position_group }}</td>
+        <td>{{ pred.player.name if pred.player else '' }}</td>
+        <td>{{ pred.player.actual_pick if pred.player else '' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+{% endfor %}
+
+{% endblock %}

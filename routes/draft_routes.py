@@ -73,6 +73,8 @@ def draft():
         for player_id in previous_predictions.values()
     )
 
+    points = 1000 - current_score
+
     # Comments 
     pages = ["draft"]
     comments = Comment.query.filter(Comment.page.in_(pages)).order_by(Comment.timestamp.desc()).all()
@@ -98,7 +100,8 @@ def draft():
         db_players=db_players,
         previous_predictions=previous_predictions,
         current_score=current_score,
-        actual_picks=actual_picks
+        actual_picks=actual_picks,
+        points=points
     )
 
 
@@ -208,6 +211,14 @@ def update_draft():
             player.actual_pick = new_value
 
         db.session.commit()
+
+        # 🔥 RECALC SCORES AFTER ADMIN UPDATE
+        from football_prophesy.services.scoring import recalc_scores
+
+        recalc_scores(year=2026)
+
+        flash("Draft updated + scores recalculated!", "success")
+
         return redirect(url_for("draft.update_draft"))
 
     # =========================

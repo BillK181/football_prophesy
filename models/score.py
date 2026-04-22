@@ -24,26 +24,26 @@ class Score(db.Model):
         """
         Update this section's points, and total points for the user.
         """
-        # Use User.total_points to calculate section points
         user = User.query.get(self.user_id)
-        if user:
-            # Section points
-            self.points = user.total_points(
-                year=self.year,
-                section=self.section,
-                combine_results=combine_results,
-                position_drill_map=position_drill_map,
-                free_agency_results=free_agency_results
-            )
+        if not user:
+            return
 
-            # Total points across all sections
-            self.total_points = user.total_points(
-                year=self.year,
-                section=None,  # None means sum across all sections
-                combine_results=combine_results,
-                position_drill_map=position_drill_map,
-                free_agency_results=free_agency_results
-            )
+        # ❌ Skip draft (handled separately)
+        if self.section == "draft":
+            return
+
+        # ✅ Section points (non-draft only)
+        self.points = user.total_points(
+            year=self.year,
+            section=self.section,
+            combine_results=combine_results,
+            position_drill_map=position_drill_map,
+            free_agency_results=free_agency_results
+        )
+
+        # ✅ Total points (this will include draft AFTER recalc_scores runs)
+        scores = Score.query.filter_by(user_id=self.user_id, year=self.year).all()
+        self.total_points = sum(s.points for s in scores)
     
     @classmethod
     def update_ranks(cls, users, section=None, year=2026):

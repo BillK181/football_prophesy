@@ -114,7 +114,7 @@
 
 .flash-container {
     width: 75%;
-    margin: 0 auto 1em auto; /* top 0, left/right auto, bottom 1em */
+    margin: 0 auto 0 auto; /* top 0, left/right auto, bottom 1em */
 }
 
 .flash.info {
@@ -124,6 +124,12 @@
     border-radius: 5px;
 }
 
+.flash.warning {
+    background-color: var(--color-accent); /* or any contrast color */
+    color: var(--color-secondary);
+    padding: 10px;
+    border-radius: 5px;
+}
 
 /* Responsive adjustments */
 @media (max-width: 600px) {

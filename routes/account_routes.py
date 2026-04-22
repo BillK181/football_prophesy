@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_required, current_user
 from football_prophesy.models import User, Prediction, Score
+from datetime import datetime, timezone
 
 from football_prophesy.data.free_agency_players import FREE_AGENCY_PLAYERS
 from football_prophesy.data.free_agency_results import FREE_AGENCY_RESULTS
@@ -195,19 +196,67 @@ def free_agency_review(user_id):
     )
 
 # -------------------------
+# DRAFT REVIEW
+# -------------------------
+@account_bp.route("/account/<int:user_id>/draft")
+@login_required
+def user_draft_results(user_id):
+    user = current_user
+
+    LOCK_TIME_UTC = datetime(2026, 4, 24, 0, 0, 0, tzinfo=timezone.utc)
+
+    now = datetime.now(timezone.utc)
+
+    if now < LOCK_TIME_UTC and not user.is_admin:
+        flash("Draft review is locked until April 23rd at 5PM PST.", "warning")
+        return redirect(url_for("account.account", user_id=user_id))
+
+    users = User.query.all()
+
+    draft_data = []
+
+    for user in users:
+
+        # get all draft predictions for this user
+        predictions = (
+            Prediction.query
+            .filter_by(user_id=user.id, section="draft")
+            .join(Prediction.player)
+            .all()
+        )
+
+        # --- compute draft points ---
+        # ✅ GET REAL DRAFT POINTS FROM SCORE TABLE
+        score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="draft"
+        ).first()
+
+        points = score.points if score else 0
+
+        draft_data.append({
+            "user": user,
+            "points": points,
+            "picks": sorted(
+                predictions,
+                key=lambda x: (x.player.actual_pick if x.player and x.player.actual_pick is not None else 999)
+            )
+        })
+
+    # sort leaderboard
+    draft_data.sort(key=lambda x: x["points"], reverse=True)
+
+    return render_template(
+        "draft_review.html",
+        draft_data=draft_data
+    )
+
+# -------------------------
 # NOT IMPLEMENTED PAGES
 # -------------------------
 # - These routes are placeholders for future features.
 # - Each flashes a message and redirects back to main account page.
-@account_bp.route("/account/<int:user_id>/draft")
-@login_required
-def user_draft_results(user_id):
-
-    user = User.query.get_or_404(user_id)
-
-    flash("Draft results are not implemented yet.", "info")
-
-    return redirect(url_for("account.account", user_id=user.id))
 
 
 @account_bp.route("/account/<int:user_id>/schedule_release")
