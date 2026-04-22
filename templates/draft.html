@@ -5,13 +5,7 @@
 <h3>Players recieve a score equivalent to their draft selection number</h3>
 <h3>All selected players will be combined into a final total</h3>
 <h3>Lower total = Higher Score!</h3>
-<h3>400 or Less = 100 Points <br>
-    401-500 = 90 Points <br>
-    501-550 = 75 Points <br>
-    551-600 = 50 Points <br>
-    601-650 = 25 Points <br>
-    650-700 = 10 Points <br>
-    701+ = 0 Points <br>
+<h3>1000 - {{ current_score }} = Draft Points
 </h3>
 <h3>{{ user.username }}'s Current Total = {{ current_score }}</h3>
 {% for position, position_players in players.items() %}
