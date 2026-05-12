@@ -5,6 +5,7 @@ from football_prophesy.models.player import Player
 
 from football_prophesy.extensions import db
 
+SYSTEM_USER_ID = 0
 
 # =========================================================
 # MAIN RECALC FUNCTION (ONLY DRAFT IS ACTIVE)
@@ -153,5 +154,102 @@ def recalc_draft_scores(year=2026):
 
     # Update draft ranks only
     Score.update_ranks(users, section="draft", year=year)
+
+    db.session.commit()
+
+
+
+def recalc_schedule_release_scores(year=2026, actual_results=None):
+
+    users = User.query.all()
+
+    # ------------------------
+    # Ensure score rows exist
+    # ------------------------
+    for user in users:
+        score = Score.query.filter_by(
+            user_id=user.id,
+            section="schedule_release",
+            year=year
+        ).first()
+
+        if not score:
+            db.session.add(Score(
+                user_id=user.id,
+                section="schedule_release",
+                year=year
+            ))
+
+    db.session.commit()
+
+    # ------------------------
+    # GET CORRECT ANSWERS
+    # ------------------------
+    correct = Prediction.query.filter_by(
+        user_id=SYSTEM_USER_ID,
+        year=year,
+        section="schedule_release"
+    ).first()
+
+    correct_answers = correct.correct_schedule_preds if correct else {}
+
+    # ------------------------
+    # GET SCORES (DEFINE FIRST!)
+    # ------------------------
+    schedule_scores = Score.query.filter_by(
+        year=year,
+        section="schedule_release"
+    ).all()
+
+    # ------------------------
+    # UPDATE SCORE TABLE
+    # ------------------------
+    for score in schedule_scores:
+        user_preds = Prediction.query.filter_by(
+            user_id=score.user_id,
+            year=year,
+            section="schedule_release"
+        ).all()
+
+        score.points = sum(
+            p.calculate_points(schedule_correct=correct_answers)
+            for p in user_preds
+        )
+
+    db.session.commit()
+
+    # ------------------------
+    # UPDATE PREDICTIONS (optional but fine)
+    # ------------------------
+    predictions = Prediction.query.filter_by(
+        year=year,
+        section="schedule_release"
+    ).all()
+
+    for pred in predictions:
+        pred.correct_schedule_preds = correct_answers
+
+    db.session.commit()
+
+    # ------------------------
+    # RECALCULATE TOTALS
+    # ------------------------
+    for user in users:
+        scores = Score.query.filter_by(
+            user_id=user.id,
+            year=year
+        ).all()
+
+        total = sum(s.points for s in scores)
+
+        for s in scores:
+            s.total_points = total
+
+    db.session.commit()
+
+    # ------------------------
+    # UPDATE RANKS
+    # ------------------------
+    Score.update_ranks(users, section=None, year=year)
 
     db.session.commit()

@@ -1,0 +1,135 @@
+/* =========================
+   COLOR THEME
+========================= */
+:root {
+    --color-primary: #efc588;
+    --color-secondary: #9c6e56;
+    --color-background: #efc588;
+    --color-accent: #d9b00e;
+}
+
+/* =========================
+   ADMIN PAGE WRAPPER
+========================= */
+.admin-panel {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 25px 30px;
+
+    /* theme-based background */
+    background: var(--color-primary);
+
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    font-family: Arial, sans-serif;
+
+    /* IMPORTANT: ensure text is visible */
+    color: #2b1d16;
+}
+
+/* =========================
+   HEADINGS
+========================= */
+.admin-panel h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+
+    color: var(--color-secondary);
+}
+
+/* =========================
+   LABELS
+========================= */
+.admin-panel label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 700;
+
+    color: #3a241a;
+}
+
+/* =========================
+   SELECT DROPDOWNS
+========================= */
+.admin-panel select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+
+    border: 1px solid rgba(156, 110, 86, 0.4);
+    background: rgba(255, 255, 255, 0.6);
+
+    font-size: 14px;
+
+    color: #2b1d16;
+
+    transition: 0.2s ease;
+}
+
+.admin-panel select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(217, 176, 14, 0.25);
+    background: #fff;
+}
+
+/* =========================
+   FORM LAYOUT
+========================= */
+.admin-panel form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.admin-panel button {
+    margin-top: 25px;
+    padding: 12px 16px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: var(--color-accent);
+    color: #2b1d16;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.admin-panel button:hover {
+    background: #c79d0c;
+}
+
+.admin-panel button:active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   UNAUTHORIZED STATE
+========================= */
+.admin-panel h2,
+.admin-panel p {
+    text-align: center;
+}
+
+.admin-panel p {
+    color: #3a241a;
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 600px) {
+    .admin-panel {
+        margin: 20px;
+        padding: 20px;
+    }
+}

@@ -1,0 +1,150 @@
+:root {
+    /* Colors */
+    --color-primary: #efc588;
+    --color-secondary: #9c6e56;
+    --color-background: #efc588;
+    --color-accent: #d9b00e;
+}
+
+/* =========================
+   PAGE WRAPPER
+========================= */
+.schedule-release {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px 25px;
+
+    font-family: Arial, sans-serif;
+    color: var(--color-secondary);
+}
+
+/* =========================
+   MAIN CARD
+========================= */
+.snf {
+    background: var(--color-primary);
+    padding: 25px;
+    border-radius: 16px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   HEADINGS
+========================= */
+.snf h2 {
+    text-align: center;
+    margin: 25px 0 20px;
+
+    font-size: 24px;
+    color: var(--color-secondary);
+}
+
+/* =========================
+   SNF ROWS
+========================= */
+.snf-prediction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.55);
+    padding: 12px 14px;
+    border-radius: 10px;
+
+    border: 1px solid rgba(156, 110, 86, 0.25);
+}
+
+/* =========================
+   LABELS
+========================= */
+.snf-prediction label {
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+/* =========================
+   DROPDOWNS
+========================= */
+.snf-prediction select {
+    padding: 8px 10px;
+    border-radius: 8px;
+
+    border: 1px solid var(--color-secondary);
+    background: rgba(255, 255, 255, 0.8);
+
+    font-size: 14px;
+    color: var(--color-secondary);
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.snf-prediction select:focus {
+    outline: none;
+
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(217, 176, 14, 0.25);
+
+    background: #fff;
+}
+
+/* =========================
+   THANKSGIVING SECTION
+========================= */
+.thgprediction {
+    margin-top: 30px;
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(156, 110, 86, 0.25);
+}
+
+/* =========================
+   THANKSGIVING LABEL
+========================= */
+.thgprediction label {
+    display: block;
+    margin-bottom: 10px;
+
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+/* =========================
+   THANKSGIVING SELECT
+========================= */
+.thgprediction select {
+    width: 100%;
+    padding: 10px;
+
+    border-radius: 8px;
+
+    border: 1px solid var(--color-secondary);
+    background: rgba(255, 255, 255, 0.8);
+
+    font-size: 14px;
+    color: var(--color-secondary);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 600px) {
+
+    .schedule-release {
+        padding: 15px;
+    }
+
+    .snf-prediction {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .snf-prediction select {
+        width: 100%;
+    }
+}

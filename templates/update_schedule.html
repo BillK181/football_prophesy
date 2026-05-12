@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/update_schedule.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% if not is_admin %}
+
+  <h2>Unauthorized</h2>
+  <p>You are not allowed to view this page.</p>
+
+{% else %}
+
+<div class="admin-panel">
+
+  <h2>Update Schedule Release Correct Answers</h2>
+
+  <form method="POST" action="{{ url_for('schedule.update_schedule') }}">
+
+    <label>Patriots</label>
+    <select name="patriots_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>49ers</label>
+    <select name="niners_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Steelers</label>
+    <select name="steelers_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Chargers</label>
+    <select name="chargers_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Chiefs</label>
+    <select name="chiefs_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Bears</label>
+    <select name="bears_snf_correct">
+      <option value="">None</option>
+      {% for i in range(0, 8) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Lions Thanksgiving Opponent</label>
+    <select name="lions_thg_correct">
+      <option value="">None</option>
+      {% for i in range(1, 10) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+
+    <br><br>
+
+    <button type="submit">Save Correct Answers</button>
+
+  </form>
+
+  <br>
+
+  <p>
+    1 = Bears <br>
+    2 = Packers <br>
+    3 = Vikings <br>
+    4 = Saints <br>
+    5 = Buccaneers <br>
+    6 = Patriots <br>
+    7 = Jets <br>
+    8 = Titans <br>
+    9 = Giants
+  </p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

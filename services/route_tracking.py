@@ -53,19 +53,14 @@ def init_app(app: Flask):
 
     @app.teardown_request
     def commit_route_usage(exception=None):
-        """
-        Commit all route usage records stored in g.
-        Handles rollback on failure.
-        """
 
-        # Check if g.route_usage_to_commit exists
+        if exception:
+            db.session.rollback()
+            return
+
         if hasattr(g, "route_usage_to_commit"):
-            # For each usage record in the list, merge it into the session
-            for usage in g.route_usage_to_commit:
-                db.session.merge(usage)
-            # Commit all changes in a try/except block
             try:
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
-                print(f"[RouteTracking] Failed to commit route usage: {e}")
+                print(f"[RouteTracking] commit failed: {e}")

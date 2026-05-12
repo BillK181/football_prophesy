@@ -1,34 +1,98 @@
-{% extends "base.html" %}
+{% extends "predictions_base.html" %}
 
-{% block title %}
-Coming Soon | Football Prophesy
-{% endblock %}
+{% block prediction_form %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
-{% endblock %}
+{% set prev = previous_predictions or {} %}
 
-{% block content %}
+<div class="schedule-release">
 
-<section class="coming-soon-container">
-    <h1>Coming Soon!</h1>
-    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
+  <div class="snf">
 
-    <div class="tentative-scoring">
-        <h2>Tentative Scoring</h2>
-        <ul>
-            <li>Predict Which Teams Will Have 7+, 6, 5, 4, 3, 2, 1, and 0 Primetime Games
-                <ul>
-                    <li>2 pts per team correctly guessed</li>
-                </ul>
-            </li>
-            <li>Predict Thanksgiving Day Matchups
-                <ul>
-                    <li>5 pts per team correctly guessed (Lions and Cowboys do not count)</li>
-                </ul>
-            </li>
-        </ul>
+    <h2>Prophesy How Many Primetime Games</h2>
+
+    <div class="snf-prediction">
+      <label>Patriots</label>
+      <select name="patriots_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('patriots_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
     </div>
-</section>
+
+    <div class="snf-prediction">
+      <label>49ers</label>
+      <select name="niners_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('niners_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="snf-prediction">
+      <label>Steelers</label>
+      <select name="steelers_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('steelers_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="snf-prediction">
+      <label>Chargers</label>
+      <select name="chargers_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('chargers_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="snf-prediction">
+      <label>Chiefs</label>
+      <select name="chiefs_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('chiefs_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="snf-prediction">
+      <label>Bears</label>
+      <select name="bears_snf">
+        <option value="">--</option>
+        {% for i in range(0, 8) %}
+          <option value="{{ i }}" {% if prev.get('bears_snf') == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <h2>Prophesy Who Will Play on Thanksgiving</h2>
+
+        <div class="thgprediction">
+        <label>Lions Thanksgiving Opponent</label>
+
+        <select name="lions_thg">
+            <option value="" {% if prev.get('lions_thg') is none %}selected{% endif %}>--</option>
+
+            <option value="1" {% if prev.get('lions_thg') == 1 %}selected{% endif %}>Bears</option>
+            <option value="2" {% if prev.get('lions_thg') == 2 %}selected{% endif %}>Packers</option>
+            <option value="3" {% if prev.get('lions_thg') == 3 %}selected{% endif %}>Vikings</option>
+            <option value="4" {% if prev.get('lions_thg') == 4 %}selected{% endif %}>Saints</option>
+            <option value="5" {% if prev.get('lions_thg') == 5 %}selected{% endif %}>Buccaneers</option>
+            <option value="6" {% if prev.get('lions_thg') == 6 %}selected{% endif %}>Patriots</option>
+            <option value="7" {% if prev.get('lions_thg') == 7 %}selected{% endif %}>Jets</option>
+            <option value="8" {% if prev.get('lions_thg') == 8 %}selected{% endif %}>Titans</option>
+            <option value="9" {% if prev.get('lions_thg') == 9 %}selected{% endif %}>Giants</option>
+
+        </select>
+        </div>
+
+  </div>
+
+</div>
 
 {% endblock %}

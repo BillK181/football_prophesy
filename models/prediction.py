@@ -1,4 +1,5 @@
 from football_prophesy.extensions import db
+from sqlalchemy import JSON
 
 class Prediction(db.Model):
     __tablename__ = "prediction"
@@ -7,9 +8,13 @@ class Prediction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     year = db.Column(db.Integer, default=2026)
     section = db.Column(db.String(50), default="scouting_combine")
-    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=True)
     player = db.relationship("Player")
     player_name = db.Column(db.String(100), nullable=True)
+
+    # Schedule release
+    schedule_preds = db.Column(db.JSON, nullable=True)
+    correct_schedule_preds = db.Column(db.JSON, nullable=True)
 
     # Draft fields
     draft_position_group = db.Column(db.String(50), nullable=True)
@@ -24,10 +29,11 @@ class Prediction(db.Model):
     place = db.Column(db.Integer, nullable=True)
 
 
+
     # ------------------------
     # Scoring
     # ------------------------
-    def calculate_points(self, combine_results=None, position_drill_map=None, free_agency_results=None):
+    def calculate_points(self, combine_results=None, position_drill_map=None, free_agency_results=None, schedule_correct=None):
         """
         Calculate points for this prediction based on its section.
         
@@ -73,6 +79,28 @@ class Prediction(db.Model):
         # -----------------------------
         elif self.section == "draft":
             return 0  # handled by Score system
+        
+
+        # -----------------------------
+        # Schedule Release Section
+        # -----------------------------
+        elif self.section == "schedule_release":
+            if not self.schedule_preds or not self.correct_schedule_preds:
+                return 0
+
+            points = 0
+
+            for team, predicted_value in self.schedule_preds.items():
+                actual_value = self.correct_schedule_preds.get(team)
+
+                if actual_value is None:
+                    continue
+
+                if predicted_value == actual_value:
+                    points += 10
+
+            return points
+            
 
         # -----------------------------
         # Unknown section → no points

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, render_template
+from flask import Blueprint, request, session, render_template, redirect, url_for
 from flask_login import current_user
 from football_prophesy.models.user import User
 from football_prophesy.models.score import Score
@@ -48,7 +48,7 @@ def index():
 # =========================
 @main_bp.route("/schedule_release")
 def schedule_release():
-    return render_template("schedule_release.html", players=SCOUTING_COMBINE_PLAYERS)
+    return redirect(url_for("schedule.schedule_release"))
 
 
 @main_bp.route("/preseason")
