@@ -97,6 +97,21 @@
 
 </div>
 
+<br><br>
+
+<form method="POST" action="{{ url_for('schedule.send_schedule_emails') }}" style="text-align:center;">
+    <button type="submit" style="
+        background:#1E90FF;
+        color:white;
+        padding:10px 18px;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        margin-bottom: 30px;
+    ">
+        Send Schedule Release Email to All Users
+    </button>
+</form>
 {% endif %}
 
 {% endblock %}

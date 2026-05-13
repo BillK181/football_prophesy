@@ -29,10 +29,17 @@
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required>
         </div>
-
-        <button type="submit">Login</button>
+        <button type="submit" class="login-btn">Login</button>
     </form>
 
     <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+
+    <p>Forgot password?</p> 
+    <form method="POST" action="{{ url_for('auth.request_password_reset') }}">
+        <div class="password_reset">
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="email" required>
+        </div>
+    <button type="submit" class="reset-btn">Send Password Reset</button>
 </section>
 {% endblock %}

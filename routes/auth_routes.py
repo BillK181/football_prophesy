@@ -1,8 +1,10 @@
-from flask import Blueprint, request, redirect, url_for, flash, render_template, session
+from flask import Blueprint, request, redirect, url_for, flash, render_template, session, current_app
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy import func
 from football_prophesy.models import db
 from football_prophesy.models.user import User
+from football_prophesy.services.email_service import send_password_reset_email
+from itsdangerous import URLSafeTimedSerializer
 
 # Optional imports
 from football_prophesy.services.email_service import send_welcome_email
@@ -106,3 +108,76 @@ def logout():
     logout_user()  # tells Flask-Login to remove authentication
     flash("Logged out successfully!", "success")
     return redirect(url_for("auth.login"))
+
+# =========================
+# PASSWORD RESET REQUEST
+# =========================
+@auth_bp.route("/request-password-reset", methods=["POST"])
+def request_password_reset():
+    serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+
+    email = request.form.get("email")
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("If that email exists, a reset link has been sent.")
+        return redirect(url_for("auth.login"))
+
+    # generate token
+    token = serializer.dumps(user.email, salt="password-reset")
+
+    reset_link = url_for(
+        "auth.reset_password",
+        token=token,
+        _external=True
+    )
+
+    send_password_reset_email(user, reset_link)
+
+    flash("If that email exists, a reset link has been sent.")
+    return redirect(url_for("auth.login"))
+
+
+# =========================
+# PASSWORD RESET
+# =========================
+@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    from flask import current_app
+    serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+
+    try:
+        email = serializer.loads(token, salt="password-reset", max_age=3600)
+    except Exception:
+        flash("Invalid or expired link.", "danger")
+        return redirect(url_for("auth.login"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("Invalid user.", "danger")
+        return redirect(url_for("auth.login"))
+
+    if request.method == "POST":
+        new_password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # ✅ Check passwords match
+        if new_password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(request.url)
+
+        # ✅ Optional: enforce minimum length
+        if len(new_password) < 6:
+            flash("Password must be at least 6 characters.", "danger")
+            return redirect(request.url)
+
+        # ✅ Save new password
+        user.set_password(new_password)
+        db.session.commit()
+
+        flash("Password updated!", "success")
+        return redirect(url_for("auth.login"))
+
+    return render_template("reset_password.html")

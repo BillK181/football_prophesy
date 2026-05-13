@@ -11,6 +11,7 @@ from football_prophesy.data.combine_map import POSITION_DRILL_MAP
 from football_prophesy.data.scouting_combine_participants import SCOUTING_COMBINE_PLAYERS
 from football_prophesy.services.scoring import recalc_schedule_release_scores
 from football_prophesy.decorators import admin_required
+from football_prophesy.services.email_service import send_schedule_release_email_to_all_users
 
 
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule-release")
@@ -27,7 +28,7 @@ def safe_int(value):
 
 
 # =========================
-# PAGE
+# SCHEDULE RELEASE PAGE
 # =========================
 @schedule_bp.route("/")
 @login_required
@@ -91,7 +92,7 @@ def schedule_release():
 
 
 # =========================
-# USER SUBMIT
+# SUBMIT SCHEDULE
 # =========================
 @schedule_bp.route("/submit", methods=["POST"])
 @login_required
@@ -140,6 +141,19 @@ def submit_schedule():
     return redirect(url_for("schedule.schedule_release"))
 
 
+# =========================
+# ADMIN PAGE
+# =========================
+@schedule_bp.route("/admin", methods=["GET"])
+@login_required
+@admin_required
+def update_schedule_page():
+    return render_template("update_schedule.html", is_admin=True)
+
+
+# =========================
+# UPDATE SCHEDULE
+# =========================
 @schedule_bp.route("/update_schedule", methods=["POST"])
 @login_required
 @admin_required
@@ -202,12 +216,15 @@ def update_schedule():
     return redirect(url_for("schedule.schedule_release"))
 
 
-
-
-
-
-@schedule_bp.route("/admin", methods=["GET"])
+# =========================
+# SEND SCHEDULE EMAILS
+# =========================
+@schedule_bp.route("/send_schedule_emails", methods=["POST"])
 @login_required
 @admin_required
-def update_schedule_page():
-    return render_template("update_schedule.html", is_admin=True)
+def send_schedule_emails():
+
+    send_schedule_release_email_to_all_users()
+
+    flash("Schedule Release emails sent to all users!", "success")
+    return redirect(url_for("schedule.update_schedule_page"))

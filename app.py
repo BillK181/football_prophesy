@@ -9,6 +9,7 @@ Key rules fixed here:
 
 from flask import Flask
 from flask_login import LoginManager, current_user
+from dotenv import load_dotenv
 
 # ✅ FIX: package-level imports (required for Flask CLI)
 from football_prophesy.config import Config
@@ -21,6 +22,7 @@ def create_app():
     # -------------------------
     # 1. Create Flask app
     # -------------------------
+    load_dotenv()
     app = Flask(__name__)
 
     # -------------------------
