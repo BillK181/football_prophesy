@@ -98,7 +98,7 @@ def schedule_release():
 @login_required
 def submit_schedule():
 
-    schedule_deadline = datetime(2026, 5, 13, 23, 0)
+    schedule_deadline = datetime(2026, 5, 14, 13, 0)
 
     if datetime.utcnow() > schedule_deadline:
         flash("Schedule Release predictions are now closed.", "danger")

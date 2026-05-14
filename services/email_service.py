@@ -178,21 +178,20 @@ def send_draft_email(user):
 # ==============================
 def build_schedule_release_email(user):
     return make_email(
-        "Schedule Release is Live 🏈",
+        "Schedule Release is Back Live 🏈",
         user,
         f"""Hi {user.name},
 
-The NFL Schedule Release is now live!
-
-https://footballprophesy.com/schedule
+After a short outage the Schedule Release section now once again allows submissions. Be sure to submit before 6am PST May 14th!
+https://www.footballprophesy.com/schedule
 """,
         f"""
         <html>
           <body>
             <h2>Hi {user.name},</h2>
             <p>
-              The schedule is now live!<br><br>
-              <a href="https://footballprophesy.com/schedule">
+              After a short outage the Schedule Release section now once again allows submissions. Be sure to submit before 6am PST May 14th!<br><br>
+              <a href="https://www.footballprophesy.com/schedule">
                 View Schedule
               </a>
             </p>
