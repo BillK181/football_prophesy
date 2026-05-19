@@ -14,6 +14,7 @@ def register_blueprints(app: Flask):
     from .free_agency_routes import free_agency_bp
     from .main_routes import main_bp
     from .schedule_release_routes import schedule_bp
+    from .sleeper_api import sleeper_api
 
     # Register blueprints
     app.register_blueprint(account_bp)
@@ -24,4 +25,5 @@ def register_blueprints(app: Flask):
     app.register_blueprint(free_agency_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(schedule_bp)
+    app.register_blueprint(sleeper_api)
 
