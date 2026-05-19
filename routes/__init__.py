@@ -25,5 +25,5 @@ def register_blueprints(app: Flask):
     app.register_blueprint(free_agency_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(schedule_bp)
-    app.register_blueprint(sleeper_api)
+    app.register_blueprint(sleeper_api, url_prefix="/api")
 

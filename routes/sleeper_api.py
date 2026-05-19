@@ -12,7 +12,7 @@ CORS(sleeper_api)
 # =========================
 # GET LEAGUES
 # =========================
-@sleeper_api.route("/api/sleeper/leagues", methods=["GET"])
+@sleeper_api.route("/sleeper/leagues", methods=["GET"])
 def leagues():
 
     username = request.args.get("username")
@@ -44,7 +44,7 @@ def leagues():
 # =========================
 # GET MATCHUP
 # =========================
-@sleeper_api.route("/api/sleeper/matchup", methods=["GET"])
+@sleeper_api.route("/sleeper/matchup", methods=["GET"])
 def matchup():
 
     try:
