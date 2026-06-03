@@ -10,6 +10,7 @@ Key rules fixed here:
 from flask import Flask
 from flask_login import LoginManager, current_user
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 # ✅ FIX: package-level imports (required for Flask CLI)
 from football_prophesy.config import Config
@@ -24,6 +25,7 @@ def create_app():
     # -------------------------
     load_dotenv()
     app = Flask(__name__)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # -------------------------
     # 2. Load config
