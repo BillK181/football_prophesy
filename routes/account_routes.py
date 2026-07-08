@@ -20,34 +20,46 @@ account_bp = Blueprint("account", __name__)
 @account_bp.route("/account/<int:user_id>")
 @login_required
 def account(user_id):
-    # - Displays the main account page for a given user
-    # - Requires login
 
-    # Fetch user by ID, 404 if not found
-    user = current_user
+    user = User.query.get_or_404(user_id)
 
-    score = Score.query.filter_by(
+    leaderboard = Score.section_leaderboard()
+
+    user_entry = next(
+        (
+            entry
+            for entry in leaderboard
+            if entry["user"].id == user.id
+        ),
+        None
+    )
+
+    total = user_entry["points"] if user_entry else 0
+    rank = user_entry["rank"] if user_entry else None
+
+    combine_score = Score.query.filter_by(
         user_id=user.id,
-        year=2026
+        year=2026,
+        section="scouting_combine"
     ).first()
-
-    total = score.total_points if score else 0
-    rank = score.rank if score else None
-
-    # Fetch scores per section
-    combine_score = Score.query.filter_by(user_id=user.id, year=2026, section="scouting_combine").first()
     combine_points = combine_score.points if combine_score else 0
 
-    free_agency_score = Score.query.filter_by(user_id=user.id, year=2026, section="free_agency").first()
+    free_agency_score = Score.query.filter_by(
+        user_id=user.id,
+        year=2026,
+        section="free_agency"
+    ).first()
     free_agency_points = free_agency_score.points if free_agency_score else 0
 
-    draft_score = Score.query.filter_by(user_id=user.id, year=2026, section="draft").first()
+    draft_score = Score.query.filter_by(
+        user_id=user.id,
+        year=2026,
+        section="draft"
+    ).first()
     draft_points = draft_score.points if draft_score else 0
 
-    # Fetch user's comments for display
     comments = user.comments
 
-    # Render the template with all relevant user info
     return render_template(
         "account.html",
         user=user,
@@ -58,7 +70,6 @@ def account(user_id):
         free_agency_points=free_agency_points,
         draft_points=draft_points
     )
-
 
 # -------------------------
 # ALL ACCOUNTS

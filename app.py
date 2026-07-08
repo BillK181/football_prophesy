@@ -66,14 +66,20 @@ def create_app():
         if not current_user.is_authenticated:
             return {}
 
-        score = Score.query.filter_by(
-            user_id=current_user.id,
-            year=2026
-        ).first()
+        leaderboard = Score.section_leaderboard()
+
+        user_entry = next(
+            (
+                entry
+                for entry in leaderboard
+                if entry["user"].id == current_user.id
+            ),
+            None
+        )
 
         return {
-            "total": score.total_points if score else 0,
-            "rank": score.rank if score else None
+            "total": user_entry["points"] if user_entry else 0,
+            "rank": user_entry["rank"] if user_entry else None
         }
 
     # -------------------------

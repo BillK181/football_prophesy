@@ -37,16 +37,12 @@
 </header>
 
 <!-- USER INFO -->
-{% if user %}
+{% if current_user.is_authenticated %}
 <div id="user-info">
-    {% if current_user.is_authenticated %}
-        <a href="{{ url_for('account.account', user_id=current_user.id) }}">
-    {% else %}
-        <a href="{{ url_for('auth.login') }}">
-    {% endif %}
-        <strong>{{ user.username }}</strong>
+    <a href="{{ url_for('account.account', user_id=current_user.id) }}">
+        <strong>{{ current_user.username }}</strong>
         <p>Rank: <span>{{ rank }}</span></p>
-        <p>Points: <span>{{ total or 0 }}</span></p>
+        <p>Points: <span>{{ total }}</span></p>
     </a>
 </div>
 {% endif %}
