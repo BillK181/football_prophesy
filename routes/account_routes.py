@@ -58,6 +58,13 @@ def account(user_id):
     ).first()
     draft_points = draft_score.points if draft_score else 0
 
+    schedule_score = Score.query.filter_by(
+        user_id=user.id,
+        year=2026,
+        section="schedule_release"
+    ).first()
+    schedule_points = schedule_score.points if schedule_score else 0
+
     comments = user.comments
 
     return render_template(
@@ -68,7 +75,8 @@ def account(user_id):
         comments=comments,
         combine_points=combine_points,
         free_agency_points=free_agency_points,
-        draft_points=draft_points
+        draft_points=draft_points,
+        schedule_points=schedule_points
     )
 
 # -------------------------
@@ -263,23 +271,64 @@ def user_draft_results(user_id):
         draft_data=draft_data
     )
 
+
+# -------------------------
+# Schedule release review
+# -------------------------
+@account_bp.route("/account/<int:user_id>/schedule_release")
+@login_required
+def user_schedule_release_results(user_id):
+
+    users = User.query.all()
+
+    schedule_data = []
+
+    for user in users:
+
+        prediction = (
+            Prediction.query
+            .filter_by(
+                user_id=user.id,
+                year=2026,
+                section="schedule_release"
+            )
+            .first()
+        )
+
+        score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="schedule_release"
+        ).first()
+
+        points = score.points if score else 0
+
+        schedule_data.append({
+            "user": user,
+            "points": points,
+            "prediction": prediction
+        })
+
+
+    # Users with predictions first, then highest points
+    schedule_data.sort(
+        key=lambda x: (
+            x["prediction"] is None,
+            -x["points"]
+        )
+    )
+
+
+    return render_template(
+        "schedule_release_review.html",
+        schedule_data=schedule_data
+    )
+
 # -------------------------
 # NOT IMPLEMENTED PAGES
 # -------------------------
 # - These routes are placeholders for future features.
 # - Each flashes a message and redirects back to main account page.
-
-
-@account_bp.route("/account/<int:user_id>/schedule_release")
-@login_required
-def user_schedule_release_results(user_id):
-
-    user = User.query.get_or_404(user_id)
-
-    flash("Schedule Release results are not implemented yet.", "info")
-
-    return redirect(url_for("account.account", user_id=user.id))
-
 
 @account_bp.route("/account/<int:user_id>/preseason")
 @login_required

@@ -49,6 +49,13 @@ def scouting_combine():
     pages = ["scouting_combine", "scouting combine"]
     comments = Comment.query.filter(Comment.page.in_(pages)).order_by(Comment.timestamp.desc()).all()
 
+    local_tz = ZoneInfo("America/Los_Angeles")
+
+    for comment in comments:
+        comment.local_timestamp = comment.timestamp.replace(
+            tzinfo=ZoneInfo("UTC")
+        ).astimezone(local_tz)
+
     # --- Leaderboard ---
     combine_leaderboard = Score.section_leaderboard(section="scouting_combine", limit=10)
 

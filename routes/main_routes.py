@@ -46,16 +46,6 @@ def index():
 # =========================
 # OTHER PAGES
 # =========================
-@main_bp.route("/schedule_release")
-def schedule_release():
-    return redirect(url_for("schedule.schedule_release"))
-
-
-@main_bp.route("/preseason")
-def preseason():
-    return render_template("preseason.html", players=SCOUTING_COMBINE_PLAYERS)
-
-
 @main_bp.route("/season_predictions")
 def season_predictions():
     return render_template("season_predictions.html", players=SCOUTING_COMBINE_PLAYERS)

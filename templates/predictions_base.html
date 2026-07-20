@@ -58,8 +58,9 @@
 <!-- Prediction Form -->
 <section class="prediction-container">
     <h1>{{ prediction_title }}</h1>
-    <h5>{{ submission_deadline }}</h5>
     <h5>{{ instructions }}</h5>
+    <h5>{{ more_instructions }}</h5>
+    <h5>{{ submission_deadline }}</h5>
 
     <form method="POST" action="{{ form_action }}">
         {% block prediction_form %}
@@ -92,7 +93,7 @@
 {% for comment in comments %}
 <div class="comment" id="comment-{{ comment.id }}">
     <strong>{{ comment.user.username }}</strong>
-    <em>{{ comment.timestamp }}</em>
+    <em>{{ comment.local_timestamp.strftime('%b %d, %Y %I:%M %p') }}</em>
     <p>{{ comment.content }}</p>
 
     {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}

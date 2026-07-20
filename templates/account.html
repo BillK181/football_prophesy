@@ -69,7 +69,7 @@ Account | Football Prophesy
 
             <li>
                 <a href="{{ url_for('account.user_schedule_release_results', user_id=user.id) }}">
-                    Schedule Release
+                    Schedule Release: {{ "{:,}".format(schedule_points) }} pts
                 </a>
             </li>
 

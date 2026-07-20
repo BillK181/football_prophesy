@@ -79,6 +79,13 @@ def draft():
     pages = ["draft"]
     comments = Comment.query.filter(Comment.page.in_(pages)).order_by(Comment.timestamp.desc()).all()
 
+    local_tz = ZoneInfo("America/Los_Angeles")
+
+    for comment in comments:
+        comment.local_timestamp = comment.timestamp.replace(
+            tzinfo=ZoneInfo("UTC")
+        ).astimezone(local_tz)
+
     # Leaderboard
     draft_leaderboard = Score.section_leaderboard(section="draft", limit=10)
 

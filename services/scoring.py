@@ -5,251 +5,299 @@ from football_prophesy.models.player import Player
 
 from football_prophesy.extensions import db
 
+
 SYSTEM_USER_ID = 0
 
+
 # =========================================================
-# MAIN RECALC FUNCTION (ONLY DRAFT IS ACTIVE)
+# MASTER RECALC FUNCTION
 # =========================================================
 def recalc_scores(year=2026):
 
     users = User.query.all()
-    sections = ["free_agency", "scouting_combine", "draft"]
 
-    # ------------------------
-    # Ensure Score rows exist
-    # ------------------------
+    sections = [
+        "free_agency",
+        "scouting_combine",
+        "draft",
+        "schedule_release",
+        "preseason"
+    ]
+
+    ensure_score_rows(users, sections, year)
+
+
+    # Individual event scoring
+    recalc_schedule_release_scores(year)
+    recalc_preseason_scores(year)
+
+    # Add these when ready
+    # recalc_free_agency_scores(year)
+    # recalc_combine_scores(year)
+    # recalc_draft_scores(year)
+
+
+    update_total_points(year)
+
+    update_all_ranks(users, year)
+
+
+# =========================================================
+# CREATE MISSING SCORE ROWS
+# =========================================================
+def ensure_score_rows(users, sections, year):
+
     for user in users:
+
         for section in sections:
-            score_row = Score.query.filter_by(
+
+            existing = Score.query.filter_by(
                 user_id=user.id,
                 section=section,
                 year=year
             ).first()
 
-            if not score_row:
-                db.session.add(Score(
-                    user_id=user.id,
-                    section=section,
-                    year=year
-                ))
+            if not existing:
+                db.session.add(
+                    Score(
+                        user_id=user.id,
+                        section=section,
+                        year=year
+                    )
+                )
 
     db.session.commit()
 
-    # ------------------------
-    # ONLY UPDATE DRAFT SCORES
-    # ------------------------
-    draft_scores = Score.query.filter_by(
+
+
+# =========================================================
+# DRAFT SCORING
+# =========================================================
+def recalc_draft_scores(year=2026):
+
+    scores = Score.query.filter_by(
         year=year,
         section="draft"
     ).all()
 
-    for score in draft_scores:
-        score.points = calculate_draft_score(score.user_id, year)
 
-    db.session.commit()
+    for score in scores:
 
-    # ------------------------
-    # DO NOT TOUCH FREE AGENCY OR COMBINE
-    # (they remain frozen forever)
-    # ------------------------
-
-    # ------------------------
-    # UPDATE TOTAL POINTS (USES FROZEN VALUES)
-    # ------------------------
-    for user in users:
-        scores = Score.query.filter_by(
-            user_id=user.id,
-            year=year
-        ).all()
-
-        total = sum(s.points for s in scores)
-
-        for s in scores:
-            s.total_points = total
-
-    db.session.commit()
-
-    # ------------------------
-    # UPDATE RANKS
-    # ------------------------
-    Score.update_ranks(users, section=None, year=year)
-    Score.update_ranks(users, section="draft", year=year)
+        score.points = calculate_draft_score(
+            score.user_id,
+            year
+        )
 
     db.session.commit()
 
 
-# =========================================================
-# DRAFT SCORING ONLY
-# =========================================================
-def calculate_draft_score(user_id, year=2026):
 
-    user = User.query.get(user_id)
-    if not user:
-        return 0
+def calculate_draft_score(user_id, year):
 
-    previous_preds = Prediction.query.filter_by(
+    predictions = Prediction.query.filter_by(
         user_id=user_id,
         year=year,
         section="draft"
     ).all()
 
-    # no predictions = 0 points
-    if not previous_preds:
+
+    if not predictions:
         return 0
 
-    previous_predictions = {
-        pred.draft_position_group: pred.player_id
-        for pred in previous_preds
-    }
 
-    db_players = Player.query.all()
-
-    actual_picks = {
-        player.id: player.actual_pick
-        for player in db_players
-    }
-
-    current_score = sum(
-        actual_picks.get(pid) or 0
-        for pid in previous_predictions.values()
-    )
-
-    return 1000 - current_score
+    player_ids = [
+        prediction.player_id
+        for prediction in predictions
+    ]
 
 
-# =========================================================
-# OPTIONAL: DRAFT-ONLY RECALC (USE IN ADMIN ROUTE)
-# =========================================================
-def recalc_draft_scores(year=2026):
-
-    users = User.query.all()
-
-    # Ensure draft score rows exist
-    for user in users:
-        score = Score.query.filter_by(
-            user_id=user.id,
-            section="draft",
-            year=year
-        ).first()
-
-        if not score:
-            db.session.add(Score(
-                user_id=user.id,
-                section="draft",
-                year=year
-            ))
-
-    db.session.commit()
-
-    # Recalculate ONLY draft
-    draft_scores = Score.query.filter_by(
-        year=year,
-        section="draft"
+    players = Player.query.filter(
+        Player.id.in_(player_ids)
     ).all()
 
-    for score in draft_scores:
-        score.points = calculate_draft_score(score.user_id, year)
 
-    db.session.commit()
-
-    # Update draft ranks only
-    Score.update_ranks(users, section="draft", year=year)
-
-    db.session.commit()
+    total_pick_value = sum(
+        player.actual_pick or 0
+        for player in players
+    )
 
 
+    return 1000 - total_pick_value
 
-def recalc_schedule_release_scores(year=2026, actual_results=None):
+
+
+# =========================================================
+# SCHEDULE RELEASE SCORING
+# =========================================================
+def recalc_schedule_release_scores(year=2026):
 
     users = User.query.all()
 
-    # ------------------------
-    # Ensure score rows exist
-    # ------------------------
-    for user in users:
-        score = Score.query.filter_by(
-            user_id=user.id,
-            section="schedule_release",
-            year=year
-        ).first()
-
-        if not score:
-            db.session.add(Score(
-                user_id=user.id,
-                section="schedule_release",
-                year=year
-            ))
-
-    db.session.commit()
-
-    # ------------------------
-    # GET CORRECT ANSWERS
-    # ------------------------
     correct = Prediction.query.filter_by(
         user_id=SYSTEM_USER_ID,
         year=year,
         section="schedule_release"
     ).first()
 
-    correct_answers = correct.correct_schedule_preds if correct else {}
 
-    # ------------------------
-    # GET SCORES (DEFINE FIRST!)
-    # ------------------------
-    schedule_scores = Score.query.filter_by(
+    correct_answers = (
+        correct.correct_schedule_preds
+        if correct
+        else {}
+    )
+
+
+    scores = Score.query.filter_by(
         year=year,
         section="schedule_release"
     ).all()
 
-    # ------------------------
-    # UPDATE SCORE TABLE
-    # ------------------------
-    for score in schedule_scores:
-        user_preds = Prediction.query.filter_by(
+
+    for score in scores:
+
+
+        predictions = Prediction.query.filter_by(
             user_id=score.user_id,
             year=year,
             section="schedule_release"
         ).all()
 
+
         score.points = sum(
-            p.calculate_points(schedule_correct=correct_answers)
-            for p in user_preds
+            prediction.calculate_points(
+                schedule_correct=correct_answers
+            )
+            for prediction in predictions
         )
 
+
+    db.session.commit()
+    update_total_points(year)
+    update_all_ranks(users, year)
+
+
+
+# =========================================================
+# PRESEASON SCORING
+# =========================================================
+def recalc_preseason_scores(year=2026):
+
+    users = db.session.query(Prediction.user_id).filter(
+        Prediction.year == year,
+        Prediction.section == "preseason"
+    ).distinct().all()
+
+    for (user_id,) in users:
+
+        score = Score.query.filter_by(
+            user_id=user_id,
+            year=year,
+            section="preseason"
+        ).first()
+
+        if not score:
+            score = Score(
+                user_id=user_id,
+                year=year,
+                section="preseason",
+                points=0
+            )
+            db.session.add(score)
+
+
     db.session.commit()
 
-    # ------------------------
-    # UPDATE PREDICTIONS (optional but fine)
-    # ------------------------
-    predictions = Prediction.query.filter_by(
+
+    scores = Score.query.filter_by(
         year=year,
-        section="schedule_release"
+        section="preseason"
     ).all()
 
-    for pred in predictions:
-        pred.correct_schedule_preds = correct_answers
+
+    for score in scores:
+
+        predictions = Prediction.query.filter_by(
+            user_id=score.user_id,
+            year=year,
+            section="preseason"
+        ).all()
+
+        score.points = sum(
+            prediction.player.preseason_points or 0
+            for prediction in predictions
+            if prediction.player
+        )
+
 
     db.session.commit()
+    update_total_points(year)
+    update_all_ranks(users, year)
 
-    # ------------------------
-    # RECALCULATE TOTALS
-    # ------------------------
+# =========================================================
+# TOTAL POINTS
+# =========================================================
+def update_total_points(year):
+
+
+    users = User.query.all()
+
+
     for user in users:
+
+
         scores = Score.query.filter_by(
             user_id=user.id,
             year=year
         ).all()
 
-        total = sum(s.points for s in scores)
 
-        for s in scores:
-            s.total_points = total
+        total = sum(
+            score.points
+            for score in scores
+        )
+
+
+        for score in scores:
+            score.total_points = total
+
 
     db.session.commit()
 
-    # ------------------------
-    # UPDATE RANKS
-    # ------------------------
-    Score.update_ranks(users, section=None, year=year)
+
+
+# =========================================================
+# RANKINGS
+# =========================================================
+def update_all_ranks(users, year):
+
+
+    # Overall leaderboard
+    Score.update_ranks(
+        users,
+        section=None,
+        year=year
+    )
+
+
+    # Individual sections
+    sections = [
+        "draft",
+        "schedule_release",
+        "preseason",
+        "free_agency",
+        "scouting_combine"
+    ]
+
+
+    for section in sections:
+
+        Score.update_ranks(
+            users,
+            section=section,
+            year=year
+        )
+
 
     db.session.commit()
+
+    users = User.query.all()

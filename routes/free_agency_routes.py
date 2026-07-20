@@ -60,6 +60,13 @@ def free_agency():
     pages = ["free_agency", "free agency"]
     comments = Comment.query.filter(Comment.page.in_(pages)).order_by(Comment.timestamp.desc()).all()
 
+    local_tz = ZoneInfo("America/Los_Angeles")
+
+    for comment in comments:
+        comment.local_timestamp = comment.timestamp.replace(
+            tzinfo=ZoneInfo("UTC")
+        ).astimezone(local_tz)
+
     return render_template(
         "free_agency.html",
         user=user,

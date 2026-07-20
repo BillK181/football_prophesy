@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}
+Schedule Release Review | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/schedule_release_review.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="schedule-review">
+
+    <h2>All Users' Schedule Release Review</h2>
+
+    {% set labels = {
+        "patriots_snf": "Patriots Primetime Games",
+        "niners_snf": "49ers Primetime Games",
+        "steelers_snf": "Steelers Primetime Games",
+        "chargers_snf": "Chargers Primetime Games",
+        "chiefs_snf": "Chiefs Primetime Games",
+        "bears_snf": "Bears Primetime Games",
+        "lions_thg": "Lions Thanksgiving Opponent"
+    } %}
+
+    {% set thanksgiving_teams = {
+        1: "Bears",
+        2: "Packers",
+        3: "Vikings",
+        4: "Saints",
+        5: "Buccaneers",
+        6: "Patriots",
+        7: "Jets",
+        8: "Titans",
+        9: "Giants"
+    } %}
+
+    {% for entry in schedule_data %}
+
+    <div class="user-review">
+
+        <h2>
+            {{ entry.user.username }} — {{ entry.points }} pts
+        </h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Prediction</th>
+                    <th>User Prediction</th>
+                    <th>Correct Result</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for key, label in labels.items() %}
+                <tr>
+                    <td>{{ label }}</td>
+
+                    {% if entry.prediction %}
+
+                        {% set user_pick = entry.prediction.schedule_preds.get(key) %}
+                        {% set correct_pick = entry.prediction.correct_schedule_preds.get(key) %}
+
+                        {% if key == "lions_thg" %}
+
+                            <td class="{% if user_pick == correct_pick %}correct{% endif %}">
+                                {{ thanksgiving_teams.get(user_pick) }}
+                            </td>
+
+                            <td>
+                                {{ thanksgiving_teams.get(correct_pick) }}
+                            </td>
+
+                        {% else %}
+
+                            <td class="{% if user_pick == correct_pick %}correct{% endif %}">
+                                {{ user_pick }}
+                            </td>
+
+                            <td>
+                                {{ correct_pick }}
+                            </td>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <td>-</td>
+                        <td>-</td>
+
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

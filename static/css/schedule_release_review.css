@@ -1,0 +1,66 @@
+/* Center the review section */
+.schedule-review {
+    max-width: 900px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.user-review {
+    width: 85%;
+    margin: 30px auto;
+    padding: 20px;
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+}
+
+/* Headers */
+h2 {
+    color: var(--color-secondary);
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Table */
+.table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    color: var(--color-secondary);
+}
+
+/* Table borders */
+.table th,
+.table td {
+    border: 1px solid var(--color-secondary);
+    padding: 10px 15px;
+    text-align: center;
+}
+
+/* Header row */
+.table th {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+}
+
+/* Alternate rows */
+.table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effect */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Spacing between users */
+hr {
+    width: 80%;
+    border: 0;
+    border-top: 2px solid var(--color-secondary);
+    margin: 35px auto;
+}
+
+.correct {
+    color: #4caf50;
+    font-weight: bold;
+}

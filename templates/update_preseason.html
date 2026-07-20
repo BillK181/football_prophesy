@@ -1,0 +1,67 @@
+{% extends "predictions_base.html" %}
+
+{% block prediction_form %}
+
+    <div class="user-container">
+        {% for user in completed_users %}
+            <div class="user-card">
+                <label for="player_{{ loop.index }}">
+                    {{ user.username }}
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    {% for prediction in predictions %}
+
+        <div class="form-group">
+
+            <label for="player_{{ loop.index }}">
+                {{ prediction.player.name }}
+                ({{ prediction.player.team }})
+            </label>
+
+
+            <input 
+                type="number"
+                name="preseason_points_{{ prediction.player.id }}"
+                id="player_{{ loop.index }}"
+                value="{{ prediction.player.preseason_points if prediction.player.preseason_points is not none else '' }}"
+                placeholder="tbd"
+            >
+
+        </div>
+
+    {% endfor %}
+    
+    <br>
+
+    <hr>
+
+    
+    <form method="POST" action="{{ url_for('preseason.update_preseason') }}">
+
+        <button 
+            type="submit" 
+            class="btn btn-update"
+            onclick="return confirm('This will update all preseason player points and recalculate scores. Continue?');">
+            Update Preseason Points
+        </button>
+
+    </form>
+
+
+    <form method="POST" action="{{ url_for('preseason.send_preseason_emails') }}">
+
+        <button 
+            type="submit" 
+            class="btn btn-email"
+            onclick="return confirm('Are you sure you want to send preseason emails to all users?');">
+            Send Preseason Emails
+        </button>
+
+    </form>
+
+
+{% endblock %}

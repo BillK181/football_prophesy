@@ -3,7 +3,7 @@
 /* ================================================== */
 
 .prediction-container {
-    max-width: 70%;
+    max-width: 80%;
     margin: 10px auto;
     background-color: var(--color-secondary, #111);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -133,11 +133,18 @@
 /* ================================================== */
 
 @media (max-width: 768px) {
-    .prediction-container {
+    .prediction-container form {
         padding-bottom: 10px;
+        max-height: 80vh; 
     }
 
     .submit-section {
-        bottom: 2px;
+        padding: 5px 0 0;
+    }
+
+    .submit-section button {
+        font-size: 14px;
+        padding: 8px 18px;
+        margin: 0;
     }
 }

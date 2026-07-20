@@ -9,7 +9,7 @@ class Prediction(db.Model):
     year = db.Column(db.Integer, default=2026)
     section = db.Column(db.String(50), default="scouting_combine")
     player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=True)
-    player = db.relationship("Player")
+    player = db.relationship("Player", backref="predictions")
     player_name = db.Column(db.String(100), nullable=True)
 
     # Schedule release
@@ -28,6 +28,8 @@ class Prediction(db.Model):
     drill = db.Column(db.String(50), nullable=True)
     place = db.Column(db.Integer, nullable=True)
 
+    # Preseason fields
+    preseason_position = db.Column(db.String(50), nullable=True)
 
 
     # ------------------------
@@ -85,7 +87,7 @@ class Prediction(db.Model):
         # Schedule Release Section
         # -----------------------------
         elif self.section == "schedule_release":
-            if not self.schedule_preds or not self.correct_schedule_preds:
+            if not self.schedule_preds or not schedule_correct:
                 return 0
 
             points = 0
@@ -100,12 +102,19 @@ class Prediction(db.Model):
                     points += 10
 
             return points
+        
+        # -----------------------------
+        # Preseason Section
+        # -----------------------------
+        elif self.section == "preseason":
+            return 0  # handled by Score system
             
-
         # -----------------------------
         # Unknown section → no points
         # -----------------------------
         return 0
+    
+    
 
     def _calculate_combine_points(self, results_data, position_drill_map):
         """

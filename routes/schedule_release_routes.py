@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from football_prophesy.models.prediction import Prediction
 from football_prophesy.models.comment import Comment
@@ -62,6 +63,13 @@ def schedule_release():
     comments = Comment.query.filter(
         Comment.page.in_(pages)
     ).order_by(Comment.timestamp.desc()).all()
+
+    local_tz = ZoneInfo("America/Los_Angeles")
+
+    for comment in comments:
+        comment.local_timestamp = comment.timestamp.replace(
+            tzinfo=ZoneInfo("UTC")
+        ).astimezone(local_tz)
 
     schedule_leaderboard = Score.section_leaderboard(
         section="schedule_release",

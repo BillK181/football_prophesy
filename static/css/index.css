@@ -265,6 +265,11 @@
     
     #hero {
         width: 90%;
+        border: 2px solid black;
+    }
+
+    #login {
+        border: 2px solid black;
     }
 
 
@@ -274,6 +279,14 @@
 
     #login h5 {
         font-size: 1.2rem;
+    }
+
+    #main-navigation {
+        border: 1.3px solid black;
+    }
+
+    #main-navigation li {
+        border: 1.3px solid black;
     }
 
     #main-navigation ul {
@@ -291,7 +304,9 @@
         white-space: pre-line;      /* wrap at spaces/newlines */
         text-align: center;         /* center text */
         line-height: 1.2em;         /* tighter vertical spacing */
-        font-size: 1.1rem;
+        font-size: 15px;
+        -webkit-text-stroke: .5px black;
+        margin: 0 10px;
     }
 }
 

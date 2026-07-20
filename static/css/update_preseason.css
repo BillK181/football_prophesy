@@ -1,0 +1,29 @@
+.form-group {
+    display: grid;
+    grid-template-columns: 1fr 80px;
+    gap: 15px;
+    max-width: 300px;
+    margin: 5px auto;
+    align-items: center;
+}
+
+.form-group input {
+    width: 80px;
+}
+
+.user-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+    gap: 15px;
+    justify-content: center;
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.user-card {
+    background-color: var(--color-primary, #fff);
+    color: var(--color-secondary, #fff);
+    text-align: center;
+    padding: 5px 15px;
+    border-radius: 12px;
+}
