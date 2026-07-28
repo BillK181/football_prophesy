@@ -208,8 +208,14 @@ def get_multiple_team_info(multiple_rosters, multiple_league_users, multiple_ros
 
 # Get Current Week of Season
 def get_week():
-    nfl_object = requests.get(f"https://api.sleeper.app/v1/state/nfl").json()
-    return nfl_object["week"]
+    nfl_object = requests.get("https://api.sleeper.app/v1/state/nfl").json()
+    return nfl_object["display_week"]
+
+
+# Get Current Year of Season
+def get_year():
+    nfl_object = requests.get("https://api.sleeper.app/v1/state/nfl").json()
+    return int(nfl_object["season"])
 
 
 # =========================
@@ -661,7 +667,7 @@ def print_matchups(filtered_matchup_players, stripped_matchup_player, stripped_u
 def main(multiple_usernames, teams_watched_filter, teams_playing, week, year):
     players = get_players()
 
-    year = datetime.now().year
+    year = get_year()
 
     multiple_users = get_multiple_users(multiple_usernames)
 
@@ -772,7 +778,6 @@ def main(multiple_usernames, teams_watched_filter, teams_playing, week, year):
                         "points": p["points"]
                     }
                     for p in players
-                    if float(p.get("points", 0) or 0) > 0
                 ]
 
                 return {
