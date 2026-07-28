@@ -725,6 +725,8 @@ def main(multiple_usernames, teams_watched_filter, teams_playing, week, year):
     user_map = {u["user_id"]: u for u in multiple_users}
 
     result = {
+        "year": year,
+        "week": week,
         "users": {}
     }
 
