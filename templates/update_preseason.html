@@ -52,6 +52,17 @@
     </form>
 
 
+    <form method="POST" action="{{ url_for('preseason.update_players_route') }}">
+
+        <button 
+            type="submit" 
+            class="btn btn-update">
+            Update Players
+        </button>
+
+    </form>
+
+
     <form method="POST" action="{{ url_for('preseason.send_preseason_emails') }}">
 
         <button 

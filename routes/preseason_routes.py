@@ -14,7 +14,7 @@ from football_prophesy.models.comment import Comment
 from football_prophesy.models.score import Score
 from football_prophesy.extensions import db
 from football_prophesy.services.email_service import send_preseason_email
-from football_prophesy.services.sleeper_players import cache_players
+from football_prophesy.services.sleeper_players import update_players
 from football_prophesy.services.scoring import recalc_preseason_scores
 from football_prophesy.services.player_update import update_players_if_needed
 
@@ -257,6 +257,19 @@ def update_preseason():
     )
 
 # =========================
+# Update players
+# =========================
+@preseason_bp.route("/update_players", methods=["POST"])
+@login_required
+@admin_required
+def update_players_route():
+    update_players()
+
+    flash("Players updated successfully!", "success")
+    return redirect(url_for("preseason.update_preseason"))
+
+
+# =========================
 # Send preseason emails
 # =========================
 @preseason_bp.route("/send_emails", methods=["POST"])
@@ -265,10 +278,29 @@ def send_preseason_emails():
 
     users = User.query.all()
 
+    predictions = Prediction.query.filter(
+            Prediction.year == 2026,
+            Prediction.section == "preseason",
+            Prediction.preseason_position.isnot(None),
+            Prediction.player_id.isnot(None)
+        ).all()
+                
+    completed_users = []
+                
+    for prediction in predictions:
+        if prediction.user_id not in completed_users:
+            completed_users.append(prediction.user_id)
+
+    incomplete_users = []
+
+    for user in users:
+        if user.id not in completed_users:
+            incomplete_users.append(user)
+    
     sent = 0
     failed = 0
 
-    for u in users:
+    for u in incomplete_users:
 
         if not u.email:
             continue
@@ -285,4 +317,4 @@ def send_preseason_emails():
         "success"
     )
 
-    return redirect(url_for("preseason.update"))
+    return redirect(url_for("preseason.update_preseason"))

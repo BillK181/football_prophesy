@@ -33,13 +33,13 @@ Account | Football Prophesy
 
         <p><strong>Rank:</strong>
             {% if rank %}
-                {{ rank }}
+                {{ page_rank }}
             {% else %}
                 Unranked
             {% endif %}
         </p>
 
-        <p><strong>Score:</strong> {{ total or 0 }}</p>
+        <p><strong>Score:</strong> {{ page_total or 0 }}</p>
     </section>
 
 

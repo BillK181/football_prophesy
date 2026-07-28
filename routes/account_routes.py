@@ -34,8 +34,8 @@ def account(user_id):
         None
     )
 
-    total = user_entry["points"] if user_entry else 0
-    rank = user_entry["rank"] if user_entry else None
+    page_total = user_entry["points"] if user_entry else 0
+    page_rank = user_entry["rank"] if user_entry else None
 
     combine_score = Score.query.filter_by(
         user_id=user.id,
@@ -70,8 +70,8 @@ def account(user_id):
     return render_template(
         "account.html",
         user=user,
-        total=total,
-        rank=rank,
+        page_total=page_total,
+        page_rank=page_rank,
         comments=comments,
         combine_points=combine_points,
         free_agency_points=free_agency_points,

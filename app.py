@@ -63,7 +63,7 @@ def create_app():
     # -------------------------
     @app.context_processor
     def inject_user_data():
-        if not current_user.is_authenticated:
+        if not current_user or not current_user.is_authenticated:
             return {}
 
         leaderboard = Score.section_leaderboard()

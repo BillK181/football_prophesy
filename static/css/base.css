@@ -193,15 +193,18 @@ section {
 #site-footer {
     display: flex;
     justify-content: center; /* horizontal centering */
+    flex-direction: column;
     align-items: center;     /* vertical centering */
     padding: var(--spacing-md);
     min-height: 90px;
     background-color: var(--color-background); /* optional */
+    color: var(--color-secondary);
 }
 
 #site-footer .footer-logo {
     max-height: 80px; /* keeps it smaller than header */
     width: auto;      /* maintain aspect ratio */
+    margin-bottom: 15px;
 }
 
 /* ================================================== */

@@ -4,75 +4,132 @@
 
 <head>
 
-```
-<!-- META -->
+    <!-- META -->
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- TITLE -->
+    <!-- SEO -->
 
-<title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="Football Prophesy - Predict NFL events, compete with friends, and climb the leaderboard.">
 
-<!-- STYLES -->
+    <meta name="keywords" content="NFL predictions, football predictions, NFL games, fantasy football">
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <meta name="author" content="Football Prophesy">
 
-{% block extra_css %}
-<!-- Page-specific CSS -->
-{% endblock %}
-```
+
+    <!-- TITLE -->
+
+    <title>{% block title %}Football Prophesy{% endblock %}</title>
+
+
+    <!-- FAVICON -->
+
+    <link rel="icon" href="{{ url_for('static', filename='images/football_prophesy.png') }}">
+
+
+    <!-- OPEN GRAPH / SOCIAL SHARING -->
+
+    <meta property="og:title" content="Football Prophesy">
+
+    <meta property="og:description" content="Predict NFL events, compete with friends, and see who knows football best.">
+
+    <meta property="og:image" content="{{ url_for('static', filename='images/football_prophesy.png', _external=True) }}">
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:url" content="{{ request.url }}">
+
+
+    <!-- STYLES -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+    {% block extra_css %}
+    <!-- Page-specific CSS -->
+    {% endblock %}
 
 </head>
 
+
 <body>
 
-```
-<!-- HEADER -->
 
-<header id="site-header">
-    <a href="/" aria-label="Home">
-        <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" alt="Football Prophesy" class="site-logo">
-    </a>
-</header>
+    <!-- HEADER -->
 
-<!-- USER INFO -->
-{% if current_user.is_authenticated %}
-<div id="user-info">
-    <a href="{{ url_for('account.account', user_id=current_user.id) }}">
-        <strong>{{ current_user.username }}</strong>
-        <p>Rank: <span>{{ rank }}</span></p>
-        <p>Points: <span>{{ total }}</span></p>
-    </a>
-</div>
-{% endif %}
+    <header id="site-header">
 
-<!-- MAIN -->
+        <a href="/" aria-label="Home">
 
-<main id="site-content">
+            <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" 
+                 alt="Football Prophesy" 
+                 class="site-logo">
 
-    {% block content %}
-    <!-- Page content goes here -->
+        </a>
+
+    </header>
+
+
+    <!-- USER INFO -->
+
+    {% if current_user.is_authenticated %}
+
+    <div id="user-info">
+
+        <a href="{{ url_for('account.account', user_id=current_user.id) }}">
+
+            <strong>{{ current_user.username }}</strong>
+
+            <p>Rank: <span>{{ rank }}</span></p>
+
+            <p>Points: <span>{{ total }}</span></p>
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+
+
+    <!-- MAIN -->
+
+    <main id="site-content">
+
+        {% block content %}
+        <!-- Page content goes here -->
+        {% endblock %}
+
+    </main>
+
+
+
+    <!-- FOOTER -->
+
+    <footer id="site-footer">
+
+        <a href="/" aria-label="Home">
+
+            <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" 
+                 alt="Football Prophesy" 
+                 class="footer-logo">
+
+        </a>
+        <p>
+            © 2026 Football Prophesy
+        </p>
+
+    </footer>
+
+
+
+    <!-- SCRIPTS -->
+
+    {% block extra_js %}
+    <!-- Page-specific JS -->
     {% endblock %}
 
-</main>
-
-<!-- FOOTER -->
-
-<footer id="site-footer">
-    <a href="/" aria-label="Home">
-        <img src="{{ url_for('static', filename='images/football_prophesy.png') }}" alt="Football Prophesy" class="footer-logo">
-    </a>
-</footer>
-
-<!-- SCRIPTS -->
-
-
-
-{% block extra_js %}
-<!-- Page-specific JS -->
-{% endblock %}
-```
 
 </body>
+
 </html>
