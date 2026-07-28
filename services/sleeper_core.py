@@ -661,7 +661,7 @@ def print_matchups(filtered_matchup_players, stripped_matchup_player, stripped_u
 def main(multiple_usernames, teams_watched_filter, teams_playing, week, year):
     players = get_players()
 
-    year = 2025 # For Testing, will be year = datetime.now().year once season starts
+    year = datetime.now().year
 
     multiple_users = get_multiple_users(multiple_usernames)
 
@@ -677,7 +677,7 @@ def main(multiple_usernames, teams_watched_filter, teams_playing, week, year):
 
     multiple_roster_ids = get_multiple_roster_ids(multiple_rosters)
 
-    week = 2 # For Testing, will be getweek() once season starts
+    week = get_week()
 
     multiple_users_matchups = get_multiple_users_matchups(multiple_users_league_ids, week)
 

@@ -4,20 +4,20 @@
 #hero {
     text-align: center;
     width: 90%;
-    height: fit-content;
-    margin: 1rem auto;          /* <-- centers the section horizontally */
-    margin-top: .1rem;
+    margin: .1rem auto;
     padding: 0;
     background-color: var(--color-background);
     border: 3px solid black;
     text-transform: uppercase;
+    overflow: hidden;
 }
 
 .hero-box {
-    display: inline-block; /* makes the box shrink to fit content */
-    background-color: var(--color-secondary); /* box background */
-    padding: .5rem .75rem;    /* space inside the box */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* subtle depth */
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--color-secondary);
+    padding: .5rem .75rem;
 }
 
 .hero-box h1 {
@@ -315,3 +315,4 @@
         height: 60px;
     }
 }
+
