@@ -15,6 +15,7 @@ def register_blueprints(app: Flask):
     from .main_routes import main_bp
     from .preseason_routes import preseason_bp
     from .schedule_release_routes import schedule_bp
+    from .season_prediction_routes import season_predictions_bp
     from .sleeper_api import sleeper_api
 
     # Register blueprints
@@ -27,5 +28,6 @@ def register_blueprints(app: Flask):
     app.register_blueprint(main_bp)
     app.register_blueprint(preseason_bp)
     app.register_blueprint(schedule_bp)
+    app.register_blueprint(season_predictions_bp)
     app.register_blueprint(sleeper_api, url_prefix="/api")
 

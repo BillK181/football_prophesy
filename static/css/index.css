@@ -2,81 +2,131 @@
 /*                 HERO SECTION                       */
 /* ================================================== */
 #hero {
-    text-align: center;
-    width: 90%;
-    margin: .1rem auto;
-    padding: 0;
-    background-color: var(--color-background);
-    border: 3px solid black;
-    text-transform: uppercase;
-    overflow: hidden;
+  text-align: center;
+  display: block;
+  
+  width: max-content;
+  max-width: 90%;
+  
+  margin: 40px auto 30px auto;
+  padding: 40px 75px;
+  background-image: url("/static/images/hero_background.jpg");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-transform: capitalize;
+  overflow: hidden;
+  
 }
 
 .hero-box {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--color-secondary);
-    padding: .5rem .75rem;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--color-secondary);
+  padding: 15px 30px;
+  border: 2.2px solid black;
 }
 
 .hero-box h1 {
-    font-family: var(--font-heading); /* your heading font */
-    line-height: 1.2;
-    letter-spacing: 2px;
-    font-size: 4rem;
-    color: var(--color-primary); /* text color */
-    -webkit-text-stroke: .1px black;
-    text-shadow: 0 0 8px var(--color-accent), 0 0 16px var(--color-primary);
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  letter-spacing: 1px;
+  font-size: 50px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+
+/* ================================================== */
+/*                 HOW IT WORKS CARDS                 */
+/* ================================================== */
+
+#how-it-works {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 700px;
+    margin: 0 auto 70px auto;
+    text-align: center;
+}
+
+.how-it-works-card {
+    padding: 20px 10px;
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-accent);
+    color: var(--color-secondary);
+}
+
+.how-it-works-card h3 {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+}
+
+.how-it-works-card p {
     margin: 0;
+    line-height: 1.5;
+    color: var(--color-primary);
 }
 
 
 /* ================================================== */
 /*                 LOGIN SECTION                      */
 /* ================================================== */
-#login {
-    display: block;               /* block makes margin auto work reliably */
-    width: 80%;         
-    height: fit-content;
-    text-align: center;
-    padding: .25rem .2rem;           /* same vertical padding as hero */
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
-    margin: 0.5rem auto;            /* centers horizontally */
-    margin-bottom: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border: 3px solid black;
+#login { 
+    display: block; 
+    
+    /* THE FIX: Shrink-wraps the button to the text while keeping it perfectly centered */
+    width: fit-content; 
+    height: fit-content; 
+    
+    text-align: center; 
+    
+    /* Removed padding here so the background color fills completely to the border edges */
+    padding: 15px 30px; 
+    
+    background-color: var(--color-secondary); 
+    color: var(--color-primary); 
+    margin: 0.5rem auto 25px auto; 
+    cursor: pointer; 
+    transition: background-color 0.2s, color 0.2s; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+    border: 2.2px solid black; 
+    border-radius: 0; /* Ensures strictly sharp, 90-degree corners */
+} 
+
+#login > a { 
+    display: block; 
+    text-decoration: none; /* Removes default link underline */
+    
+    /* Moving the padding here creates the perfect internal spacing with solid background fill */
+    padding: 10px 25px; 
+} 
+
+#login h5 { 
+    font-family: var(--font-base); 
+    font-weight: 800; /* Made bolder to match your heavy, sharp sports styling */
+    line-height: 1.2; 
+    margin: 0; 
+    letter-spacing: normal; 
+    text-shadow: none; 
+} 
+
+#login:hover { 
+    background-color: var(--color-accent); 
+    color: var(--color-background); 
+} 
+
+/* Logout link default */ 
+#login .logout_link { 
+    color: var(--color-primary); 
+    text-decoration: underline; 
+    font-weight: bold; 
+    transition: color 0.2s ease; 
 }
 
-#login > a {
-    display: block;               /* make link fill the box */
-}
-
-#login h5 {
-    font-family: var(--font-base);
-    font-weight: normal;
-    line-height: 1.2;
-    margin: 0;
-    letter-spacing: normal;
-    text-shadow: none;
-}
-
-#login:hover {
-    background-color: var(--color-accent);
-    color: var(--color-background);
-}
-
-
-/* Logout link default */
-#login .logout_link {
-    color: var(--color-primary);
-    text-decoration: underline;
-    font-weight: bold;
-    transition: color 0.2s ease;
-}
 
 
 /* ================================================== */
@@ -184,6 +234,7 @@
     border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.2s ease;
+    margin-bottom: 20px;
 }
 
 
@@ -195,23 +246,34 @@
 /* ================================================== */
 /*                       MEMO                         */
 /* ================================================== */
-
+/* ================================================== */
+/* MEMO SECTION (MUTED & LOW KEY)                     */
+/* ================================================== */
 #memo {
-    width: 95%;
-    text-align: center;               /* center the text */
-    margin: 0rem auto;                /* spacing from other content */
+    width: 90%; /* Matches your hero and nav grid alignments */
+    max-width: 600px; /* Caps width on desktop so long sentences don't stretch */
+    text-align: center; 
+    margin: 1.5rem auto; /* Added elegant spacing to let elements breathe */
     padding: 0;
 }
 
 #memo h5 {
-    font-family: var(--font-base); /* heading font for impact */
-    color: var(--color-secondary);    /* secondary color text */
-    -webkit-text-stroke: .01px var(--color-base);
-    font-weight: bold;                /* make it stand out */
-    line-height: 1.4;
-    letter-spacing: 0.5px;            /* subtle spacing for readability */
-    text-transform: uppercase;
+    font-family: var(--font-heading); 
+    
+    /* THE LOW KEY FIX: Swapped brown text for a sleek, premium muted gray */
+    color: var(--color-secondary); 
+    
+    /* REMOVED: -webkit-text-stroke line entirely for clean letter edges */
+    
+    font-size: 0.9rem; /* Smaller font makes text feel sophisticated and secondary */
+    font-weight: 600; /* Medium-bold for premium legibility without yelling */
+    line-height: 1.5; 
+    
+    /* THE SPORTS TRICK: Wider spacing looks expensive and intentional in uppercase */
+    letter-spacing: 1.5px; 
+    text-transform: uppercase; 
 }
+
 
 
 
@@ -220,10 +282,9 @@
 /* ================================================== */
 #main-navigation {
     width: 90%;                /* big box width */
-    margin: .5rem auto;         /* center horizontally */
-    background-color: var(--color-secondary); /* whole nav background */
+    margin: 60px auto;         /* center horizontally */
+    background-color: transparent; /* whole nav background */
     padding: 0;                /* remove extra padding */
-    border: 2px solid black;
 }
 
 #main-navigation ul {
@@ -232,16 +293,16 @@
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 0;                    /* no gap between squares */
+    gap: 12px;        
 }
 
 #main-navigation li {
-    border: 2px solid black;   /* each square border */
+    background-color: var(--color-secondary);
+    border: 2.6px solid black;
     display: flex;             /* use flex to center content */
     justify-content: center;   /* horizontal center */
     align-items: center;       /* vertical center */
-    height: 100px;             /* square height, adjust as needed */
+    height: 90px;             /* square height, adjust as needed */
     text-align: center;        /* center multi-line text */
 }
 
@@ -250,9 +311,10 @@
     display: inline-block;     /* allow text to wrap */
     text-align: center;        /* center text horizontally */
     white-space: pre-line;     /* wrap words onto new lines at spaces */
-    font-family: var(--font-heading);
+    font-family: var( --font-heading);
     font-size: 1.5rem;
-    -webkit-text-stroke: .2px black;
+    font-weight: bolder;
+    color: var(--color-primary);
     width: 100%;               /* fill li width */
     line-height: 1.5em;        /* vertical spacing between stacked words */
 }
@@ -261,20 +323,70 @@
 /* ================================================== */
 /*               RESPONSIVE ADJUSTMENTS              */
 /* ================================================== */
+/* ================================================== */
+/* RESPONSIVE ADJUSTMENTS                             */
+/* ================================================== */
+@media (max-width: 1000px) {
+    .hero-box h1 {
+        font-size: 30px;
+    }
+
+}
+
+
 @media (max-width: 768px) {
-    
     #hero {
-        width: 90%;
-        border: 2px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        margin: 15px auto 35px auto;
+        padding: 60px 0;
+
+        background-image: url("/static/images/hero_background_mobile.jpg");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        text-transform: capitalize;
+        overflow: hidden;
     }
 
-    #login {
-        border: 2px solid black;
+    .hero-box {
+        width: 230px;
+        padding: 10px 0px;
+        margin: 0;
+        border: 1px solid black;
     }
-
 
     .hero-box h1 {
-        font-size: 2.5rem;
+        font-size: 30px;
+    }
+
+    /* THE FIX: Matches the exact structure of the hero box above */
+    #login {
+        display: block;
+        width: max-content;
+        max-width: 90%;
+        margin: 0.5rem auto 20px auto;
+        border: 1.5px solid black;
+        padding: 10px 20px; 
+    }
+
+
+    /* THE FIX: Applies the identical layout to your inner login link */
+    #login > a {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 20px; /* Matches the hero-box padding exactly */
+    }
+
+    .hero-box h1 {
+        font-size: 30px;
     }
 
     #login h5 {
@@ -282,31 +394,37 @@
     }
 
     #main-navigation {
-        border: 1.3px solid black;
+        margin: 35px auto 45px auto;
     }
 
     #main-navigation li {
         border: 1.3px solid black;
-    }
-
-    #main-navigation ul {
-        grid-template-columns: repeat(3, 1fr);  /* force 3 columns */
-        grid-template-rows: repeat(3, 1fr);     /* force 3 rows */
-        gap: 0;
-    }
-
-    #main-navigation li {
-        height: 80px;   /* smaller for mobile */
+        height: 80px; 
     }
 
     #main-navigation a {
-        display: inline-block;      /* allow text wrapping inside link */
-        white-space: pre-line;      /* wrap at spaces/newlines */
-        text-align: center;         /* center text */
-        line-height: 1.2em;         /* tighter vertical spacing */
+        display: inline-block; 
+        white-space: pre-line; 
+        text-align: center; 
+        line-height: 1.2em; 
         font-size: 15px;
-        -webkit-text-stroke: .5px black;
         margin: 0 10px;
+    }
+
+    .full-scoreboard-btn {
+        margin-bottom: 20px;
+    }
+
+    #how-it-works {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        justify-items: center;
+        margin-bottom: 40px;
+    }
+
+    .how-it-works-card {
+        padding: 20px 5px;
+        max-width: 250px;
     }
 }
 
@@ -315,4 +433,3 @@
         height: 60px;
     }
 }
-

@@ -29,9 +29,6 @@ preseason_bp = Blueprint("preseason", __name__, url_prefix="/preseason")
 @preseason_bp.route("/")
 @login_required
 def preseason():
-
-    update_players_if_needed()
-
     user = current_user
 
     previous_preds = Prediction.query.filter_by(

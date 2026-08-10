@@ -43,13 +43,6 @@ def index():
         user=user
     )
 
-# =========================
-# OTHER PAGES
-# =========================
-@main_bp.route("/season_predictions")
-def season_predictions():
-    return render_template("season_predictions.html", players=SCOUTING_COMBINE_PLAYERS)
-
 
 @main_bp.route("/season_picks")
 def season_picks():

@@ -22,7 +22,7 @@ load_dotenv()
 SMTP_SERVER = "smtp.mailgun.org"
 SMTP_PORT = 587
 
-SENDER = "ThrillBill <no-reply@footballprophesy.com>"
+SENDER = "Football Prophesy <no-reply@footballprophesy.com>"
 
 EMAIL_ENABLED = (
     os.environ.get("EMAIL_ENABLED", "true").lower() == "true"

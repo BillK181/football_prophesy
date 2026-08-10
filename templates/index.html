@@ -5,7 +5,6 @@ Home | Football Prophesy
 {% endblock %}
 
 {% block extra_css %}
-<!-- Page-specific CSS for index page -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 {% endblock %}
 
@@ -15,10 +14,37 @@ Home | Football Prophesy
 <!-- ===================== -->
 <section id="hero">
     <div class="hero-box">
-        <h1>Will You Be Crowned As The 2026 Football Prophet?</h1>
+        <h1>Will You Be Crowned As The <br>2026 Football Prophet?</h1>
     </div>
 </section>
 
+<div id="how-it-works">
+
+        <div class="how-it-works-card">
+            <h3>🔮 Make Your Picks</h3>
+            <p>
+                Predict the biggest events throughout
+                the NFL season.
+            </p>
+        </div>
+
+        <div class="how-it-works-card">
+            <h3>🏈 Earn Points</h3>
+            <p>
+                Get points when your predictions
+                come true.
+            </p>
+        </div>
+
+        <div class="how-it-works-card">
+            <h3>👑 Climb The Ranks</h3>
+            <p>
+                Compete against other players and
+                chase the #1 spot.
+            </p>
+        </div>
+
+    </div>
 
 <section id="login">
     {% if current_user.is_authenticated %}
@@ -28,7 +54,7 @@ Home | Football Prophesy
         </h5>
     {% else %}
         <a href="{{ url_for('auth.login') }}">
-            <h5>Click Here For Sign In Or Register & More Info</h5>
+            <h5>Click Here for Sign In or Register & More Info</h5>
         </a>
     {% endif %}
 </section>
@@ -75,7 +101,7 @@ Home | Football Prophesy
         <li><a href="{{ url_for('draft.draft') }}">Draft</a></li>
         <li><a href="{{ url_for('schedule.schedule_release') }}">Schedule Release</a></li>
         <li><a href="{{ url_for('preseason.preseason') }}">Preseason</a></li>
-        <li><a href="{{ url_for('main.season_predictions') }}">Season Predictions</a></li>
+        <li><a href="{{ url_for('season_predictions.season_predictions') }}">Season Predictions</a></li>
         <li><a href="{{ url_for('main.season_picks') }}">Season Picks</a></li>
         <li><a href="{{ url_for('main.postseason_predictions') }}">Postseason Predictions</a></li>
         <li><a href="{{ url_for('main.postseason_picks') }}">Postseason Picks</a></li>

@@ -50,7 +50,7 @@ a {
 
     /* Typography */
     --font-base: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --font-heading: 'Impact', sans-serif;
+    --font-heading: 'Trebuchet MS', sans-serif;
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -251,6 +251,10 @@ section {
         width: 55%;               /* keep your width */
         margin: 0 auto;           /* center horizontally */
         text-align: center;       /* center content inside footer */
+    }
+
+    #site-footer p {
+        font-size: 8px;
     }
 
     #user-info p {
