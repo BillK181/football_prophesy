@@ -400,6 +400,63 @@ def send_preseason_email(user):
 
         return False
 
+# ==============================
+# SEASON PREDICTIONS EMAIL
+# ==============================
+
+def build_season_predictions_email(user):
+
+    html = render_template(
+        "emails/season_predictions_email.html",
+        user=user
+    )
+
+
+    text = f"""
+Hi {user.name},
+
+Season Predictions are now live!
+
+Submit before 5:00 PM PST on September 9th.
+
+https://footballprophesy.com/season_predictions
+"""
+
+
+    return make_email(
+        "🏈 Season Predictions Are Live!",
+        user,
+        text,
+        html
+    )
+
+
+
+def send_season_predictions_email(user):
+
+    try:
+
+        msg = build_season_predictions_email(
+            user
+        )
+
+
+        send_email(
+            msg,
+            user.email
+        )
+
+
+        return True
+
+
+    except Exception as e:
+
+        print(
+            f"[ERROR] Season Predictions email failed for {user.email}: {e}"
+        )
+
+        return False
 
 
 # ==============================

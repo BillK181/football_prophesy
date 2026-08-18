@@ -653,4 +653,46 @@ def update_season_predictions():
 @season_predictions_bp.route("/send_emails", methods=["POST"])
 @login_required
 def send_season_predictions_emails():
-    return
+    
+    users = User.query.all()
+
+    predictions = Prediction.query.filter(
+            Prediction.year == 2026,
+            Prediction.section == "season_predictions",
+            Prediction.preseason_position.isnot(None),
+            Prediction.player_id.isnot(None)
+        ).all()
+                
+    completed_users = []
+                
+    for prediction in predictions:
+        if prediction.user_id not in completed_users:
+            completed_users.append(prediction.user_id)
+
+    incomplete_users = []
+
+    for user in users:
+        if user.id not in completed_users:
+            incomplete_users.append(user)
+    
+    sent = 0
+    failed = 0
+
+    for u in incomplete_users:
+
+        if not u.email:
+            continue
+
+        success = send_season_predictions_email(u)
+
+        if success:
+            sent += 1
+        else:
+            failed += 1
+
+    flash(
+        f"Emails sent → {sent} success, {failed} failed",
+        "success"
+    )
+
+    return redirect(url_for("season_predictions.update_season_predictions"))

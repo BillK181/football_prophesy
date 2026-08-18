@@ -1,5 +1,5 @@
 SEASON_PREDICTION_POINTS = {
-    "mvp": 80,
+    "mvp": 100,
     "sb_mvp": 30,
 
     "passing_yards": 50,
@@ -9,23 +9,23 @@ SEASON_PREDICTION_POINTS = {
     "tackles": 50,
     "interceptions": 50,
 
-    "highest_scoring_offense": 15,
-    "lowest_scoring_offense": 15,
-    "best_defense": 15,
-    "worst_defense": 15,
+    "highest_scoring_offense": 20,
+    "lowest_scoring_offense": 20,
+    "best_defense": 20,
+    "worst_defense": 20,
 
     "afc_1_seed": 25,
     "nfc_1_seed": 25,
 
-    "afc_east_champion": 10,
-    "afc_south_champion": 10,
-    "afc_north_champion": 10,
-    "afc_west_champion": 10,
+    "afc_east_champion": 20,
+    "afc_south_champion": 20,
+    "afc_north_champion": 20,
+    "afc_west_champion": 20,
 
-    "nfc_east_champion": 10,
-    "nfc_south_champion": 10,
-    "nfc_north_champion": 10,
-    "nfc_west_champion": 10,
+    "nfc_east_champion": 20,
+    "nfc_south_champion": 20,
+    "nfc_north_champion": 20,
+    "nfc_west_champion": 20,
 
     "afc_playoff_teams": None,
     "nfc_playoff_teams": None,
@@ -35,7 +35,7 @@ SEASON_PREDICTION_POINTS = {
 
     "super_bowl_matchup": None,
 
-    "super_bowl_champion": 50,
+    "super_bowl_champion": 100,
 }
 
 TEAM_POINTS = {
