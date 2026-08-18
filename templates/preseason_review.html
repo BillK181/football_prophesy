@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+Preseason Review | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/preseason_review.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">Preseason Review</h2>
+
+<div class="pcard-grid">
+
+    {% for entry in preseason_data %}
+
+    <section class="pcard">
+
+        <h2>
+            {{ entry.user.username }} — {{ entry.points }} pts
+        </h2>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Position</th>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for pred in entry.picks %}
+            <tr>
+                <td>{{ pred.preseason_position }}</td>
+                <td>{{ pred.player.name if pred.player else '' }}</td>
+                <td>{{ pred.player.preseason_points if pred.player else '' }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

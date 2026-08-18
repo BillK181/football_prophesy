@@ -325,20 +325,69 @@ def user_schedule_release_results(user_id):
     )
 
 # -------------------------
-# NOT IMPLEMENTED PAGES
+# PRESEASON REVIEW
 # -------------------------
-# - These routes are placeholders for future features.
-# - Each flashes a message and redirects back to main account page.
 
 @account_bp.route("/account/<int:user_id>/preseason")
 @login_required
 def user_preseason_results(user_id):
+    predictions = Prediction.query.filter(
+            Prediction.year == 2026,
+            Prediction.section == "preseason",
+        ).all()
 
-    user = User.query.get_or_404(user_id)
+    users = set()
 
-    flash("Preseason results are not implemented yet.", "info")
+    preseason_data = []
 
-    return redirect(url_for("account.account", user_id=user.id))
+    for prediction in predictions:
+        users.add(prediction.user)
+
+    for user in users:
+    
+        # get all predictions for this user
+        predictions = (
+            Prediction.query
+            .filter_by(user_id=user.id, section="preseason")
+            .join(Prediction.player)
+            .all()
+        )
+
+        # Get points
+        score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="preseason"
+        ).first()
+
+        points = score.points if score else 0
+
+        preseason_data.append({
+            "user": user,
+            "points": points,
+            "picks": sorted(
+                predictions,
+                key=lambda x: (
+                    x.player is None or x.player.preseason_points is None,
+                    -(x.player.preseason_points or 0)
+                )
+            )
+        })
+    # sort leaderboard
+    preseason_data.sort(key=lambda x: x["points"], reverse=True)
+
+    return render_template(
+            "preseason_review.html",
+            users=users,
+            preseason_data=preseason_data,
+        )
+
+
+# -------------------------
+# NOT IMPLEMENTED PAGES
+# -------------------------
+# - These routes are placeholders for future features.
+# - Each flashes a message and redirects back to main account page.
 
 
 @account_bp.route("/account/<int:user_id>/season_predictions")

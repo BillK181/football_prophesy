@@ -2,11 +2,13 @@ from football_prophesy.extensions import db
 from datetime import datetime
 
 
+
 class Player(db.Model):
     __tablename__ = "player"
 
-    # Your internal database ID
     id = db.Column(db.Integer, primary_key=True)
+
+    season_prediction = db.Column(db.JSON, nullable=True)
 
     # Sleeper's unique player ID
     sleeper_id = db.Column(db.String(50), unique=True, nullable=False)

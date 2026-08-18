@@ -3,39 +3,104 @@
 /* ================================================== */
 #hero {
   text-align: center;
-  display: block;
+  align-items: center;
+  display: flex;
   
-  width: max-content;
-  max-width: 90%;
+  width: 700px;
+  height: 300px;
   
-  margin: 40px auto 30px auto;
-  padding: 40px 75px;
+  margin: 50px auto 50px auto;
+  justify-content: center;
+  padding: 35px 73px;
   background-image: url("/static/images/hero_background.jpg");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   text-transform: capitalize;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
   
 }
 
 .hero-box {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: var(--color-secondary);
-  padding: 15px 30px;
-  border: 2.2px solid black;
+    display: block;
+
+    width: 500px;
+
+    margin: 0 auto;
+
+    box-sizing: border-box;
+
+    padding: 8px 10px;
+
+    background-color: var(--color-secondary);
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.18),
+        0 0 12px rgba(0, 0, 0, 0.08);
 }
 
+
 .hero-box h1 {
-  font-family: var(--font-heading);
-  line-height: 1.2;
-  letter-spacing: 1px;
-  font-size: 50px;
-  font-weight: 800;
-  color: var(--color-primary);
-  margin: 0;
+    margin: 0;
+
+    font-family: var(--font-heading);
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    line-height: 1.02;
+
+    letter-spacing: 0.5px;
+
+    color: var(--color-primary);
+}
+
+
+/* YOU */
+
+.hero-box span {
+    display: inline-block;
+
+    color: var(--color-primary);
+
+    font-size: 44px;
+
+    font-weight: 900;
+
+    line-height: 0.95;
+
+    padding: 0;
+}
+
+
+/* 2026 FOOTBALL PROPHET? */
+
+.hero-box span:last-child {
+    display: inline-block;
+
+    margin-top: 2px;
+
+    color: var(--color-accent);
+
+    font-size: 39px;
+
+    font-weight: 900;
+
+    line-height: 0.95;
+
+    padding: 0;
+
+    -webkit-text-stroke: 1.5px black;
+
+    text-shadow:
+        2px 2px 0 black,
+        0 0 12px var(--color-accent);
 }
 
 
@@ -46,29 +111,41 @@
 #how-it-works {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    max-width: 700px;
-    margin: 0 auto 70px auto;
+    gap: 0px;
+    max-width: 1000px;
+    margin: 0 auto 50px auto;
     text-align: center;
+    justify-items: center;
 }
 
 .how-it-works-card {
-    padding: 20px 10px;
-    background-color: var(--color-secondary);
-    border: 2px solid var(--color-accent);
+    max-width: 300px;
+    padding: 35px 5px;
+    background-color: #ebcc90;
     color: var(--color-secondary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
 }
 
 .how-it-works-card h3 {
-    margin: 0 0 12px;
-    font-size: 1.2rem;
-    color: var(--color-primary);
+    margin: 5px auto 15px auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 20px 5px;
+    font-size: 23px;
+    font-weight: bolder;
+    color: var(--color-secondary);
+    line-height: 1;
+    border-radius: 10px;
+    max-width: 90%;
 }
 
 .how-it-works-card p {
-    margin: 0;
-    line-height: 1.5;
-    color: var(--color-primary);
+    margin: 0 auto 5px auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    line-height: 1.35;
+    font-size: 16.5px;
+    color: var(--color-secondary);
+    max-width: 85%;
+    padding: 20px 20px;
 }
 
 
@@ -87,15 +164,15 @@
     /* Removed padding here so the background color fills completely to the border edges */
     padding: 15px 30px; 
     
-    background-color: var(--color-secondary); 
-    color: var(--color-primary); 
+    background-color: #ebcc90; 
+    color: var(--color-secondary); 
     margin: 0.5rem auto 25px auto; 
     cursor: pointer; 
     transition: background-color 0.2s, color 0.2s; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-    border: 2.2px solid black; 
     border-radius: 0; /* Ensures strictly sharp, 90-degree corners */
 } 
+
 
 #login > a { 
     display: block; 
@@ -114,14 +191,13 @@
     text-shadow: none; 
 } 
 
-#login:hover { 
-    background-color: var(--color-accent); 
-    color: var(--color-background); 
+#login a:hover { 
+    color: var(--color-accent); 
 } 
 
 /* Logout link default */ 
 #login .logout_link { 
-    color: var(--color-primary); 
+    color: var(--color-secondary); 
     text-decoration: underline; 
     font-weight: bold; 
     transition: color 0.2s ease; 
@@ -227,11 +303,10 @@
     display: inline-block;      /* shrink to fit text */
     padding: 5px 7px;
     font-size: .6rem;
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
+    background-color: #ebcc90;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+    color: var(--color-secondary);
     text-decoration: none;
-    border: 2px solid var(--color-accent);
-    border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.2s ease;
     margin-bottom: 20px;
@@ -285,6 +360,7 @@
     margin: 60px auto;         /* center horizontally */
     background-color: transparent; /* whole nav background */
     padding: 0;                /* remove extra padding */
+    
 }
 
 #main-navigation ul {
@@ -297,8 +373,8 @@
 }
 
 #main-navigation li {
-    background-color: var(--color-secondary);
-    border: 2.6px solid black;
+    background-color: #ebcc90;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
     display: flex;             /* use flex to center content */
     justify-content: center;   /* horizontal center */
     align-items: center;       /* vertical center */
@@ -314,7 +390,7 @@
     font-family: var( --font-heading);
     font-size: 1.5rem;
     font-weight: bolder;
-    color: var(--color-primary);
+    color: var(--color-secondary);
     width: 100%;               /* fill li width */
     line-height: 1.5em;        /* vertical spacing between stacked words */
 }
@@ -328,107 +404,211 @@
 /* ================================================== */
 @media (max-width: 1000px) {
     .hero-box h1 {
-        font-size: 30px;
+        font-size: 33px;
+    }
+
+    .hero-box span {
+        font-size: 32px;
+    }
+
+    #hero {
+        width: 650px;
+        height: 278px;
+        padding: 30px 75px;
+    }
+
+    .hero-box {
+        width: 475px;
+    }
+
+    .how-it-works-card {
+        max-width: 240px;
+        padding: 10px;
     }
 
 }
-
-
 @media (max-width: 768px) {
+
     #hero {
         display: flex;
+
         justify-content: center;
         align-items: center;
 
-        width: 100%;
-        max-width: 100%;
+        width: 350px;
+        height: 330px;
+
         box-sizing: border-box;
 
         margin: 15px auto 35px auto;
+
         padding: 60px 0;
 
         background-image: url("/static/images/hero_background_mobile.jpg");
-        background-size: contain;
+
+        background-size: 100% 100%;
         background-position: center;
         background-repeat: no-repeat;
 
         text-transform: capitalize;
+
         overflow: hidden;
+
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.15);
     }
+
+
+    /* ============================= */
+    /* MOBILE HERO BOX               */
+    /* ============================= */
 
     .hero-box {
-        width: 230px;
-        padding: 10px 0px;
+        width: 250px;
+
+        box-sizing: border-box;
+
+        padding: 10px 0;
+
         margin: 0;
-        border: 1px solid black;
+
+        background-color: var(--color-secondary);
+
+        border-radius: 10px;
+
+        text-align: center;
     }
+
 
     .hero-box h1 {
-        font-size: 30px;
+        margin: 0;
+
+        font-size: 33px;
+
+        line-height: 1.2;
+
+        letter-spacing: 1px;
     }
 
-    /* THE FIX: Matches the exact structure of the hero box above */
+
+    .hero-box span {
+        font-size: 45px;
+
+        line-height: .7;
+
+        padding: 0;
+
+        -webkit-text-stroke: 0;
+    }
+
+
+    .hero-box span:last-child {
+        font-size: 35px;
+        line-height: 1.2;
+
+        padding: 0;
+
+        -webkit-text-stroke: 1.5px black;
+
+        text-shadow:
+            2px 2px 0 black,
+            0 0 12px var(--color-accent);
+    }
+
+
+    /* ============================= */
+    /* LOGIN                         */
+    /* ============================= */
+
     #login {
         display: block;
+
         width: max-content;
         max-width: 90%;
+
         margin: 0.5rem auto 20px auto;
-        border: 1.5px solid black;
-        padding: 10px 20px; 
+
+        padding: 10px 20px;
     }
 
 
-    /* THE FIX: Applies the identical layout to your inner login link */
     #login > a {
         width: 100%;
+
         box-sizing: border-box;
-        padding: 10px 20px; /* Matches the hero-box padding exactly */
+
+        padding: 10px 20px;
     }
 
-    .hero-box h1 {
-        font-size: 30px;
-    }
 
     #login h5 {
         font-size: 1.2rem;
     }
 
+
+    /* ============================= */
+    /* NAVIGATION                    */
+    /* ============================= */
+
     #main-navigation {
         margin: 35px auto 45px auto;
     }
 
+
     #main-navigation li {
-        border: 1.3px solid black;
-        height: 80px; 
+        height: 80px;
     }
 
+
     #main-navigation a {
-        display: inline-block; 
-        white-space: pre-line; 
-        text-align: center; 
-        line-height: 1.2em; 
+        display: inline-block;
+
+        white-space: pre-line;
+
+        text-align: center;
+
+        line-height: 1.2em;
+
         font-size: 15px;
+
         margin: 0 10px;
     }
+
+
+    /* ============================= */
+    /* BUTTON                        */
+    /* ============================= */
 
     .full-scoreboard-btn {
         margin-bottom: 20px;
     }
 
+
+    /* ============================= */
+    /* HOW IT WORKS                  */
+    /* ============================= */
+
     #how-it-works {
         grid-template-columns: 1fr;
-        gap: 15px;
+
+        gap: 25px;
+
         justify-items: center;
+
         margin-bottom: 40px;
     }
 
+
     .how-it-works-card {
         padding: 20px 5px;
+
         max-width: 250px;
     }
 }
 
+
 @media (max-width: 480px) {
+
     #main-navigation li {
         height: 60px;
     }

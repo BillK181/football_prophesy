@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}
+Update Season Predictions | Football Prophesy
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/update_season_predictions.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="user-container">
+        {% for user in completed_users %}
+            <div class="user-card">
+                <label for="player_{{ loop.index }}">
+                    {{ user.username }}
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <form
+        method="POST"
+        action="{{ url_for('season_predictions.update_season_predictions') }}"
+        class="predictions-form">
+
+        {% for season_prediction in SEASON_PREDICTIONS_PLAYERS %}
+
+            <div class="prediction-card">
+
+                <div class="predictions-label">
+                    <label for="{{ season_prediction }}">
+                        {{ season_prediction.replace('_', ' ') }}
+                    </label>
+                </div>
+
+                <div class="player-search-container">
+
+                    <input
+                        type="text"
+                        class="player-search"
+                        id="{{ season_prediction }}"
+                        autocomplete="off"
+                        value="{% if awarded_players.get(season_prediction) %}{{ awarded_players[season_prediction].name }}{% endif %}"
+                        placeholder="Search player..."
+                    >
+
+                    <input
+                        type="hidden"
+                        name="{{ season_prediction }}"
+                        value="{% if awarded_players.get(season_prediction) %}{{ awarded_players[season_prediction].id }}{% endif %}"
+                    >
+
+                    <div class="search-results"></div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        {% for season_prediction in SEASON_PREDICTIONS_TEAMS %}
+
+            <div class="prediction-card">
+
+                <div class="predictions-label">
+                    <label for="{{ season_prediction }}">
+                        {{ season_prediction.replace('_', ' ') }}
+                    </label>
+                </div>
+
+                <div class="team-search-container">
+
+                    <input
+                        type="text"
+                        class="team-search"
+                        id="{{ season_prediction }}"
+                        autocomplete="off"
+                        data-existing-team="{% if awarded_teams.get(season_prediction) %}{{ awarded_teams[season_prediction][0].id }}{% endif %}"
+                        value="{% if awarded_teams.get(season_prediction) %}{{ awarded_teams[season_prediction][0].city }} {{ awarded_teams[season_prediction][0].name }}{% endif %}"
+                        placeholder="Search team..."
+                    >
+
+                    <input
+                        type="hidden"
+                        name="{{ season_prediction }}"
+                        value="{% if awarded_teams.get(season_prediction) %}{{ awarded_teams[season_prediction][0].id }}{% endif %}"
+                    >
+
+                    <div class="search-results"></div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        {% for season_prediction, selection_count in MULTI_PREDICTIONS.items() %}
+
+            <div class="prediction-card">
+
+                <div class="predictions-label">
+                    <label>
+                        {{ season_prediction.replace('_', ' ') }}
+                    </label>
+                </div>
+
+                {% for count in range(1, selection_count + 1) %}
+
+                    {% set prediction_name = season_prediction ~ '_' ~ count %}
+
+                    <div class="team-search-container">
+
+                        <input
+                            type="text"
+                            class="team-search"
+                            id="{{ prediction_name }}"
+                            autocomplete="off"
+                            data-existing-team="{% if awarded_teams.get(prediction_name) %}{{ awarded_teams[prediction_name][0].id }}{% endif %}"
+                            value="{% if awarded_teams.get(prediction_name) %}{{ awarded_teams[prediction_name][0].city }} {{ awarded_teams[prediction_name][0].name }}{% endif %}"
+                            placeholder="Search team..."
+                        >
+
+                        <input
+                            type="hidden"
+                            name="{{ prediction_name }}"
+                            value="{% if awarded_teams.get(prediction_name) %}{{ awarded_teams[prediction_name][0].id }}{% endif %}"
+                        >
+
+                        <div class="search-results"></div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        <button
+            type="submit"
+            class="btn btn-update"
+            onclick="return confirm('This will update all season predictions and recalculate scores. Continue?');">
+            Update Season Predictions
+        </button>
+
+    </form>
+
+
+    <form method="POST" action="{{ url_for('preseason.update_players_route') }}">
+
+        <button
+            type="submit"
+            class="btn btn-update">
+            Update Players
+        </button>
+
+    </form>
+
+
+    <form method="POST" action="{{ url_for('season_predictions.send_season_predictions_emails') }}">
+
+        <button
+            type="submit"
+            class="btn btn-email"
+            onclick="return confirm('Are you sure you want to send season_prediction emails to all users?');">
+            Send Season Prediction Emails
+        </button>
+
+    </form>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<!-- Page-specific scripts -->
+<script src="{{ url_for('static', filename='js/team_search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/player_search.js') }}"></script>
+{% endblock %}

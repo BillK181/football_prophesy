@@ -1,11 +1,14 @@
 {% extends "predictions_base.html" %}
 
+
 {% block prediction_form %}
+
 
 {% set award_predictions = [
     ("mvp", "MVP", 1, 80),
     ("sb_mvp", "SB MVP", 1, 30),
 ] %}
+
 
 {% set leader_predictions = [
     ("passing_yards", "Passing Yards Leader", 1, 50),
@@ -16,7 +19,12 @@
     ("interceptions", "Interceptions Leader", 1, 50),
 ] %}
 
+
 {% set team_season_predictions = [
+    ("highest_scoring_offense", "Highest Scoring Offense", 1, 15),
+    ("lowest_scoring_offense", "Lowest Scoring Offense", 1, 15),
+    ("best_defense", "Best Defense (Fewest Points Allowed)", 1, 15),
+    ("worst_defense", "Worst Defense (Most Points Allowed)", 1, 15),
     ("afc_1_seed", "AFC 1 Seed", 1, 25),
     ("nfc_1_seed", "NFC 1 Seed", 1, 25),
     ("afc_east_champion", "AFC East Champion", 1, 10),
@@ -27,17 +35,14 @@
     ("nfc_south_champion", "NFC South Champion", 1, 10),
     ("nfc_north_champion", "NFC North Champion", 1, 10),
     ("nfc_west_champion", "NFC West Champion", 1, 10),
+    ("afc_playoff_teams", "Pick 2 AFC teams to Make the Playoffs", 2, "Correctly chosen playoff teams receive different points based off probability. See search for"),
+    ("nfc_playoff_teams", "Pick 2 NFC teams to Make the Playoffs", 2, "Correctly chosen playoff teams receive different points based off probability. See search for"),
     ("afc_championship_matchup", "AFC Championship Matchup Teams", 2, "1 Correct = 15, 2 Correct = 50"),
     ("nfc_championship_matchup", "NFC Championship Matchup Teams", 2, "1 Correct = 15, 2 Correct = 50"),
     ("super_bowl_matchup", "Super Bowl Matchup Teams", 2, "1 Correct = 25 Points, 2 Correct = 100"),
     ("super_bowl_champion", "Super Bowl Champion", 1, 50),
-    ("highest_scoring_offense", "Highest Scoring Offense", 1, 15),
-    ("lowest_scoring_offense", "Lowest Scoring Offense", 1, 15),
-    ("best_defense", "Best Defense (Fewest Points Allowed)", 1, 15),
-    ("worst_defense", "Worst Defense (Most Points Allowed)", 1, 15),
-    ("afc_playoff_teams", "Pick 2 AFC teams to Make the Playoffs", 2, "Correctly Chosen Playoff Teams Receive Different Points Based Off Probability. See search for"),
-    ("nfc_playoff_teams", "Pick 2 NFC teams to Make the Playoffs", 2, "Correctly Chosen Playoff Teams Receive Different Points Based Off Probability. See search for"),
 ] %}
+
 
 {% set afc_playoff_team_points = [
     ("Buffalo Bills", 20),
@@ -58,6 +63,7 @@
     ("Miami Dolphins", 240),
 ] %}
 
+
 {% set nfc_playoff_team_points = [
     ("Los Angeles Rams", 18),
     ("Detroit Lions", 22),
@@ -77,74 +83,243 @@
     ("Arizona Cardinals", 315),
 ] %}
 
-<div class="season_predictions">
 
-    <div class="heading">
-        <h1>Season Predictions</h1>
-    </div>
+<!-- ========================================== -->
+<!-- EXISTING PREDICTIONS                       -->
+<!-- ========================================== -->
 
-    <div class="predictions">
+{% set previous_prediction_map = {} %}
 
-        <div class="award-predictions">
-            {% for key, label, count, points in award_predictions %}
-                <div class="predictions-label">
-                    <label for="label">{{ label }}</label>
-                    <label for="points">{{ points }} Points</label>
-                </div>
+{% for pred in previous_predictions %}
 
-                <div class="prediction-input">
-                    {% for i in range(count) %}
-                        <input
-                            type="text"
-                            name="{{ key }}_{{ i + 1 }}"
-                            id="{{ key }}_{{ i + 1 }}">
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
+    {% set _ = previous_prediction_map.update({
+        pred.season_prediction: pred
+    }) %}
 
-        <div class="leader-predictions">
-            {% for key, label, count, points in leader_predictions %}
-                <div class="predictions-label">
-                    <label for="label">{{ label }}</label>
-                    <label for="points">{{ points }} Points</label>
-                </div>
+{% endfor %}
 
-                <div class="prediction-input">
-                    {% for i in range(count) %}
-                        <input
-                            type="text"
-                            name="{{ key }}_{{ i + 1 }}"
-                            id="{{ key }}_{{ i + 1 }}">
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
 
-        <div class="team-season-predictions">
-            {% for key, label, count, points in team_season_predictions %}
-                <div class="predictions-label">
-                    <label for="label">{{ label }}</label>
-                    <label for="points">{{ points }} Points</label>
-                </div>
+<div class="heading">
 
-                <div class="prediction-input">
-                    {% for i in range(count) %}
-                        <input
-                            type="text"
-                            name="{{ key }}_{{ i + 1 }}"
-                            id="{{ key }}_{{ i + 1 }}">
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
+    <h1>
+        Season Predictions
+    </h1>
 
-    </div>
 </div>
+
+
+<div class="predictions">
+
+
+    <!-- ========================================== -->
+    <!-- AWARD PREDICTIONS                          -->
+    <!-- ========================================== -->
+
+    <div class="prediction-section">
+
+        {% for key, label, count, points in award_predictions %}
+
+            {% set prediction_key = key ~ "_1" %}
+            {% set existing = previous_prediction_map.get(prediction_key) %}
+
+            <div class="prediction-card {% if existing and existing.player and key in (existing.player.season_prediction or []) %}correct{% endif %}">
+
+                <div class="predictions-label">
+
+                    <label>
+                        {{ label }}
+                    </label>
+
+                    <span>
+                        {{ points }} Points
+                    </span>
+
+                </div>
+
+
+                <div class="player-slot">
+
+                    {% for i in range(count) %}
+
+                        {% set prediction_key = key ~ "_" ~ (i + 1) %}
+                        {% set existing = previous_prediction_map.get(prediction_key) %}
+
+                        <div class="player-search-container">
+
+                            <input
+                                type="text"
+                                id="{{ prediction_key }}"
+                                class="player-search"
+                                placeholder="Search player..."
+                                autocomplete="off"
+                                value="{% if existing and existing.player %}{{ existing.player.name }}{% endif %}"
+                            >
+
+                            <input
+                                type="hidden"
+                                id="{{ prediction_key }}-id"
+                                name="{{ prediction_key }}"
+                                value="{% if existing and existing.player_id %}{{ existing.player_id }}{% endif %}"
+                            >
+
+                            <div class="search-results"></div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- LEADER PREDICTIONS                         -->
+    <!-- ========================================== -->
+
+    <div class="prediction-section">
+
+        {% for key, label, count, points in leader_predictions %}
+
+            {% set prediction_key = key ~ "_1" %}
+            {% set existing = previous_prediction_map.get(prediction_key) %}
+
+            <div class="prediction-card {% if existing and existing.player and key in (existing.player.season_prediction or []) %}correct{% endif %}">
+
+                <div class="predictions-label">
+
+                    <label>
+                        {{ label }}
+                    </label>
+
+                    <span>
+                        {{ points }} Points
+                    </span>
+
+                </div>
+
+
+                <div class="player-slot">
+
+                    {% for i in range(count) %}
+
+                        {% set prediction_key = key ~ "_" ~ (i + 1) %}
+                        {% set existing = previous_prediction_map.get(prediction_key) %}
+
+                        <div class="player-search-container">
+
+                            <input
+                                type="text"
+                                id="{{ prediction_key }}"
+                                class="player-search"
+                                placeholder="Search player..."
+                                autocomplete="off"
+                                value="{% if existing and existing.player %}{{ existing.player.name }}{% endif %}"
+                            >
+
+                            <input
+                                type="hidden"
+                                id="{{ prediction_key }}-id"
+                                name="{{ prediction_key }}"
+                                value="{% if existing and existing.player_id %}{{ existing.player_id }}{% endif %}"
+                            >
+
+                            <div class="search-results"></div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- TEAM SEASON PREDICTIONS                    -->
+    <!-- ========================================== -->
+
+    <div class="prediction-section">
+
+        {% for key, label, count, points in team_season_predictions %}
+
+            {% set prediction_key = key ~ "_1" %}
+            {% set existing = previous_prediction_map.get(prediction_key) %}
+
+            <div class="prediction-card {% if existing and existing.team and key in (existing.team.season_prediction or []) %}correct{% endif %}">
+
+                <div class="predictions-label">
+
+                    <label>
+                        {{ label }}
+                    </label>
+
+                    <span>
+                        {{ points }} Points
+                    </span>
+
+                </div>
+
+
+                <div class="team-slot">
+
+                    {% for i in range(count) %}
+
+                        {% set prediction_key = key ~ "_" ~ (i + 1) %}
+                        {% set existing = previous_prediction_map.get(prediction_key) %}
+
+                        <div class="team-search-container">
+
+                            <input
+                                type="text"
+                                id="{{ prediction_key }}"
+                                class="team-search"
+                                placeholder="Search team..."
+                                autocomplete="off"
+                                data-existing-team="{% if existing %}{{ existing.team_id or '' }}{% endif %}"
+                                value=""
+                            >
+
+                            <input
+                                type="hidden"
+                                id="{{ prediction_key }}-id"
+                                name="{{ prediction_key }}"
+                                value="{% if existing %}{{ existing.team_id or '' }}{% endif %}"
+                            >
+
+                            <div class="search-results"></div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+</div>
+
 
 {% endblock %}
 
+
 {% block extra_js %}
+
 <script src="{{ url_for('static', filename='js/season_predictions.js') }}"></script>
+
 <script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+
 {% endblock %}

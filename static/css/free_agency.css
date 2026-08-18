@@ -5,7 +5,7 @@
 h1,
 .prediction-container p{
     color: var(--color-secondary, #111);
-    -webkit-text-stroke: .2px var(--color-accent, #111);
+    -webkit-text-stroke: .2px var(--color-primary, #111);
     text-align: center;
 }
 
@@ -23,13 +23,12 @@ h1,
     color: var(--color-primary, #fff);
     font-family: var(--font-base, Arial);
     background-color: var(--color-secondary, #111);
-    border-radius: 8px;
     overflow: hidden;
 }
 
 /* HEADER */
 .prediction-table th {
-    background-color: var(--color-accent, #111);
+    background-color: var(--color-primary, #111);
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--color-secondary, #f0f);
@@ -51,7 +50,7 @@ h1,
     padding: 6px;
     border-radius: 5px;
     border: 1px solid #333;
-    background-color: var(--color-accent, #111);
+    background-color: var(--color-primary, #111);
     color: var(--color-secondary, #111);
     font-size: 0.85rem;
 }

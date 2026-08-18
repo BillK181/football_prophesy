@@ -47,6 +47,7 @@ a {
     --color-secondary: #9c6e56;
     --color-background: #efc588;
     --color-accent: #d9b00e;
+    --color-light: #ebcc90;
 
     /* Typography */
     --font-base: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -185,7 +186,7 @@ section {
 }
 
 #site-header .site-logo {
-    max-height: 170px;   /* keeps logo from being too tall */
+    max-height: 150px;   /* keeps logo from being too tall */
     width: auto;        /* maintains aspect ratio */
 }
 

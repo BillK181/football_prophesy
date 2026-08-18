@@ -1,16 +1,30 @@
 from football_prophesy.extensions import db
-from sqlalchemy import JSON
+
 
 class Prediction(db.Model):
     __tablename__ = "prediction"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     year = db.Column(db.Integer, default=2026)
     section = db.Column(db.String(50), default="scouting_combine")
-    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=True)
+
+    # User
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    # Player
+    player_id = db.Column(db.Integer, db.ForeignKey("player.id", name="fk_prediction_player"), nullable=True)
     player = db.relationship("Player", backref="predictions")
     player_name = db.Column(db.String(100), nullable=True)
+
+    # Team
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id", name="fk_prediction_team"), nullable=True)
+    team = db.relationship("Team", backref="predictions")
+
+    # Season Predictions
+    season_prediction = db.Column(db.String(100), nullable=True)
+
+    # Preseason fields
+    preseason_position = db.Column(db.String(50), nullable=True)
 
     # Schedule release
     schedule_preds = db.Column(db.JSON, nullable=True)
@@ -28,8 +42,6 @@ class Prediction(db.Model):
     drill = db.Column(db.String(50), nullable=True)
     place = db.Column(db.Integer, nullable=True)
 
-    # Preseason fields
-    preseason_position = db.Column(db.String(50), nullable=True)
 
 
     # ------------------------
@@ -108,6 +120,13 @@ class Prediction(db.Model):
         # -----------------------------
         elif self.section == "preseason":
             return 0  # handled by Score system
+
+
+        # -----------------------------
+        # Preseason Section
+        # -----------------------------
+        elif self.section == "season_predictions":
+            return 0 
             
         # -----------------------------
         # Unknown section → no points
