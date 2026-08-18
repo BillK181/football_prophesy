@@ -15,7 +15,7 @@ from football_prophesy.models.score import Score
 from football_prophesy.models.team import Team
 from football_prophesy.data.season_predictions_points import SEASON_PREDICTION_POINTS
 from football_prophesy.extensions import db
-from football_prophesy.services.email_service import send_preseason_email
+from football_prophesy.services.email_service import send_season_predictions_email
 from football_prophesy.services.sleeper_players import update_players
 from football_prophesy.services.scoring import recalc_season_predictions_scores
 from football_prophesy.services.player_update import update_players_if_needed
@@ -250,6 +250,7 @@ def submit_season_predictions():
 # ==================================================
 @season_predictions_bp.route("/update", methods=["GET", "POST"])
 @login_required
+@admin_required
 def update_season_predictions():
 
     SEASON_PREDICTIONS_TEAMS = [
