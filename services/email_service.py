@@ -460,6 +460,104 @@ def send_season_predictions_email(user):
 
 
 # ==============================
+# SEASON PICKS EMAIL
+# ==============================
+
+def build_season_picks_email(
+    user,
+    week,
+    missing_games,
+    deadline
+):
+
+    html = render_template(
+        "emails/season_picks_email.html",
+        user=user,
+        week=week,
+        missing_games=missing_games,
+        deadline=deadline
+    )
+
+    # ------------------------------
+    # Missing games for plain text
+    # ------------------------------
+
+    missing_games_text = "\n".join(
+        f"- {game.away_team.name} @ {game.home_team.name}"
+        for game in missing_games
+    )
+
+    # ------------------------------
+    # Plain text email
+    # ------------------------------
+
+    text = f"""
+Hi {user.name},
+
+Week {week} of Season Picks is live!
+
+You are missing picks for:
+
+{missing_games_text}
+
+Your deadline is:
+
+{deadline.strftime('%A, %B %-d at %-I:%M %p %Z')}
+
+Submit your picks here:
+
+https://footballprophesy.com/season_picks
+
+Good luck, and may your predictions reign supreme!
+"""
+
+    return make_email(
+        f"🏈 Week {week} Season Picks Are Live!",
+        user,
+        text,
+        html
+    )
+
+
+# ==============================
+# SEND SEASON PICKS EMAIL
+# ==============================
+
+def send_season_picks_email(
+    user,
+    week,
+    missing_games,
+    deadline
+):
+
+    try:
+
+        msg = build_season_picks_email(
+            user=user,
+            week=week,
+            missing_games=missing_games,
+            deadline=deadline
+        )
+
+        send_email(
+            msg,
+            user.email
+        )
+
+        return True
+
+    except Exception as e:
+
+        print(
+            f"[ERROR] Season Picks email failed "
+            f"for {user.email}: {e}"
+        )
+
+        return False
+
+
+
+# ==============================
 # BULK SENDERS
 # ==============================
 

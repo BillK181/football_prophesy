@@ -20,6 +20,10 @@ class Prediction(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("team.id", name="fk_prediction_team"), nullable=True)
     team = db.relationship("Team", backref="predictions")
 
+    # Game
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=True)
+    game = db.relationship("Game", backref="predictions")
+
     # Season Predictions
     season_prediction = db.Column(db.String(100), nullable=True)
 
@@ -127,6 +131,22 @@ class Prediction(db.Model):
         # -----------------------------
         elif self.section == "season_predictions":
             return 0 
+
+        # -----------------------------
+        # Season Picks Section
+        # -----------------------------
+        elif self.section == "season_picks":
+
+            if not self.game:
+                return 0
+
+            if not self.game.winner_id:
+                return 0
+
+            if self.team_id == self.game.winner_id:
+                return self.game.pick_points
+
+            return 0
             
         # -----------------------------
         # Unknown section → no points

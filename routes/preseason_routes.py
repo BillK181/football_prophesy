@@ -4,7 +4,6 @@ from collections import defaultdict
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import traceback
-from football_prophesy.extensions import mail
 
 from football_prophesy.decorators import admin_required
 from football_prophesy.models.user import User
@@ -16,7 +15,6 @@ from football_prophesy.extensions import db
 from football_prophesy.services.email_service import send_preseason_email
 from football_prophesy.services.sleeper_players import update_players
 from football_prophesy.services.scoring import recalc_preseason_scores
-from football_prophesy.services.player_update import update_players_if_needed
 
 
 # Blueprint

@@ -44,11 +44,6 @@ def index():
     )
 
 
-@main_bp.route("/season_picks")
-def season_picks():
-    return render_template("season_picks.html", players=SCOUTING_COMBINE_PLAYERS)
-
-
 @main_bp.route("/postseason_predictions")
 def postseason_predictions():
     return render_template("postseason_predictions.html", players=SCOUTING_COMBINE_PLAYERS)

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html>
+
+<body style="
+    margin:0;
+    padding:0;
+    background-color:#f8f1e7;
+    font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="
+    background-color:#efc588;
+">
+
+<tr>
+
+<td align="center" style="
+    padding:30px 15px;
+">
+
+
+<table width="100%" cellpadding="0" cellspacing="0" style="
+    max-width:600px;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+">
+
+
+<!-- HEADER -->
+
+<tr>
+
+<td style="
+    background:#9c6e56;
+    padding:30px;
+    text-align:center;
+">
+
+<img
+    src="https://www.footballprophesy.com/static/images/football_prophesy.png"
+    alt="Football Prophesy"
+    style="
+        width:400px;
+        max-width:100%;
+        height:auto;
+        display:block;
+        margin:auto;
+    "
+>
+
+
+<p style="
+    color:white;
+    margin:20px 0 0;
+    font-size:18px;
+">
+
+Week {{ week }} Season Picks Are Live!
+
+</p>
+
+</td>
+
+</tr>
+
+
+<!-- BODY -->
+
+<tr>
+
+<td style="
+    padding:30px;
+    color:#333333;
+">
+
+
+<h2 style="
+    margin-top:0;
+    color:#333333;
+">
+
+Hi {{ user.name }},
+
+</h2>
+
+
+<p style="
+    font-size:16px;
+    line-height:1.6;
+    color:#333333;
+">
+
+Be sure to make your picks for
+<strong>Week {{ week }}</strong>!
+
+</p>
+
+
+<!-- MISSING PICKS -->
+
+<div style="
+    background:#f8f1e7;
+    padding:18px;
+    margin:20px 0;
+    border-radius:8px;
+    color:#333333;
+    font-size:15px;
+">
+
+<strong>Missing Picks:</strong>
+
+<br><br>
+
+{% for game in missing_games %}
+
+<div style="
+    padding:8px 0;
+    border-bottom:1px solid #dddddd;
+">
+
+{{ game.away_team.name }}
+@
+{{ game.home_team.name }}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<!-- DEADLINE -->
+
+<div style="
+    background:#efc588;
+    padding:15px;
+    margin:25px 0;
+    border-radius:6px;
+    color:#333333;
+    font-size:15px;
+">
+
+⏰ <strong>Submission Deadline</strong>
+
+<br>
+
+Each pick locks at the kickoff of that game.
+
+<br><br>
+
+<strong>First Submission Deadline:</strong>
+{{ deadline.strftime('%A, %B %-d at %-I:%M %p %Z') }}
+
+</div>
+
+
+<!-- BUTTON -->
+
+<div style="
+    text-align:center;
+    margin:35px 0;
+">
+
+<a
+    href="https://www.footballprophesy.com/season_picks"
+    style="
+        background:#9c6e56;
+        color:white;
+        padding:14px 28px;
+        border-radius:8px;
+        text-decoration:none;
+        display:inline-block;
+        font-weight:bold;
+        font-size:16px;
+"
+>
+
+Make Your Picks
+
+</a>
+
+</div>
+
+
+<p style="
+    font-size:16px;
+    line-height:1.6;
+    color:#333333;
+">
+
+Good luck, and may your predictions reign supreme!
+
+</p>
+
+
+</td>
+
+</tr>
+
+
+<!-- FOOTER -->
+
+<tr>
+
+<td style="
+    background:#f4f4f4;
+    padding:15px;
+    text-align:center;
+    font-size:12px;
+    color:#777777;
+">
+
+Football Prophesy © 2026
+
+<br><br>
+
+<a
+    href="https://footballprophesy.com"
+    style="
+        color:#9c6e56;
+        text-decoration:none;
+"
+>
+
+www.footballprophesy.com
+
+</a>
+
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

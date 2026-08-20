@@ -6,5 +6,6 @@ from .comment import Comment
 from .route_usage import RouteUsage
 from .score import Score
 from .team import Team
+from .game import Game
 
-__all__ = ["db", "User", "Prediction", "Comment", "RouteUsage", "Score", "Team"]
+__all__ = ["db", "User", "Prediction", "Comment", "RouteUsage", "Score", "Team", "Game"]

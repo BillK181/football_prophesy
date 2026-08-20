@@ -40,7 +40,7 @@ def season_predictions():
         section="season_predictions"
     ).all()
 
-    pages = ["season_predictions"]
+    pages = ["season predictions"]
 
     comments = Comment.query.filter(
         Comment.page.in_(pages)
@@ -128,6 +128,7 @@ def submit_season_predictions():
 
 
     data = request.get_json(silent=True) or {}
+    print("SEASON PREDICTION DATA:", data)
 
     user = current_user
 
@@ -207,6 +208,22 @@ def submit_season_predictions():
 
             # Make sure the team actually exists
             team = Team.query.get(team_id)
+
+            team_id = int(value)
+
+            team = Team.query.get(team_id)
+
+            print("TEAM PREDICTION:", prediction)
+            print("TEAM ID:", team_id)
+            print("TEAM FOUND:", team)
+
+            if not team:
+                print("!!! INVALID TEAM !!!")
+                return jsonify({
+                    "status": "error",
+                    "message": "Invalid team selected."
+                }), 400
+            
 
             if not team:
 

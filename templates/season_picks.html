@@ -1,34 +1,247 @@
 {% extends "base.html" %}
 
 {% block title %}
-Coming Soon | Football Prophesy
+Season Picks | Football Prophesy
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/coming_soon.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/season_picks.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/comments.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<section class="coming-soon-container">
-    <h1>Coming Soon!</h1>
-    <p>We are working hard to bring you this event. Stay tuned and get ready to Prophesy!</p>
-    <div class="tentative-scoring">
-        <h2>Tentative Scoring</h2>
-        <ul>
-            <li>Predict every NFL game each week
-                <ul>
-                    <li>Prime Time Games = 2 pts</li>
-                    <li>Regular Games = 1 pt</li>
-                </ul>
-            </li>
-            <li>The person who predicts the most games correctly gets 10 additional points
-                <ul>
-                    <li>If there is a tie, nobody receives the extra points</li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</section>
+<h1>Season Picks</h1>
 
+<!-- Season Picks Layout -->
+<div class="season-picks-layout">
+
+    <!-- Leaderboard -->
+    <section id="{{ scoreboard_id }}" class="leaderboard-section">
+
+        <div class="scoreboard-container">
+            <table id="scoreboard">
+                <tbody>
+                    {% for entry in leaderboard %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('account.account', user_id=entry.user.id) }}">
+                                {{ entry.user.username }}
+                            </a>
+                        </td>
+                        <td>{{ entry.points }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+
+    <!-- Weeks + Games -->
+    <section class="games-section">
+
+        <form
+            action="{{ form_action }}"
+            method="POST"
+            id="season-picks-form"
+        >
+
+        <!-- Week Toggle -->
+        <div class="week-toggle">
+
+            {% for week_number in weeks %}
+                <a
+                    href="{{ url_for('season_picks.season_picks', week=week_number) }}"
+                    class="{% if week_number == week %}active{% endif %}"
+                >
+                    Week {{ week_number }}
+                </a>
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Games -->
+        <div class="games">
+
+            {% for game in games %}
+
+                <div
+                    class="game-card {% if game.locked %}locked{% endif %}"
+                    data-game-id="{{ game.id }}"
+                >
+
+                    <div class="game-date">
+                        {{ game.local_date.strftime('%A, %B %d %-I:%M %p') }}
+                    </div>
+
+                    <!-- Away Team -->
+                    <div
+                        class="team away-team
+                            {% if previous_picks.get(game.id) == game.away_team.id %}selected{% endif %}
+                            {% if game.winner and previous_picks.get(game.id) == game.away_team.id %}
+                                {% if game.winner.id == game.away_team.id %}correct{% else %}incorrect{% endif %}
+                            {% endif %}
+                        "
+                        data-team-id="{{ game.away_team.id }}"
+                    >
+                        <span>{{ game.away_team.name }}</span>
+
+                        {% if game.winner and previous_picks.get(game.id) == game.away_team.id and game.winner.id == game.away_team.id %}
+                            <span class="game-points">+{{ game.points }}</span>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- @ -->
+                    <div class="game-info">
+                        <span>@</span>
+                    </div>
+
+                    <!-- Home Team -->
+                    <div
+                        class="team home-team
+                            {% if previous_picks.get(game.id) == game.home_team.id %}selected{% endif %}
+                            {% if game.winner and previous_picks.get(game.id) == game.home_team.id %}
+                                {% if game.winner.id == game.home_team.id %}correct{% else %}incorrect{% endif %}
+                            {% endif %}
+                        "
+                        data-team-id="{{ game.home_team.id }}"
+                    >
+                        <span>{{ game.home_team.name }}</span>
+
+                        {% if game.winner and previous_picks.get(game.id) == game.home_team.id and game.winner.id == game.home_team.id %}
+                            <span class="game-points">+{{ game.points }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Stored Pick -->
+                    <input
+                        type="hidden"
+                        class="winner-input"
+                        value="{{ previous_picks.get(game.id, '') }}"
+                    >
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+                <button type="submit" class="submit-picks-btn">
+                    Submit Picks
+                </button>
+
+                </form>
+
+                {% if current_user.is_admin %}
+                    <form
+                        action="{{ url_for('season_picks.update_season_picks') }}"
+                        method="POST"
+                    >
+                        <button type="submit" class="update-games-btn">
+                            Update Games & Scores
+                        </button>
+                    </form>
+                {% endif %}
+
+                {% if current_user.is_admin %}
+                    <form
+                        action="{{ url_for('season_picks.send_season_picks_emails') }}"
+                        method="POST"
+                        onsubmit="return confirm('Are you sure you want to send Season Picks reminder emails to all users with missing picks?');"
+                    >
+                        <button type="submit" class="update-games-btn">
+                            Send Season Picks Emails
+                        </button>
+                    </form>
+                {% endif %}
+
+            <div id="flash-messages"></div>
+
+
+        </section>
+
+    <!-- Season Predictions -->
+    <section class="season-predictions-section">
+
+        <div class="season-predictions">
+
+            {% for prediction in season_predictions %}
+
+                <div class="prediction-card">
+
+                    <div class="prediction-label">
+                        {{ prediction.season_prediction
+                            | replace('_1', '')
+                            | replace('_', ' ')
+                            | title
+                        }}
+                    </div>
+
+                    <div class="prediction-pick">
+
+                        {% if prediction.player %}
+                            {{ prediction.player.name }}
+
+                        {% elif prediction.team %}
+                            {{ prediction.team.name }}
+
+                        {% else %}
+                            No pick
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- Comments Section -->
+<h6>Comments</h6>
+
+<div id="comments">
+{% if current_user.is_authenticated %}
+<form id="comment-form" action="{{ url_for('comment.submit_comment') }}" method="POST" class="comment-form">
+    <input type="hidden" name="page" value="{{ page_name }}">
+    <textarea name="content" placeholder="Write a comment..." required></textarea>
+    <button type="submit">Submit</button>
+</form>
+{% else %}
+<p class="comment_login_text">
+    <a href="{{ url_for('auth.login') }}">Log in</a> to post a comment.
+</p>
+{% endif %}
+
+<div id="comments-list">
+{% for comment in comments %}
+<div class="comment" id="comment-{{ comment.id }}">
+    <strong>{{ comment.user.username }}</strong>
+    <em>{{ comment.local_timestamp.strftime('%b %d, %Y %I:%M %p') }}</em>
+    <p>{{ comment.content }}</p>
+
+    {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+    <button class="delete-comment-btn" data-comment-id="{{ comment.id }}">Delete</button>
+    {% endif %}
+</div>
+{% else %}
+<p class="no-comments">No comments yet. Be the first!</p>
+{% endfor %}
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/season_picks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
 {% endblock %}
