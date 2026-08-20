@@ -5,24 +5,30 @@
 const teams = [
     {
         id: 1,
-        name: "Patriots",
-        city: "New England",
-        abrv: "NE",
-        playoff_points: 22
+        name: "Bills",
+        city: "Buffalo",
+        abrv: "BUF",
+        conference: "AFC",
+        division: "AFC East",
+        playoff_points: 20
     },
     {
         id: 2,
         name: "Ravens",
         city: "Baltimore",
         abrv: "BAL",
+        conference: "AFC",
+        division: "AFC North",
         playoff_points: 20
     },
     {
         id: 3,
-        name: "Bills",
-        city: "Buffalo",
-        abrv: "BUF",
-        playoff_points: 20
+        name: "Patriots",
+        city: "New England",
+        abrv: "NE",
+        conference: "AFC",
+        division: "AFC East",
+        playoff_points: 22
     },
     {
         id: 4,
