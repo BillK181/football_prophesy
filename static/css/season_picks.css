@@ -291,6 +291,10 @@ button:hover {
     transform: scale(1.05);
 }
 
+.non-user-picks {
+    font-size: 10px;
+}
+
 .game-card.locked {
     opacity: 0.55;
 }

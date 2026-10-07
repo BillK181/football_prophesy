@@ -33,7 +33,19 @@ def season_picks():
 
     user = current_user
 
-    week = request.args.get("week", 1, type=int)
+    week = request.args.get("week", type=int)
+
+    if week is None:
+        current_game = Game.query.filter(
+            Game.season == 2026,
+            Game.postseason == False,
+            Game.date >= datetime.now(ZoneInfo("UTC"))
+        ).order_by(Game.date).first()
+
+        if current_game:
+            week = current_game.week
+        else: 
+            week = 18
 
     games = Game.query.filter_by(
         season=2026,
@@ -109,6 +121,18 @@ def season_picks():
         ).all()
     }
 
+    non_user_picks = {}
+
+
+    for prediction in Prediction.query.filter(
+        Prediction.user_id!=user.id,
+        Prediction.year==2026,
+        Prediction.section=="season_picks"
+    ).all():
+        non_user_picks.setdefault(prediction.game_id, {}).setdefault(
+            prediction.team_id, []
+        ).append(prediction.user.username)
+
     # =========================
     # Comments
     # =========================
@@ -152,6 +176,7 @@ def season_picks():
         comments=comments,
         page_name="season_picks",
         previous_picks=previous_picks,
+        non_user_picks=non_user_picks,
         season_predictions=season_predictions,
         week=week,
         weeks=range(1, 19),

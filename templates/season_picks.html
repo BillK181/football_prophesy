@@ -93,6 +93,10 @@ Season Picks | Football Prophesy
                             <span class="game-points">+{{ game.points }}</span>
                         {% endif %}
 
+                        {% if game.locked and game.id in non_user_picks and game.away_team.id in non_user_picks[game.id] %}
+                            <span class="non-user-picks"><br>{{ non_user_picks[game.id][game.away_team.id] | join(', ') | safe }}</span>
+                        {% endif %}
+
                     </div>
 
                     <!-- @ -->
@@ -114,6 +118,10 @@ Season Picks | Football Prophesy
 
                         {% if game.winner and previous_picks.get(game.id) == game.home_team.id and game.winner.id == game.home_team.id %}
                             <span class="game-points">+{{ game.points }}</span>
+                        {% endif %}
+                        
+                        {% if game.locked and game.id in non_user_picks and game.home_team.id in non_user_picks[game.id] %}
+                            <span class="non-user-picks"><br>{{ non_user_picks[game.id][game.home_team.id] | join(', ') | safe }}</span>
                         {% endif %}
                     </div>
 
