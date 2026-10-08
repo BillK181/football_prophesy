@@ -6,7 +6,7 @@
 
     display: grid;
 
-    grid-template-columns: 1fr 20fr;
+    grid-template-columns: 2fr 20fr;
 
     gap: 5px;
 
@@ -50,7 +50,7 @@ h1 {
 .scoreboard-container {
 
     width: 100%;
-    max-width: 100px;
+    max-width: 250px;
     margin: 0;
 
 }
@@ -87,6 +87,10 @@ h1 {
 
     padding: 5px;
 
+}
+
+#scoreboard td.record {
+    font-size: 10px;
 }
 
 #scoreboard tbody tr:last-child td {

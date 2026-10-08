@@ -75,19 +75,19 @@ Account | Football Prophesy
 
             <li>
                 <a href="{{ url_for('account.user_preseason_results', user_id=user.id) }}">
-                    Preseason
+                    Preseason {{ "{:,}".format(preseason_points) }} pts
                 </a>
             </li>
 
             <li>
                 <a href="{{ url_for('account.user_season_predictions_results', user_id=user.id) }}">
-                    Season Predictions
+                    Season Predictions:  {{ "{:,}".format(season_predictions_points) }} pts
                 </a>
             </li>
 
             <li>
                 <a href="{{ url_for('account.user_season_picks_results', user_id=user.id) }}">
-                    Season Picks
+                    Season Picks: {{ "{:,}".format(season_picks_points) }} pts
                 </a>
             </li>
 

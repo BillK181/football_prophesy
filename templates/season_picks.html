@@ -30,6 +30,7 @@ Season Picks | Football Prophesy
                             </a>
                         </td>
                         <td>{{ entry.points }}</td>
+                        <td class="record">{{ records[entry.user.id]["correct"] }} - {{ records[entry.user.id]["incorrect"] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

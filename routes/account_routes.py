@@ -65,6 +65,27 @@ def account(user_id):
     ).first()
     schedule_points = schedule_score.points if schedule_score else 0
 
+    preseason_score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="preseason"
+        ).first()
+    preseason_points = preseason_score.points if preseason_score else 0
+
+    season_predictions_score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="season_predictions"
+        ).first()
+    season_predictions_points = season_predictions_score.points if season_predictions_score else 0
+
+    season_picks_score = Score.query.filter_by(
+            user_id=user.id,
+            year=2026,
+            section="season_picks"
+        ).first()
+    season_picks_points = season_picks_score.points if season_picks_score else 0
+
     comments = user.comments
 
     return render_template(
@@ -76,7 +97,10 @@ def account(user_id):
         combine_points=combine_points,
         free_agency_points=free_agency_points,
         draft_points=draft_points,
-        schedule_points=schedule_points
+        schedule_points=schedule_points,
+        preseason_points=preseason_points,
+        season_predictions_points=season_predictions_points,
+        season_picks_points=season_picks_points,
     )
 
 # -------------------------

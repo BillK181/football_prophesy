@@ -160,6 +160,52 @@ def season_picks():
         limit=10
     )
 
+    records = {}
+
+    for entry in season_picks_leaderboard:
+        records[entry["user"].id] = {
+            "correct": 0,
+            "incorrect": 0
+        }
+
+    predictions = Prediction.query.filter(
+        Prediction.year == 2026,
+        Prediction.section == "season_picks"
+    ).all()
+
+    for prediction in predictions:
+
+        game = Game.query.get(prediction.game_id)
+
+        if not game or not game.date:
+            continue
+
+        game_time = game.date
+
+        if game_time.tzinfo is None:
+            game_time = game_time.replace(
+                tzinfo=ZoneInfo("UTC")
+            )
+
+        # Don't count games that haven't started
+        if now < game_time:
+            continue
+
+        records.setdefault(
+            prediction.user_id,
+            {
+                "correct": 0,
+                "incorrect": 0
+            }
+        )
+
+        points = prediction.calculate_points()
+
+        if points > 0:
+            records[prediction.user_id]["correct"] += 1
+        else:
+            records[prediction.user_id]["incorrect"] += 1
+
     return render_template(
         "season_picks.html",
         user=user,
@@ -180,7 +226,9 @@ def season_picks():
         season_predictions=season_predictions,
         week=week,
         weeks=range(1, 19),
-        games=games
+        games=games,
+        records=records,
+        users=User.query.all(),
     )
 
 # =========================
