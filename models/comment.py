@@ -21,6 +21,7 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=True)
 
     # Relationship back to User is already in User: 
     # comments = db.relationship("Comment", backref="user", lazy=True)

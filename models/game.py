@@ -9,10 +9,12 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    game_id = db.Column(db.Integer, unique=True, nullable=False)
+    game_id = db.Column(db.Integer, unique=True, nullable=True)
 
     season = db.Column(db.Integer)
     week = db.Column(db.Integer)
+
+    comments = db.relationship("Comment", backref="game", lazy=True)
 
     postseason = db.Column(db.Boolean, default=False)
 

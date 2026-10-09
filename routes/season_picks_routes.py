@@ -580,3 +580,69 @@ def send_season_picks_emails():
     return redirect(
         url_for("season_picks.season_picks")
     )
+
+
+# ==================================================
+# Game Comments
+# ==================================================
+
+# Get Comments
+@season_picks_bp.route("/comments")
+def get_comments():
+    game_id = request.args.get("game_id", type=int)
+
+    comments = Comment.query.filter_by(
+        page="season picks",
+        game_id=game_id
+    ).order_by(Comment.timestamp.asc()).all()
+
+    return jsonify([
+        {
+            "id": comment.id,
+            "username": comment.user.username,
+            "content": comment.content,
+            "timestamp": comment.timestamp.isoformat(),
+            "admin": comment.is_admin,
+            "game_id": comment.game_id
+        }
+        for comment in comments
+    ])
+
+
+
+# Submit Comments
+@season_picks_bp.route("/comments", methods=["POST"])
+@login_required
+def submit_game_comment():
+    data = request.get_json()
+
+    game_id = data.get("game_id")
+    content = data.get("content", "").strip()
+
+    if not game_id or not content:
+        return jsonify({"error": "Game ID and comment are required"}), 400
+
+    game = db.session.get(Game, game_id)
+
+    if game is None:
+        return jsonify({"error": "Game not found"}), 404
+
+    comment = Comment(
+        user_id=current_user.id,
+        page="season picks",
+        content=content,
+        game_id=game.id,
+        is_admin=current_user.is_admin
+    )
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify({
+        "id": comment.id,
+        "user_id": comment.user_id,
+        "content": comment.content,
+        "timestamp": comment.timestamp.isoformat(),
+        "admin": comment.is_admin,
+        "game_id": comment.game_id
+    }), 201

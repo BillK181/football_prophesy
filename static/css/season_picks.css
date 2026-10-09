@@ -51,6 +51,7 @@ h1 {
 
     width: 100%;
     max-width: 250px;
+    min-width: 200px;
     margin: 0;
 
 }
@@ -78,7 +79,7 @@ h1 {
 
     color: #333;
 
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
 
     border-bottom: 1px solid var(--color-secondary);
@@ -201,6 +202,23 @@ h1 {
 
     border-radius: 10px;
 
+    position: relative;
+
+}
+
+.icon {
+    position: absolute;
+    font-size: 15px;
+    top: 8px;
+    right: 15px;
+    z-index: 10;
+
+    display: flex;
+    gap: 10px;
+}
+
+.comment-icon {
+    cursor: pointer;
 }
 
 
@@ -478,7 +496,7 @@ button:hover {
     }
 
     #scoreboard {
-        width: 40%;
+        width: 45%;
         box-sizing: border-box;
         margin: 0px auto 0px;
     }

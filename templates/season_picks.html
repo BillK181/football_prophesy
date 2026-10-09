@@ -78,6 +78,12 @@ Season Picks | Football Prophesy
                         {{ game.local_date.strftime('%A, %B %d %-I:%M %p') }}
                     </div>
 
+                    <div class="icon">
+                        <span class="comment-icon">💬</span>
+                        <span>⭐</span>
+                    </div>
+
+
                     <!-- Away Team -->
                     <div
                         class="team away-team
@@ -257,9 +263,25 @@ Season Picks | Football Prophesy
 </div>
 </div>
 
+<div id="comment-board" class="comment-board">
+    <div class="comment-board-content">
+        <button id="close-comment-board">×</button>
+
+        <h2 id="comment-board-title"></h2>
+
+        <div id="game-comments">
+            <!-- Comments will go here later -->
+        </div>
+
+        <textarea id="game-comment-input" placeholder="Write a comment..."></textarea>
+        <button id="game-comment-submit">Post</button>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/season_picks.js') }}"></script>
 <script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game_comment.js') }}"></script>
 {% endblock %}
