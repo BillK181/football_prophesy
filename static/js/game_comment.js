@@ -60,9 +60,9 @@ commentIcons.forEach(icon => {
 
         console.log(gameId);
 
-        commentBoardTitle.textContent = gameCard.querySelector('.away-team').textContent
+        commentBoardTitle.textContent = gameCard.querySelector('.away-team > span:first-child').textContent
         + ' @ ' +
-        gameCard.querySelector('.home-team').textContent;
+        gameCard.querySelector('.home-team > span:first-child').textContent;
 
         commentBoard.style.display = 'block';
 
