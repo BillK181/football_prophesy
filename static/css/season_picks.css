@@ -654,12 +654,7 @@ button:hover {
     }
 
     .season-prediction p {
-        font-size: 18px;
-    }
-
-    #displayed-season-predictions {
-        gap: 0px;
-        max-height: 50vh;
+        font-size: 14px;
     }
 
 }
