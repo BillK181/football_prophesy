@@ -650,10 +650,16 @@ button:hover {
 
     .season-prediction {
         width: 70vw;
+        margin: 0px auto;
     }
 
     .season-prediction p {
         font-size: 18px;
+    }
+
+    #displayed-season-predictions {
+        gap: 0px;
+        max-height: 50vh;
     }
 
 }
