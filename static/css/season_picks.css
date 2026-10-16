@@ -648,8 +648,12 @@ button:hover {
         width: 95px;
     }
 
+    .season-prediction {
+        width: 70vw;
+    }
+
     .season-prediction p {
-        font-size: 21px;
+        font-size: 18px;
     }
 
 }
