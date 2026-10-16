@@ -528,6 +528,24 @@ button:hover {
     border: 2px solid orange;
 }
 
+
+.rating-star {
+    color: grey;
+    font-size: 40px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+/* Stars up to and including the selected star */
+.rating-star.active {
+    color: gold;
+}
+
+/* Prevent another rating while the first is submitting */
+#rating-stars.disabled {
+    pointer-events: none;
+}
+
 /* ==========================================
    Mobile
 ========================================== */
