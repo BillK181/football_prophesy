@@ -3,6 +3,12 @@ from flask_login import login_required, current_user
 from collections import defaultdict
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+from ..data.season_predictions_points import (
+    SEASON_PREDICTION_POINTS,
+    TEAM_POINTS
+)
+
 import traceback
 
 import requests
@@ -229,6 +235,7 @@ def season_picks():
         games=games,
         records=records,
         users=User.query.all(),
+        season_prediction_points=SEASON_PREDICTION_POINTS,
     )
 
 # =========================
@@ -646,3 +653,45 @@ def submit_game_comment():
         "admin": comment.is_admin,
         "game_id": comment.game_id
     }), 201
+
+
+# ==================================================
+# Get Season Predictions
+# ==================================================
+
+# Get Predictions
+@season_picks_bp.route("/get_predictions")
+def get_predictions():
+    season_prediction = request.args.get("season_prediction")
+
+    # Remove suffix like "_1" from the prediction category
+    points_key = season_prediction.rsplit("_", 1)[0] \
+        if season_prediction.rsplit("_", 1)[-1].isdigit() \
+        else season_prediction
+
+    predictions = Prediction.query.filter_by(
+        section="season_predictions",
+        season_prediction=season_prediction
+    ).all()
+
+    return jsonify([
+        {
+            "id": prediction.id,
+            "username": prediction.user.username,
+            "seasonPred": (
+                prediction.player.name if prediction.player
+                else prediction.team.name if prediction.team
+                else "No pick"
+            ),
+            "points": SEASON_PREDICTION_POINTS.get(
+                season_prediction
+            ),
+            "teamPoints": (
+                TEAM_POINTS.get(prediction.team.name)
+                if points_key in ("afc_playoff_teams", "nfc_playoff_teams")
+                and prediction.team
+                else ""
+            )
+        }
+        for prediction in predictions
+    ])

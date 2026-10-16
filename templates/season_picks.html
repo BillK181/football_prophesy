@@ -195,7 +195,7 @@ Season Picks | Football Prophesy
 
             {% for prediction in season_predictions %}
 
-                <div class="prediction-card">
+                <div class="prediction-card" data-prediction="{{ prediction.season_prediction }}">
 
                     <div class="prediction-label">
                         {{ prediction.season_prediction
@@ -227,6 +227,19 @@ Season Picks | Football Prophesy
 
     </section>
 
+</div>
+
+<!-- Season Prediction Board -->
+<div id="season-prediction-board" class="season-prediction-board">
+    <div class="season-prediction-board-content">
+        <button id="close-season-prediction-board">×</button>
+
+        <h2 id="season-prediction-board-title"></h2>
+
+        <div id="displayed-season-predictions">
+            <!-- Other players predictions go here -->
+        </div>
+    </div>
 </div>
 
 
@@ -284,4 +297,8 @@ Season Picks | Football Prophesy
 <script src="{{ url_for('static', filename='js/season_picks.js') }}"></script>
 <script src="{{ url_for('static', filename='js/comments.js') }}"></script>
 <script src="{{ url_for('static', filename='js/game_comment.js') }}"></script>
+<script>
+    const predictionsPoints = {{ season_prediction_points | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/season_prediction_popup.js') }}"></script>
 {% endblock %}

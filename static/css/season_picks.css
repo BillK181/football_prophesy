@@ -418,6 +418,78 @@ button:hover {
 
 }
 
+.season-prediction-board {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.season-prediction-board-content {
+    position: relative;
+    background: var(--color-secondary);
+    width: 90vw;
+    height: 83vh;
+    max-width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#close-season-prediction-board {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    line-height: 1;
+    margin: 0;
+    padding: 6px 10px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-light);
+}
+
+#season-prediction-board-title {
+    color: white;
+    margin: -20px -20px 0 -20px;
+    padding: 20px;
+    text-align: center;
+    background-color: black;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#displayed-season-predictions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.season-prediction {
+    background: var(--color-light);
+    color: var(--color-secondary);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: 20px auto;
+    width: 40vw;
+}
+
+.season-prediction p {
+    font-size: 24px;
+    margin: 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
 /* ==========================================
    Flash Messages
 ========================================== */
@@ -574,6 +646,10 @@ button:hover {
     .prediction-card {
         height: 65px;
         width: 95px;
+    }
+
+    .season-prediction p {
+        font-size: 21px;
     }
 
 }
