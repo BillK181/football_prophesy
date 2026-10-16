@@ -648,13 +648,17 @@ button:hover {
         width: 95px;
     }
 
+    #season-prediction-board-title {
+        font-size: 20px;
+    }
+
     .season-prediction {
         width: 70vw;
         margin: 0px auto;
     }
 
     .season-prediction p {
-        font-size: 14px;
+        font-size: 15px;
     }
 
 }
