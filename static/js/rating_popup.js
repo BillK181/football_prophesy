@@ -11,7 +11,9 @@ const ratingStars = document.querySelectorAll('.rating-star');
 
 const ratingStarsContainer = document.querySelector('#rating-stars');
 
-let currentGameId = null;
+let GameId = null;
+
+let userRating = null;
 
 
 // Display rating board on rating icon click
@@ -21,21 +23,29 @@ ratingIcons.forEach(icon => {
         const gameCard = this.closest('.game-card');
         const gameId = gameCard.dataset.gameId;
 
-        currentGameId = gameId;
+        GameId = gameId;
+
+        userRating = Number(gameCard.dataset.userRating) || null;
 
         ratingBoardTitle.textContent =
             gameCard.querySelector('.away-team > span:first-child').textContent
             + ' @ ' +
             gameCard.querySelector('.home-team > span:first-child').textContent;
 
-        // Reset stars whenever the board opens
+        // Display the user's existing rating
         ratingStars.forEach(star => {
-            star.classList.remove('active');
+            const rating = Number(star.dataset.rating);
+
+            if (userRating && rating <= userRating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
         });
 
         ratingStarsContainer.classList.remove('disabled');
 
-        ratingBoard.style.display = 'block';
+        ratingBoard.style.display = 'flex';
     });
 });
 
@@ -43,6 +53,24 @@ ratingIcons.forEach(icon => {
 // Close rating board button
 closeRatingBoard.addEventListener('click', function() {
     ratingBoard.style.display = 'none';
+});
+
+// Have stars change on hover
+ratingStars.forEach(star => {
+    star.addEventListener('mouseenter', function() {
+
+        const rating = Number(this.dataset.rating);
+
+        ratingStars.forEach(otherStar => {
+            const otherRating = Number(otherStar.dataset.rating);
+
+            if (otherRating <= rating) {
+                otherStar.classList.add('active');
+            } else {
+                otherStar.classList.remove('active');
+            }
+        });
+    });
 });
 
 
@@ -57,7 +85,7 @@ ratingStars.forEach(star => {
 
         const rating = Number(this.dataset.rating);
 
-        if (!currentGameId || rating < 1 || rating > 5) {
+        if (!GameId || rating < 1 || rating > 5) {
             return;
         }
 
@@ -84,7 +112,7 @@ ratingStars.forEach(star => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    game_id: currentGameId,
+                    game_id: GameId,
                     rating: rating
                 })
             })

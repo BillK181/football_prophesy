@@ -222,6 +222,10 @@ h1 {
 }
 
 
+.rating-icon {
+    cursor: pointer;
+}
+
 .game-date {
 
     grid-column: 1 / -1;
@@ -528,22 +532,84 @@ button:hover {
     border: 2px solid orange;
 }
 
+.rating-board {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.rating-board-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    background: var(--color-secondary);
+    width: 90vw;
+    height: 40vh;
+    max-width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#close-rating-board {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    line-height: 1;
+    margin: 0;
+    padding: 6px 10px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-light);
+}
+
+#rating-board-title {
+    align-self: stretch;
+    color: white;
+    margin: -20px -20px 0 -20px;
+    padding: 20px;
+    text-align: center;
+    background-color: black;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
 
 .rating-star {
-    color: grey;
-    font-size: 40px;
+    font-size: 120px;
     cursor: pointer;
-    transition: color 0.2s ease;
+    opacity: 0.35;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 /* Stars up to and including the selected star */
 .rating-star.active {
-    color: gold;
+    opacity: 1;
+    transform: scale(1.1);
 }
 
-/* Prevent another rating while the first is submitting */
-#rating-stars.disabled {
-    pointer-events: none;
+#rating-stars {
+    display: inline-flex;
+    gap: 10px;
+}
+
+.comment-count {
+    font-size: 10px;
+    font-weight: 700;
+    color: black;
+}
+
+.average-rating {
+    font-size: 10px;
+    font-weight: 700;
+    color: black;
 }
 
 /* ==========================================
@@ -677,6 +743,19 @@ button:hover {
 
     .season-prediction p {
         font-size: 15px;
+    }
+
+    .rating-star {
+        margin-top: 20px;
+        font-size: 50px;
+    }
+
+    #rating-stars {
+        gap: 17px;
+    }
+
+    .rating-board-content {
+        height: 50vh;
     }
 
 }

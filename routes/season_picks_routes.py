@@ -19,6 +19,7 @@ from football_prophesy.models.game import Game
 from football_prophesy.models.prediction import Prediction
 from football_prophesy.models.comment import Comment
 from football_prophesy.models.score import Score
+from football_prophesy.models.rating import Rating
 from football_prophesy.extensions import db
 from football_prophesy.services.email_service import send_season_picks_email
 from football_prophesy.services.sleeper_players import update_players
@@ -62,14 +63,42 @@ def season_picks():
     local_tz = ZoneInfo("America/Los_Angeles")
     now = datetime.now(ZoneInfo("UTC"))
 
+    # Game Rating, Comment Count, and Points
     for game in games:
+
+        # =========================
+        # Game Rating
+        # =========================
+
+        game.rating = db.session.query(
+            db.func.avg(Rating.rating)
+        ).filter_by(
+            game_id=game.id
+        ).scalar()
+
+        game.user_rating = Rating.query.filter_by(
+            game_id=game.id,
+            user_id=current_user.id
+        ).first()
+
+        game.user_rating = game.user_rating.rating if game.user_rating else None
+
+        # =========================
+        # Game Comment Count
+        # =========================
+
+        game.comment_count = Comment.query.filter_by(
+            page="season picks",
+            game_id=game.id
+        ).count()
+
+        # =========================
+        # Game Points and Time
+        # =========================
 
         if game.date:
 
-            # =========================
             # Game time
-            # =========================
-
             game_time = game.date
 
             # Make sure game time is UTC
@@ -78,24 +107,14 @@ def season_picks():
                     tzinfo=ZoneInfo("UTC")
                 )
 
-            # =========================
             # Local display time
-            # =========================
-
             game.local_date = game_time.astimezone(local_tz)
 
-            # =========================
             # Lock game once it starts
-            # =========================
-
             game.locked = now >= game_time
 
-            # =========================
             # Points
-            # =========================
-
-            # 10 points for games starting
-            # after 5:00 PM Pacific
+            # 10 points for games starting after 5:00 PM Pacific
             if (
                 game.local_date.hour > 17
                 or (
@@ -695,3 +714,66 @@ def get_predictions():
         }
         for prediction in predictions
     ])
+
+
+
+# ==================================================
+# Game Ratings
+# ==================================================
+# Submit Ratings
+@season_picks_bp.route("/ratings", methods=["POST"])
+@login_required
+def submit_game_rating():
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid request data"}), 400
+
+    game_id = data.get("game_id")
+    rating_value = data.get("rating")
+
+    if not game_id or isinstance(game_id, bool):
+        return jsonify({"error": "Game ID is required"}), 400
+
+    if (
+        not isinstance(rating_value, int)
+        or isinstance(rating_value, bool)
+        or not 1 <= rating_value <= 5
+    ):
+        return jsonify({"error": "Rating must be between 1 and 5"}), 400
+
+    game = db.session.get(Game, game_id)
+
+    if game is None:
+        return jsonify({"error": "Game not found"}), 404
+
+    # Find this user's existing rating for this game
+    rating_record = Rating.query.filter_by(
+        user_id=current_user.id,
+        game_id=game.id
+    ).first()
+
+    if rating_record is None:
+        # Create a new rating
+        rating_record = Rating(
+            user_id=current_user.id,
+            game_id=game.id,
+            rating=rating_value
+        )
+        db.session.add(rating_record)
+        status_code = 201
+    else:
+        # Update the existing rating
+        rating_record.rating = rating_value
+        status_code = 200
+
+    db.session.commit()
+
+    return jsonify({
+        "id": rating_record.id,
+        "user_id": rating_record.user_id,
+        "game_id": rating_record.game_id,
+        "rating": rating_record.rating,
+        "created_at": rating_record.created_at.isoformat(),
+        "updated_at": rating_record.updated_at.isoformat()
+    }), status_code

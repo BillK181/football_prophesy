@@ -72,6 +72,7 @@ Season Picks | Football Prophesy
                 <div
                     class="game-card {% if game.locked %}locked{% endif %}"
                     data-game-id="{{ game.id }}"
+                    data-user-rating="{{ game.user_rating if game.user_rating is not none else '' }}"
                 >
 
                     <div class="game-date">
@@ -80,9 +81,10 @@ Season Picks | Football Prophesy
 
                     <div class="icon">
                         <span class="comment-icon">💬</span>
+                            <span class="comment-count">{{ game.comment_count }}</span>
                         <span class="rating-icon">⭐</span>
+                            <span class="average-rating">{{ game.rating if game.rating is not none else "" }}</span>
                     </div>
-
 
                     <!-- Away Team -->
                     <div
@@ -293,7 +295,7 @@ Season Picks | Football Prophesy
 
 <div id="rating-board" class="rating-board">
     <div class="rating-board-content">
-        <button id="close-comment-board">×</button>
+        <button id="close-rating-board">×</button>
 
         <h2 id="rating-board-title"></h2>
 
@@ -319,4 +321,5 @@ Season Picks | Football Prophesy
     const predictionsPoints = {{ season_prediction_points | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/season_prediction_popup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/rating_popup.js') }}"></script>
 {% endblock %}
